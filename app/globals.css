@@ -20,11 +20,16 @@
   100% { transform: translateX(-50%); }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: #071B2A;
   color: #E2E8F0;
+  overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 8px; }
