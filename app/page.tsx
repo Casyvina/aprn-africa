@@ -4,6 +4,9 @@ import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import PillarsSection from "@/components/PillarsSection";
 import MapSection from "@/components/MapSection";
+import RoadmapSection from "@/components/RoadmapSection";
+import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -15,7 +18,10 @@ export default function Home() {
         <AboutSection />
         <PillarsSection />
         <MapSection />
+        <RoadmapSection />
+        <CTASection />
       </main>
+      <Footer />
     </>
   );
 }
