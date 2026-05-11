@@ -167,6 +167,38 @@ export default function MapSection() {
         <div className="glass-panel rounded-sm p-2 w-full h-[600px]">
           <PipelineMap />
         </div>
+
+        {/* NMGP Corridor spotlight */}
+        <div className="mt-6 glass-panel rounded-sm p-6 border-l-4 border-gold-500">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div className="shrink-0">
+              <span className="text-xs font-bold text-gold-500 uppercase tracking-widest block mb-1">
+                Featured Corridor
+              </span>
+              <h3 className="font-display text-lg font-bold text-white">
+                Nigeria–Morocco Gas Pipeline (NMGP)
+              </h3>
+              <p className="text-sm text-slate-400 mt-1">
+                ~5,660 km · 13 nations · Atlantic coastline route
+              </p>
+            </div>
+            <div className="h-px lg:h-10 lg:w-px bg-navy-700 lg:mx-4 shrink-0" />
+            <div className="flex flex-wrap gap-2">
+              {[
+                "Nigeria", "Benin", "Togo", "Ghana", "Côte d'Ivoire",
+                "Liberia", "Sierra Leone", "Guinea", "Guinea-Bissau",
+                "Gambia", "Senegal", "Mauritania", "Morocco",
+              ].map((country) => (
+                <span
+                  key={country}
+                  className="px-2.5 py-1 text-xs font-medium bg-navy-800 text-slate-300 rounded-sm border border-navy-700"
+                >
+                  {country}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

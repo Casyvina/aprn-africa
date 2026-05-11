@@ -34,9 +34,14 @@ export default function Navigation() {
 
         {/* Desktop CTAs + mobile hamburger */}
         <div className="flex items-center gap-4">
-          <button className="hidden md:block px-5 py-2.5 text-sm font-semibold text-white border border-gold-500/30 hover:border-gold-500 hover:bg-gold-500/10 transition-all rounded-sm">
-            Member Portal
-          </button>
+          <div className="hidden md:inline-flex relative">
+            <button disabled className="px-5 py-2.5 text-sm font-semibold text-slate-500 border border-navy-700 cursor-not-allowed rounded-sm opacity-60">
+              Member Portal
+            </button>
+            <span className="absolute -top-2.5 -right-2 text-[9px] font-bold bg-navy-700 text-gold-500 px-1.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
+              Coming Soon
+            </span>
+          </div>
           <button className="hidden md:block px-5 py-2.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm shadow-[0_0_15px_rgba(212,160,23,0.3)]">
             Join Network
           </button>
@@ -76,9 +81,14 @@ export default function Navigation() {
             </a>
           ))}
           <div className="pt-4 flex flex-col gap-3">
-            <button className="w-full px-5 py-3 text-sm font-semibold text-white border border-gold-500/30 hover:border-gold-500 hover:bg-gold-500/10 transition-all rounded-sm">
-              Member Portal
-            </button>
+            <div className="relative">
+              <button disabled className="w-full px-5 py-3 text-sm font-semibold text-slate-500 border border-navy-700 cursor-not-allowed rounded-sm opacity-60">
+                Member Portal
+              </button>
+              <span className="absolute -top-2.5 right-2 text-[9px] font-bold bg-navy-700 text-gold-500 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                Coming Soon
+              </span>
+            </div>
             <button className="w-full px-5 py-3 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm">
               Join Network
             </button>

@@ -31,7 +31,7 @@ const milestones = [
     sideColor: "border-gold-500",
     title: "Full Integration",
     description:
-      "APRN established as the mandatory certification body for all major continental midstream projects.",
+      "APRN positioned as the leading certification partner for major continental midstream projects across all AU member states.",
     tag: "Target: 100% data coverage.",
     tagSide: "right" as const,
   },

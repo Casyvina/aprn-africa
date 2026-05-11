@@ -39,6 +39,13 @@ export default function Footer() {
               Building the knowledge infrastructure for Africa&apos;s energy transition through rigorous
               research and elite training.
             </p>
+            <a
+              href="mailto:info@aprn-africa.org"
+              className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-gold-500 transition-colors mb-6"
+            >
+              <i className="fa-solid fa-envelope text-gold-500" />
+              info@aprn-africa.org
+            </a>
             <div className="flex gap-4">
               <a
                 href="#"
