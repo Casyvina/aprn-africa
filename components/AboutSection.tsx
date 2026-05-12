@@ -4,12 +4,12 @@ const leadership = [
   {
     name: "Lucy Okeke",
     title: "Founder & Executive Director",
-    icon: "fa-user-tie",
+    photo: "/images/lucy-okeke.jpg",
   },
   {
     name: "Joseph Agwuh",
     title: "Director, Applied Energy and Innovation",
-    icon: "fa-user-gear",
+    photo: "/images/joseph-agwuhu.jpg",
   },
 ];
 
@@ -64,8 +64,14 @@ export default function AboutSection() {
                     key={person.name}
                     className="flex items-center gap-3 glass-panel px-4 py-3 rounded-sm border-l-2 border-gold-500/50"
                   >
-                    <div className="w-8 h-8 rounded-full bg-navy-700 flex items-center justify-center flex-shrink-0">
-                      <i className={`fa-solid ${person.icon} text-gold-500 text-xs`} />
+                    <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gold-500/30">
+                      <Image
+                        src={person.photo}
+                        alt={person.name}
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover object-top"
+                      />
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-white leading-tight">{person.name}</p>
