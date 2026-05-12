@@ -69,7 +69,7 @@ const leadership = [
   },
   {
     name: "Joseph Agwuh",
-    title: "Director, Applied Energy and Innovation",
+    title: "Director, Applied Engineering and Innovation",
     photo: "/images/joseph-agwuh.png",
     bio: "Joseph Agwuh drives APRN's technical programmes, overseeing research output, engineering curriculum development, and the organization's applied innovation agenda across the midstream sector.",
   },
