@@ -4,10 +4,9 @@ export default function HeroSection() {
       <div className="absolute inset-0 z-0">
         <div
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2574&auto=format&fit=crop')",
+            backgroundImage: "url('/images/hero-pipeline.jpg')",
           }}
-          className="w-full h-full bg-cover bg-center opacity-30 mix-blend-luminosity"
+          className="w-full h-full bg-cover bg-center opacity-40 mix-blend-luminosity"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-900/90 via-navy-900/80 to-navy-900" />
         <div

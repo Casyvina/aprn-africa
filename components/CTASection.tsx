@@ -4,10 +4,9 @@ export default function CTASection() {
       <div className="absolute inset-0">
         <div
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=2574&auto=format&fit=crop')",
+            backgroundImage: "url('/images/pipeline-aerial.png')",
           }}
-          className="w-full h-full bg-cover bg-center opacity-10 mix-blend-luminosity"
+          className="w-full h-full bg-cover bg-center opacity-15 mix-blend-luminosity"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/80 to-transparent" />
       </div>

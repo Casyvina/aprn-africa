@@ -7,8 +7,8 @@ const leadership = [
     icon: "fa-user-tie",
   },
   {
-    name: "Joseph Agwuhu",
-    title: "Co-Founder & Director, Technical Affairs",
+    name: "Joseph Agwuh",
+    title: "Director, Applied Energy and Innovation",
     icon: "fa-user-gear",
   },
 ];
@@ -83,8 +83,8 @@ export default function AboutSection() {
               <Image
                 fill
                 className="object-cover"
-                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/cf955a14c7-336ebe3931fd269ceae1.png"
-                alt="African engineers reviewing pipeline blueprints in a modern high-tech facility"
+                src="/images/engineers-group.png"
+                alt="African engineers in hard hats and safety vests inspecting pipeline infrastructure"
               />
               <div className="absolute bottom-6 left-6 z-20 glass-panel px-4 py-3 border-l-4 border-gold-500">
                 <span className="block text-xs text-gold-500 uppercase tracking-widest mb-1">Facility</span>

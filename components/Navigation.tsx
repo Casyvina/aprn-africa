@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 const navLinks = [
   { href: "#about", label: "About" },
   { href: "#pillars", label: "Pillars" },
+  { href: "#partnerships", label: "Partners" },
   { href: "#map", label: "Infrastructure Map" },
   { href: "#research", label: "Research" },
 ];
@@ -16,12 +18,16 @@ export default function Navigation() {
     <nav id="header" className="fixed w-full z-50 glass-panel border-b border-navy-700/50">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-sm bg-gradient-to-br from-gold-500 to-copper-500 flex items-center justify-center">
-            <i className="fa-solid fa-network-wired text-navy-900 text-xl"></i>
-          </div>
-          <span className="font-display font-bold text-xl tracking-wider text-white">APRN</span>
-        </div>
+        <a href="#hero" className="flex items-center">
+          <Image
+            src="/images/logo.png"
+            alt="African Pipeline Resource Network"
+            width={999}
+            height={453}
+            className="h-10 w-auto"
+            priority
+          />
+        </a>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300 tracking-wide">

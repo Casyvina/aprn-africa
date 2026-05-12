@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const initiatives = [
   "Engineering Academy",
   "Policy Think-Tank",
@@ -29,11 +31,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-sm bg-gradient-to-br from-gold-500 to-copper-500 flex items-center justify-center">
-                <i className="fa-solid fa-network-wired text-navy-900 text-sm" />
-              </div>
-              <span className="font-display font-bold text-lg tracking-wider text-white">APRN</span>
+            <div className="mb-5">
+              <Image
+                src="/images/logo.png"
+                alt="African Pipeline Resource Network"
+                width={999}
+                height={453}
+                className="h-12 w-auto"
+              />
             </div>
             <p className="text-sm text-slate-500 mb-6">
               Building the knowledge infrastructure for Africa&apos;s energy transition through rigorous
