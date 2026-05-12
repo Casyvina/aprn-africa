@@ -4,11 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 
 const navLinks = [
-  { href: "#about", label: "About" },
-  { href: "#pillars", label: "Pillars" },
-  { href: "#partnerships", label: "Partners" },
-  { href: "#map", label: "Infrastructure Map" },
-  { href: "#research", label: "Research" },
+  { href: "/about", label: "About" },
+  { href: "/#pillars", label: "Pillars" },
+  { href: "/#partnerships", label: "Partners" },
+  { href: "/#map", label: "Infrastructure Map" },
+  { href: "/research", label: "Research" },
 ];
 
 export default function Navigation() {
@@ -18,7 +18,7 @@ export default function Navigation() {
     <nav id="header" className="fixed w-full z-50 glass-panel border-b border-navy-700/50">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
         {/* Logo */}
-        <a href="#hero" className="flex items-center">
+        <a href="/" className="flex items-center">
           <Image
             src="/images/logo.png"
             alt="African Pipeline Resource Network"

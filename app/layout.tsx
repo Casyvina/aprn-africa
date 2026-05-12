@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, Oswald } from "next/font/google";
+import { Inter, Space_Grotesk, Oswald, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -21,6 +21,12 @@ const oswald = Oswald({
   display: "swap",
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "African Pipeline Resource Network",
   description:
@@ -33,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${oswald.variable}`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${oswald.variable} ${playfair.variable}`}>
       <head>
         <link
           rel="stylesheet"
