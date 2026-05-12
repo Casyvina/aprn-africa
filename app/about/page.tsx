@@ -70,7 +70,7 @@ const leadership = [
   {
     name: "Joseph Agwuh",
     title: "Director, Applied Energy and Innovation",
-    photo: "/images/joseph-agwuhu.jpg",
+    photo: "/images/joseph-agwuh.png",
     bio: "Joseph Agwuh drives APRN's technical programmes, overseeing research output, engineering curriculum development, and the organization's applied innovation agenda across the midstream sector.",
   },
 ];
@@ -325,7 +325,7 @@ export default function AboutPage() {
             style={{ fontFamily: "var(--font-oswald), sans-serif" }}
           >
             &ldquo;Africa&apos;s infrastructure future requires{" "}
-            <span className="text-gold-500">African engineering capacity.</span>&rdquo;
+            <span className="text-gold-500">African engineering capacity</span>&rdquo;
           </blockquote>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a

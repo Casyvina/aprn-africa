@@ -40,7 +40,7 @@ export default function WhyNowSection() {
             </span>
             <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
               Why Africa Needs This{" "}
-              <span className="text-gold-500">Institution Now.</span>
+              <span className="text-gold-500">Institution Now</span>
             </h2>
             <p className="text-slate-400 text-lg leading-relaxed mb-8">
               Africa is entering its most consequential energy decade. Billions in infrastructure

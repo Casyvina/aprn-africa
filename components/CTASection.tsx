@@ -15,7 +15,7 @@ export default function CTASection() {
         <i className="fa-solid fa-globe text-4xl text-gold-500 mb-6 block" />
         <h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
           Africa&apos;s infrastructure future requires{" "}
-          <span className="text-gradient">African engineering capacity.</span>
+          <span className="text-gradient">African engineering capacity</span>
         </h2>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <button className="px-8 py-4 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold tracking-wide transition-all rounded-sm shadow-[0_0_20px_rgba(212,160,23,0.2)]">

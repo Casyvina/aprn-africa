@@ -31,7 +31,7 @@ export default function HeroSection() {
           <h1 className="font-display text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white">
             Building Africa&apos;s <br />
             <span className="text-gradient">Pipeline Knowledge</span> <br />
-            &amp; Training Infrastructure.
+            &amp; Training Infrastructure
           </h1>
 
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed font-light border-l-2 border-gold-500/50 pl-6">

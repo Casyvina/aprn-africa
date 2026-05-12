@@ -9,7 +9,7 @@ const leadership = [
   {
     name: "Joseph Agwuh",
     title: "Director, Applied Energy and Innovation",
-    photo: "/images/joseph-agwuhu.jpg",
+    photo: "/images/joseph-agwuh.png",
   },
 ];
 
@@ -21,7 +21,7 @@ export default function AboutSection() {
           <div>
             <h2 className="font-display text-3xl md:text-5xl font-bold mb-6 text-white">
               The Institutional Foundation for{" "}
-              <span className="text-gold-500">African Energy</span>.
+              <span className="text-gold-500">African Energy</span>
             </h2>
             <p className="text-slate-400 text-lg leading-relaxed mb-6">
               The African Pipeline Resource Network (APRN) is the premier continental think-tank and
