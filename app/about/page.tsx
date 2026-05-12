@@ -65,7 +65,7 @@ const leadership = [
     name: "Lucy Okeke",
     title: "Founder & Executive Director",
     photo: "/images/lucy-okeke.jpg",
-    bio: "Lucy Okeke is the founding force behind APRN, bringing a decade of experience in energy policy, stakeholder engagement, and institutional development across West Africa. She leads APRN's strategic vision and continental partnerships.",
+    bio: "Lucy Okeke is the founding force behind APRN, bringing over 2 decade of experience in energy policy, stakeholder engagement, and institutional development across West Africa. She leads APRN's strategic vision and continental partnerships.",
   },
   {
     name: "Joseph Agwuh",
