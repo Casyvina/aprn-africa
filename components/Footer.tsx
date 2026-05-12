@@ -4,7 +4,6 @@ const initiatives = [
   "Engineering Academy",
   "Policy Think-Tank",
   "Data Observatory",
-  "Women in Midstream",
   "Research Grants",
 ];
 

@@ -3,7 +3,7 @@ import Image from "next/image";
 const leadership = [
   {
     name: "Lucy Okeke",
-    title: "Founder & Executive Director",
+    title: "Founder & President",
     photo: "/images/lucy-okeke.jpg",
   },
   {
