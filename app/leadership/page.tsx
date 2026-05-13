@@ -241,6 +241,87 @@ export default function LeadershipPage() {
           </div>
         </section>
 
+        {/* ── Youth Ambassador ─────────────────────────────────── */}
+        <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-900">
+          <div className="max-w-[1440px] mx-auto">
+            <div className="text-center mb-20">
+              <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
+                Next Generation
+              </span>
+              <h2
+                className="text-4xl md:text-5xl font-bold text-white mb-6"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                Youth <span className="italic text-gold-500">Ambassador</span>
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                Representing the emerging generation of African pipeline engineers on the global stage.
+              </p>
+            </div>
+
+            <div className="glass-panel rounded-sm border border-gold-500/20 overflow-hidden max-w-5xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-12">
+                {/* Photo */}
+                <div className="lg:col-span-4 relative">
+                  <div className="relative h-[420px] lg:h-full min-h-[360px] group">
+                    <Image
+                      src="/images/allison-gabriel.png"
+                      alt="Allison Gabriel"
+                      fill
+                      className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-navy-900/60 lg:block hidden" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-900/80 via-transparent to-transparent lg:hidden" />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="lg:col-span-8 p-10 lg:p-12 flex flex-col justify-center">
+                  <div className="inline-flex items-center gap-2 mb-6">
+                    <span className="w-8 h-px bg-gold-500" />
+                    <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">APRN Youth Ambassador</span>
+                  </div>
+
+                  <h3
+                    className="text-3xl font-bold text-white mb-1"
+                    style={{ fontFamily: "var(--font-playfair), serif" }}
+                  >
+                    Allison Gabriel
+                  </h3>
+                  <p className="text-sm text-gold-500 tracking-wider uppercase mb-6">
+                    R&amp;D Graduate Engineer · BG Technical Ltd
+                  </p>
+
+                  <p className="text-sm text-slate-400 leading-relaxed mb-8">
+                    Allison Gabriel is an R&amp;D Graduate Engineer at BG Technical Ltd under the NCDMB/RENAISSANCE/PETAN Graduate Training and Human Development Program (2025–2027). A Petroleum Engineering graduate of Rivers State University, he is developing a real-time pipeline monitoring system designed to improve surveillance, detect leakages early, and reduce losses across critical energy infrastructure — an innovation that has gained global recognition.
+                  </p>
+
+                  {/* Credentials */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    {[
+                      { icon: "fa-trophy", label: "2025 Emerging Young Pipeline Professional Award", sub: "Pipeline Technology Conference, Berlin" },
+                      { icon: "fa-users", label: "Coordinator, Future Energy Leaders Network", sub: "FELNETWORK" },
+                      { icon: "fa-circle-nodes", label: "Member, SPE Port Harcourt & PLAN", sub: "Young Professional" },
+                    ].map((c) => (
+                      <div key={c.label} className="border border-navy-700 rounded-sm p-4 hover:border-gold-500/30 transition-colors">
+                        <i className={`fa-solid ${c.icon} text-gold-500 text-sm mb-2 block`} />
+                        <p className="text-xs text-white font-medium leading-snug mb-1">{c.label}</p>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-wider">{c.sub}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <blockquote className="border-l-2 border-gold-500/40 pl-4">
+                    <p className="text-sm text-slate-300 italic leading-relaxed">
+                      &ldquo;An agile and forward-thinking innovator committed to advancing technologies that strengthen pipeline integrity, monitoring, and operational safety while contributing to sustainable energy development.&rdquo;
+                    </p>
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── CTA ──────────────────────────────────────────────── */}
         <section className="py-32 px-6 border-t border-white/10 bg-navy-900 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none" style={{
