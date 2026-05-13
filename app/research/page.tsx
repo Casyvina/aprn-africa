@@ -339,11 +339,11 @@ export default function ResearchPage() {
               <div className="text-left">
                 <div className="font-bold text-slate-100 tracking-wider uppercase text-sm"
                   style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                  Dr. O. Adebayo
+                  Lucy Okeke
                 </div>
                 <div className="text-slate-500 text-sm italic"
                   style={{ fontFamily: "var(--font-playfair), serif" }}>
-                  Director of Research, APRN
+                  Founder &amp; President, APRN
                 </div>
               </div>
             </div>

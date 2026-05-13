@@ -1,26 +1,26 @@
 import Image from "next/image";
 
 const initiatives = [
-  "Engineering Academy",
-  "Policy Think-Tank",
-  "Data Observatory",
-  "Research Grants",
+  { label: "Engineering Academy", href: "/training" },
+  { label: "Policy Think-Tank", href: "#" },
+  { label: "Data Observatory", href: "/research" },
+  { label: "Research Grants", href: "#" },
 ];
 
 const organisation = [
-  "About APRN",
-  "Leadership",
-  "Member Directory",
-  "Careers",
-  "Press & Media",
+  { label: "About APRN", href: "/about" },
+  { label: "Leadership", href: "/leadership" },
+  { label: "Member Directory", href: "#" },
+  { label: "Careers", href: "#" },
+  { label: "Press & Media", href: "#" },
 ];
 
 const resources = [
-  "Pipeline Database",
-  "Research Library",
-  "Standards & Codes",
-  "Training Calendar",
-  "Contact Us",
+  { label: "Pipeline Database", href: "/research" },
+  { label: "Research Library", href: "/research" },
+  { label: "Standards & Codes", href: "#" },
+  { label: "Training Calendar", href: "/training" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 export default function Footer() {
@@ -73,9 +73,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-400">
               {initiatives.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-gold-500 transition-colors">
-                    {item}
+                <li key={item.label}>
+                  <a href={item.href} className="hover:text-gold-500 transition-colors">
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -89,9 +89,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-400">
               {organisation.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-gold-500 transition-colors">
-                    {item}
+                <li key={item.label}>
+                  <a href={item.href} className="hover:text-gold-500 transition-colors">
+                    {item.label}
                   </a>
                 </li>
               ))}
@@ -105,9 +105,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-sm text-slate-400">
               {resources.map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-gold-500 transition-colors">
-                    {item}
+                <li key={item.label}>
+                  <a href={item.href} className="hover:text-gold-500 transition-colors">
+                    {item.label}
                   </a>
                 </li>
               ))}

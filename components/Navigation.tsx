@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 
 const navLinks = [
@@ -14,6 +15,7 @@ const navLinks = [
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <nav id="header" className="fixed w-full z-50 glass-panel border-b border-navy-700/50">
@@ -33,7 +35,11 @@ export default function Navigation() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300 tracking-wide">
           {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-gold-500 transition-colors">
+            <a
+              key={l.href}
+              href={l.href}
+              className={`transition-colors hover:text-gold-500 ${pathname === l.href ? "text-gold-500" : ""}`}
+            >
               {l.label}
             </a>
           ))}
@@ -49,9 +55,9 @@ export default function Navigation() {
               Coming Soon
             </span>
           </div>
-          <button className="hidden md:block px-5 py-2.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm shadow-[0_0_15px_rgba(212,160,23,0.3)]">
+          <a href="/contact" className="hidden md:block px-5 py-2.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm shadow-[0_0_15px_rgba(212,160,23,0.3)]">
             Join Network
-          </button>
+          </a>
 
           {/* Hamburger — mobile only */}
           <button
@@ -82,7 +88,7 @@ export default function Navigation() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="py-3 text-sm font-medium text-slate-300 hover:text-gold-500 transition-colors border-b border-navy-800 last:border-0"
+              className={`py-3 text-sm font-medium transition-colors border-b border-navy-800 last:border-0 hover:text-gold-500 ${pathname === l.href ? "text-gold-500" : "text-slate-300"}`}
             >
               {l.label}
             </a>
@@ -96,9 +102,9 @@ export default function Navigation() {
                 Coming Soon
               </span>
             </div>
-            <button className="w-full px-5 py-3 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm">
+            <a href="/contact" className="w-full px-5 py-3 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm text-center block">
               Join Network
-            </button>
+            </a>
           </div>
         </div>
       </div>

@@ -69,9 +69,9 @@ const leadership = [
   },
   {
     name: "Joseph Agwuh",
-    title: "Director, Applied Engineering and Innovation",
+    title: "Director, Applied Engineering & Innovation",
     photo: "/images/joseph-agwuh.png",
-    bio: "Joseph Agwuh drives APRN's technical programmes, overseeing research output, engineering curriculum development, and the organization's applied innovation agenda across the midstream sector.",
+    bio: "Joseph Agwuh is a Civil Engineer and the digital architect behind APRN's operational infrastructure. He leads APRN's applied research programmes, technical documentation, digital platforms, and industry database development — bringing hands-on experience in digital strategy, web infrastructure, AI-powered research tools, and pipeline sector intelligence across Africa.",
   },
 ];
 
@@ -151,7 +151,7 @@ export default function AboutPage() {
                   <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform" />
                 </a>
                 <a
-                  href="/"
+                  href="/research"
                   className="inline-flex items-center justify-between border border-white/20 px-6 py-4 hover:bg-white hover:text-navy-900 transition-all group"
                 >
                   <span className="text-sm font-medium tracking-widest uppercase">Explore Research</span>
