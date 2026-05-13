@@ -11,12 +11,12 @@ const pillars = [
     description:
       "Internationally aligned certification programs building local capacity in design, construction, and maintenance.",
   },
-  {
-    icon: "fa-users-gear",
-    title: "Women in Pipeline",
-    description:
-      "Dedicated initiatives to increase female representation in technical and leadership roles across the midstream sector.",
-  },
+  // {
+  //   icon: "fa-users-gear",
+  //   title: "Women in Pipeline",
+  //   description:
+  //     "Dedicated initiatives to increase female representation in technical and leadership roles across the midstream sector.",
+  // },
   {
     icon: "fa-database",
     title: "African Pipeline Database",
