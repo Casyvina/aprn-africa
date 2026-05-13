@@ -49,14 +49,14 @@ const leadership = [
   },
   {
     name: "Joseph Agwuh",
-    title: "Director, Applied Engineering and Innovation",
+    title: "Director, Applied Engineering & Innovation",
     photo: "/images/joseph-agwuh.png",
     quote: "Applied engineering without applied knowledge transfer is a temporary solution. APRN exists to make Africa's infrastructure expertise permanent, indigenous, and self-sustaining.",
     stats: [
-      { value: "15+", label: "Years Engineering Practice" },
-      { value: "12+", label: "Technical Programmes Led" },
+      { value: "Civil Engineer", label: "BSc" },
+      { value: "Digital Infrastructure", label: "Lead" },
     ],
-    bio: "Joseph Agwuh drives APRN's technical programmes, overseeing research output, engineering curriculum development, and the organisation's applied innovation agenda across the midstream sector.",
+    bio: "Joseph Agwuh is a Civil Engineer and the digital architect behind APRN's operational infrastructure. He leads APRN's applied research programmes, technical documentation, digital platforms, and industry database development. He holds a degree in Civil Engineering and brings hands-on experience in digital strategy, web infrastructure, AI-powered research tools, and pipeline sector intelligence across Africa.",
   },
 ];
 
@@ -186,7 +186,7 @@ export default function LeadershipPage() {
                   {person.stats.map((s) => (
                     <div key={s.label}>
                       <span
-                        className="block text-3xl font-bold text-gold-500 mb-2"
+                        className={`block font-bold text-gold-500 mb-2 ${s.value.length > 5 ? "text-lg leading-tight" : "text-3xl"}`}
                         style={{ fontFamily: "var(--font-playfair), serif" }}
                       >
                         {s.value}
