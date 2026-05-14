@@ -1,4 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "next-sanity";
+
+function getSanityWriteClient() {
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  const dataset   = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
+  const token     = process.env.SANITY_WRITE_TOKEN;
+  if (!projectId || !token) return null;
+  return createClient({ projectId, dataset, apiVersion: "2025-05-01", useCdn: false, token });
+}
 
 export async function POST(req: NextRequest) {
   const { firstName, email, org } = await req.json();
@@ -7,36 +16,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "A valid email address is required." }, { status: 400 });
   }
 
-  const apiKey    = process.env.RESEND_API_KEY;
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
+  const sanity = getSanityWriteClient();
 
-  // If Resend is not configured, log and accept gracefully (dev / staging mode)
-  if (!apiKey || !audienceId) {
-    console.log("[newsletter] Resend not configured — recording subscription:", { firstName, email, org });
+  if (!sanity) {
+    // Dev fallback — Sanity not configured, log and accept
+    console.log("[newsletter] Sanity not configured — subscriber:", { firstName, email, org });
     return NextResponse.json({ ok: true });
   }
 
-  const res = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      first_name: firstName ?? "",
-      unsubscribed: false,
-    }),
-  });
+  // Idempotent: use email as deterministic document ID so duplicates are ignored
+  const docId = `subscriber-${email.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
 
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    console.error("[newsletter] Resend error:", body);
-    return NextResponse.json(
-      { message: "Could not register your subscription. Please try again." },
-      { status: 502 },
-    );
-  }
+  await sanity
+    .transaction()
+    .createIfNotExists({
+      _id:          docId,
+      _type:        "subscriber",
+      email:        email.toLowerCase().trim(),
+      firstName:    firstName?.trim() ?? "",
+      org:          org?.trim() ?? "",
+      active:       true,
+      subscribedAt: new Date().toISOString(),
+    })
+    // If they already exist, ensure they're marked active
+    .patch(docId, (p) => p.set({ active: true }))
+    .commit();
 
   return NextResponse.json({ ok: true });
 }

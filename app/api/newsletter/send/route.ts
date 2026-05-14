@@ -3,6 +3,7 @@ import { createClient } from "next-sanity";
 import { Resend } from "resend";
 import type { NewsletterIssue } from "@/lib/queries/newsletter";
 import { NEWSLETTER_APPROVED_QUERY } from "@/lib/queries/newsletter";
+import { groq } from "next-sanity";
 
 // ── Sanity write client ───────────────────────────────────────────────────────
 
@@ -10,25 +11,20 @@ function getSanityClient() {
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   const dataset   = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
   const token     = process.env.SANITY_WRITE_TOKEN;
-
   if (!projectId || !token) return null;
-
-  return createClient({ projectId, dataset, apiVersion: "2024-01-01", useCdn: false, token });
+  return createClient({ projectId, dataset, apiVersion: "2025-05-01", useCdn: false, token });
 }
 
-// ── Subscriber list via Resend ────────────────────────────────────────────────
+// ── Subscriber list from Sanity ───────────────────────────────────────────────
 
-async function fetchSubscribers(resend: Resend): Promise<string[]> {
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
-  if (!audienceId) return [];
+const ACTIVE_SUBSCRIBERS_QUERY = groq`
+  *[_type == "subscriber" && active == true]{ email }
+`;
 
-  const { data, error } = await resend.contacts.list({ audienceId });
-  if (error || !data) return [];
-
-  return data.data
-    .filter((c) => !c.unsubscribed)
-    .map((c) => c.email)
-    .filter(Boolean);
+async function fetchSubscribers(sanity: ReturnType<typeof getSanityClient>): Promise<string[]> {
+  if (!sanity) return [];
+  const rows = await sanity.fetch<Array<{ email: string }>>(ACTIVE_SUBSCRIBERS_QUERY);
+  return rows.map((r) => r.email).filter(Boolean);
 }
 
 // ── HTML email builder ────────────────────────────────────────────────────────
@@ -112,7 +108,7 @@ function buildEmailHtml(issue: NewsletterIssue, siteUrl: string): string {
         <tr>
           <td style="background:#071B2A;padding:24px 40px;border-top:1px solid #15324A;text-align:center;">
             <p style="margin:0 0 8px;font-size:11px;color:#334155;">African Pipeline Resource Network · <a href="${siteUrl}" style="color:#D4A017;text-decoration:none;">aprn-africa.org</a></p>
-            <p style="margin:0;font-size:10px;color:#1e293b;">You received this because you subscribed to the APRN Intelligence Briefing. <a href="%unsubscribe_url%" style="color:#475569;">Unsubscribe</a></p>
+            <p style="margin:0;font-size:10px;color:#1e293b;">You received this because you subscribed to the APRN Intelligence Briefing.</p>
           </td>
         </tr>
 
@@ -148,25 +144,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "No approved issue found." }, { status: 404 });
   }
 
-  // 2. Get subscribers
-  const resend       = new Resend(resendKey);
-  const subscribers  = await fetchSubscribers(resend);
+  // 2. Get subscribers from Sanity
+  const subscribers = await fetchSubscribers(sanity);
   if (subscribers.length === 0) {
-    return NextResponse.json({ message: "No subscribers found." }, { status: 200, });
+    return NextResponse.json({ message: "No active subscribers found.", sent: 0 });
   }
 
-  const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aprn-africa.org";
-  const html      = buildEmailHtml(issue, siteUrl);
+  const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aprn-africa.org";
+  const html       = buildEmailHtml(issue, siteUrl);
   const issueLabel = `Vol. ${issue.volume}, Issue ${String(issue.issueNumber).padStart(3, "0")}`;
+  const resend     = new Resend(resendKey);
 
-  // 3. Send in batches of 50 (Resend batch limit)
+  // 3. Send in batches of 50
   const batchSize = 50;
   let sent = 0;
 
   for (let i = 0; i < subscribers.length; i += batchSize) {
     const batch = subscribers.slice(i, i + batchSize);
     const { error } = await resend.emails.send({
-      from:    `APRN Intelligence Briefing <newsletter@aprn-africa.org>`,
+      from:    "APRN Intelligence Briefing <newsletter@aprn-africa.org>",
       to:      batch,
       subject: `${issueLabel} — ${issue.title}`,
       html,
