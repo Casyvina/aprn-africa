@@ -2,62 +2,55 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { PortableTextRenderer } from "@/components/PortableTextRenderer";
+import { sanityFetch } from "@/lib/sanity/fetch";
 import {
-  articles,
-  getArticleBySlug,
-  getRelatedArticles,
-  categoryMeta,
-  type ContentBlock,
-} from "@/lib/articles";
+  INSIGHT_BY_SLUG_QUERY,
+  INSIGHT_SLUGS_QUERY,
+  RELATED_INSIGHTS_QUERY,
+  type InsightDetail,
+  type InsightCard,
+  type InsightCategory,
+} from "@/lib/queries/insights";
 
-export function generateStaticParams(): Array<{ slug: string }> {
-  return articles.map((a) => ({ slug: a.slug }));
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric",
+  });
 }
 
-function ArticleBlock({ block }: { block: ContentBlock }) {
-  switch (block.type) {
-    case "paragraph":
-      return (
-        <p
-          className="text-slate-300 leading-8 text-lg mb-6"
-          style={{ fontFamily: "var(--font-inter), sans-serif" }}
-        >
-          {block.text}
-        </p>
-      );
-    case "heading":
-      return (
-        <h3
-          className="text-2xl font-bold text-white mt-12 mb-4 pt-4 border-t border-navy-800"
-          style={{ fontFamily: "var(--font-playfair), serif" }}
-        >
-          {block.text}
-        </h3>
-      );
-    case "pullquote":
-      return (
-        <blockquote className="border-l-4 border-gold-500 pl-6 my-10 py-1">
-          <p
-            className="text-xl text-gold-500 italic leading-relaxed"
-            style={{ fontFamily: "var(--font-playfair), serif" }}
-          >
-            {block.text}
-          </p>
-        </blockquote>
-      );
-    case "callout":
-      return (
-        <div className="glass-panel border border-gold-500/20 rounded-sm p-6 my-8">
-          <div className="text-xs font-semibold text-gold-500 uppercase tracking-widest mb-3">
-            {block.title}
-          </div>
-          <p className="text-slate-300 text-sm leading-relaxed">{block.text}</p>
-        </div>
-      );
-    default:
-      return null;
-  }
+function formatReadTime(mins?: number): string {
+  return mins ? `${mins} min read` : "";
 }
+
+const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot: string }> = {
+  intelligence: {
+    label: "Intelligence Brief",
+    badge: "bg-sky-400/10 border-sky-400/30 text-sky-400",
+    dot: "bg-sky-400",
+  },
+  research: {
+    label: "Research Report",
+    badge: "bg-gold-500/10 border-gold-500/30 text-gold-500",
+    dot: "bg-gold-500",
+  },
+  editorial: {
+    label: "Editorial Insight",
+    badge: "bg-copper-500/10 border-copper-500/30 text-copper-500",
+    dot: "bg-copper-500",
+  },
+};
+
+// ── Static params ─────────────────────────────────────────────────────────────
+
+export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
+  const slugs = await sanityFetch<Array<{ slug: string }>>(INSIGHT_SLUGS_QUERY);
+  return slugs.filter((s) => Boolean(s.slug));
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function ArticlePage({
   params,
@@ -65,10 +58,22 @@ export default async function ArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+
+  const [article, related] = await Promise.all([
+    sanityFetch<InsightDetail | null>(
+      INSIGHT_BY_SLUG_QUERY,
+      { slug },
+      ["researchReport", "editorialInsight"],
+    ),
+    sanityFetch<InsightCard[]>(
+      RELATED_INSIGHTS_QUERY,
+      { slug },
+      ["researchReport", "editorialInsight"],
+    ),
+  ]);
+
   if (!article) notFound();
 
-  const related = getRelatedArticles(slug, 3);
   const meta = categoryMeta[article.category];
 
   return (
@@ -97,9 +102,17 @@ export default async function ArticlePage({
                 <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
                 {meta.label}
               </span>
-              <span className="text-slate-500 text-xs uppercase tracking-wider">{article.date}</span>
-              <span className="text-navy-700">·</span>
-              <span className="text-slate-500 text-xs uppercase tracking-wider">{article.readTime}</span>
+              <span className="text-slate-500 text-xs uppercase tracking-wider">
+                {formatDate(article.publishDate)}
+              </span>
+              {article.estimatedReadTime && (
+                <>
+                  <span className="text-navy-700">·</span>
+                  <span className="text-slate-500 text-xs uppercase tracking-wider">
+                    {formatReadTime(article.estimatedReadTime)}
+                  </span>
+                </>
+              )}
             </div>
 
             <h1
@@ -109,16 +122,18 @@ export default async function ArticlePage({
               {article.title}
             </h1>
 
-            <p className="text-xl text-slate-400 leading-relaxed mb-8 max-w-3xl">
-              {article.subtitle}
-            </p>
+            {article.subtitle && (
+              <p className="text-xl text-slate-400 leading-relaxed mb-8 max-w-3xl">
+                {article.subtitle}
+              </p>
+            )}
 
             <div className="flex items-center gap-4 pt-6 border-t border-navy-800">
               <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center flex-shrink-0">
                 <i className="fa-solid fa-user text-gold-500 text-sm" />
               </div>
               <div>
-                <div className="text-sm font-semibold text-white">{article.author}</div>
+                <div className="text-sm font-semibold text-white">{article.authorName}</div>
                 <div className="text-xs text-slate-500">{article.authorRole}</div>
               </div>
             </div>
@@ -126,35 +141,41 @@ export default async function ArticlePage({
         </header>
 
         {/* ── Featured Image ──────────────────────────────────────── */}
-        <div
-          className="w-full h-[480px] bg-cover bg-center relative"
-          style={{ backgroundImage: `url('${article.heroImage}')` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/30 to-transparent" />
-        </div>
+        {article.heroImage && (
+          <div
+            className="w-full h-[480px] bg-cover bg-center relative"
+            style={{ backgroundImage: `url('${article.heroImage}')` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/30 to-transparent" />
+          </div>
+        )}
 
         {/* ── Key Insights Panel ─────────────────────────────────── */}
-        <section className="py-16 px-6 lg:px-12 bg-navy-800 border-b border-navy-700">
-          <div className="max-w-[1440px] mx-auto">
-            <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Key Intelligence</p>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {article.insights.map((insight, i) => (
-                <div key={i} className="glass-panel border border-navy-700 p-6 rounded-sm">
-                  <i className={`fa-solid ${insight.icon} text-gold-500 mb-4 block text-xl`} />
-                  <div
-                    className="text-3xl font-bold text-white mb-1"
-                    style={{ fontFamily: "var(--font-oswald), sans-serif" }}
-                  >
-                    {insight.value}
+        {article.keyInsights && article.keyInsights.length > 0 && (
+          <section className="py-16 px-6 lg:px-12 bg-navy-800 border-b border-navy-700">
+            <div className="max-w-[1440px] mx-auto">
+              <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Key Intelligence</p>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {article.keyInsights.map((insight, i) => (
+                  <div key={i} className="glass-panel border border-navy-700 p-6 rounded-sm">
+                    {insight.icon && (
+                      <i className={`fa-solid ${insight.icon} text-gold-500 mb-4 block text-xl`} />
+                    )}
+                    <div
+                      className="text-3xl font-bold text-white mb-1"
+                      style={{ fontFamily: "var(--font-oswald), sans-serif" }}
+                    >
+                      {insight.value}
+                    </div>
+                    <div className="text-xs text-slate-400 uppercase tracking-wider leading-tight">
+                      {insight.label}
+                    </div>
                   </div>
-                  <div className="text-xs text-slate-400 uppercase tracking-wider leading-tight">
-                    {insight.label}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── Body + Sidebar ─────────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12">
@@ -162,9 +183,7 @@ export default async function ArticlePage({
 
             {/* Article body */}
             <article className="lg:col-span-8">
-              {article.body.map((block, i) => (
-                <ArticleBlock key={i} block={block} />
-              ))}
+              {article.body && <PortableTextRenderer value={article.body} />}
             </article>
 
             {/* Sidebar */}
@@ -179,7 +198,7 @@ export default async function ArticlePage({
                       <i className="fa-solid fa-user text-gold-500 text-sm" />
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-white">{article.author}</div>
+                      <div className="text-sm font-semibold text-white">{article.authorName}</div>
                       <div className="text-xs text-slate-500 leading-tight mt-0.5">{article.authorRole}</div>
                     </div>
                   </div>
@@ -197,12 +216,14 @@ export default async function ArticlePage({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Published</span>
-                      <span className="text-slate-300">{article.date}</span>
+                      <span className="text-slate-300">{formatDate(article.publishDate)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Read time</span>
-                      <span className="text-slate-300">{article.readTime}</span>
-                    </div>
+                    {article.estimatedReadTime && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Read time</span>
+                        <span className="text-slate-300">{formatReadTime(article.estimatedReadTime)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -227,30 +248,32 @@ export default async function ArticlePage({
         </section>
 
         {/* ── Strategic Commentary ───────────────────────────────── */}
-        <section className="py-24 px-6 lg:px-12 bg-navy-800 border-t border-navy-700 relative overflow-hidden">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `url('${article.heroImage}')`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              opacity: 0.08,
-            }}
-          />
-          <div className="absolute inset-0 bg-navy-800/90" />
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
-            <i className="fa-solid fa-quote-left text-gold-500/20 text-7xl mb-8 block" />
-            <blockquote
-              className="text-3xl md:text-4xl font-bold text-white leading-tight mb-8 italic"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              &ldquo;{article.pullQuote}&rdquo;
-            </blockquote>
-            <cite className="text-slate-400 text-sm not-italic">
-              — {article.author}, {article.authorRole}
-            </cite>
-          </div>
-        </section>
+        {article.pullQuote && (
+          <section className="py-24 px-6 lg:px-12 bg-navy-800 border-t border-navy-700 relative overflow-hidden">
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: article.heroImage ? `url('${article.heroImage}')` : undefined,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                opacity: 0.08,
+              }}
+            />
+            <div className="absolute inset-0 bg-navy-800/90" />
+            <div className="relative z-10 max-w-4xl mx-auto text-center">
+              <i className="fa-solid fa-quote-left text-gold-500/20 text-7xl mb-8 block" />
+              <blockquote
+                className="text-3xl md:text-4xl font-bold text-white leading-tight mb-8 italic"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                &ldquo;{article.pullQuote}&rdquo;
+              </blockquote>
+              <cite className="text-slate-400 text-sm not-italic">
+                — {article.authorName}, {article.authorRole}
+              </cite>
+            </div>
+          </section>
+        )}
 
         {/* ── Related Research ───────────────────────────────────── */}
         {related.length > 0 && (
@@ -262,13 +285,13 @@ export default async function ArticlePage({
               <div className="grid md:grid-cols-3 gap-8">
                 {related.map((rel) => (
                   <Link
-                    key={rel.slug}
+                    key={rel._id}
                     href={`/insights/${rel.slug}`}
                     className="group glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors rounded-sm overflow-hidden block"
                   >
                     <div
                       className="h-40 bg-cover bg-center relative"
-                      style={{ backgroundImage: `url('${rel.heroImage}')` }}
+                      style={{ backgroundImage: rel.heroImage ? `url('${rel.heroImage}')` : undefined }}
                     >
                       <div className="absolute inset-0 bg-navy-900/50 group-hover:bg-navy-900/30 transition-colors" />
                       <div className="absolute top-3 left-3">
@@ -285,7 +308,8 @@ export default async function ArticlePage({
                         {rel.title}
                       </h4>
                       <div className="text-[11px] text-slate-500 uppercase tracking-wider">
-                        {rel.date} · {rel.readTime}
+                        {formatDate(rel.publishDate)}
+                        {rel.estimatedReadTime ? ` · ${formatReadTime(rel.estimatedReadTime)}` : ""}
                       </div>
                     </div>
                   </Link>
@@ -300,8 +324,7 @@ export default async function ArticlePage({
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              backgroundImage:
-                "radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.06) 0%, transparent 70%)",
+              backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.06) 0%, transparent 70%)",
             }}
           />
           <div className="max-w-4xl mx-auto text-center relative z-10">

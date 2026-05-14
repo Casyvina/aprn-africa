@@ -1,11 +1,62 @@
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { articles, categoryMeta } from "@/lib/articles";
+import { sanityFetch } from "@/lib/sanity/fetch";
+import { ALL_INSIGHTS_QUERY, type InsightCard, type InsightCategory } from "@/lib/queries/insights";
 
-export default function InsightsPage() {
-  const featured = articles.find((a) => a.featured) ?? articles[0];
-  const rest = articles.filter((a) => a.slug !== featured.slug);
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric",
+  });
+}
+
+function formatReadTime(mins?: number): string {
+  return mins ? `${mins} min read` : "";
+}
+
+const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot: string }> = {
+  intelligence: {
+    label: "Intelligence Brief",
+    badge: "bg-sky-400/10 border-sky-400/30 text-sky-400",
+    dot: "bg-sky-400",
+  },
+  research: {
+    label: "Research Report",
+    badge: "bg-gold-500/10 border-gold-500/30 text-gold-500",
+    dot: "bg-gold-500",
+  },
+  editorial: {
+    label: "Editorial Insight",
+    badge: "bg-copper-500/10 border-copper-500/30 text-copper-500",
+    dot: "bg-copper-500",
+  },
+};
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+
+export default async function InsightsPage() {
+  const allInsights = await sanityFetch<InsightCard[]>(
+    ALL_INSIGHTS_QUERY,
+    {},
+    ["researchReport", "editorialInsight"],
+  );
+
+  const featured = allInsights.find((a) => a.featured) ?? allInsights[0];
+  const rest = allInsights.filter((a) => a.slug !== featured?.slug);
+
+  if (!featured) {
+    return (
+      <>
+        <Navigation />
+        <main className="bg-navy-900 text-white min-h-screen flex items-center justify-center">
+          <p className="text-slate-400 text-lg">No insights published yet.</p>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -31,7 +82,7 @@ export default function InsightsPage() {
 
             {/* Category legend */}
             <div className="flex flex-wrap gap-4 mt-10">
-              {(Object.entries(categoryMeta) as [keyof typeof categoryMeta, (typeof categoryMeta)[keyof typeof categoryMeta]][]).map(([, meta]) => (
+              {(Object.entries(categoryMeta) as [InsightCategory, typeof categoryMeta[InsightCategory]][]).map(([, meta]) => (
                 <span
                   key={meta.label}
                   className={`inline-flex items-center gap-2 px-3 py-1 border rounded-full text-xs font-semibold uppercase tracking-wider ${meta.badge}`}
@@ -54,7 +105,7 @@ export default function InsightsPage() {
             >
               <div
                 className="lg:col-span-7 aspect-video bg-cover bg-center rounded-sm overflow-hidden mb-8 lg:mb-0 relative"
-                style={{ backgroundImage: `url('${featured.heroImage}')` }}
+                style={{ backgroundImage: featured.heroImage ? `url('${featured.heroImage}')` : undefined }}
               >
                 <div className="absolute inset-0 bg-navy-900/40 group-hover:bg-navy-900/20 transition-colors" />
                 <div className="absolute top-4 left-4">
@@ -73,11 +124,15 @@ export default function InsightsPage() {
                 </h2>
                 <p className="text-slate-400 leading-relaxed mb-6">{featured.excerpt}</p>
                 <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 uppercase tracking-wider">
-                  <span>{featured.date}</span>
+                  <span>{formatDate(featured.publishDate)}</span>
+                  {featured.estimatedReadTime && (
+                    <>
+                      <span className="text-navy-700">·</span>
+                      <span>{formatReadTime(featured.estimatedReadTime)}</span>
+                    </>
+                  )}
                   <span className="text-navy-700">·</span>
-                  <span>{featured.readTime}</span>
-                  <span className="text-navy-700">·</span>
-                  <span>{featured.author}</span>
+                  <span>{featured.authorName}</span>
                 </div>
                 <div className="mt-6 inline-flex items-center gap-2 text-xs text-gold-500 uppercase tracking-widest font-semibold group-hover:gap-3 transition-all">
                   Read Brief <i className="fa-solid fa-arrow-right text-[10px]" />
@@ -94,13 +149,13 @@ export default function InsightsPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {rest.map((article) => (
                 <Link
-                  key={article.slug}
+                  key={article._id}
                   href={`/insights/${article.slug}`}
                   className="group glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors rounded-sm overflow-hidden block"
                 >
                   <div
                     className="aspect-video bg-cover bg-center relative"
-                    style={{ backgroundImage: `url('${article.heroImage}')` }}
+                    style={{ backgroundImage: article.heroImage ? `url('${article.heroImage}')` : undefined }}
                   >
                     <div className="absolute inset-0 bg-navy-900/50 group-hover:bg-navy-900/30 transition-colors" />
                     <div className="absolute top-4 left-4">
@@ -119,9 +174,13 @@ export default function InsightsPage() {
                     </h3>
                     <p className="text-slate-400 text-sm leading-relaxed mb-4">{article.excerpt}</p>
                     <div className="flex items-center gap-3 text-[11px] text-slate-500 uppercase tracking-wider border-t border-navy-700 pt-4">
-                      <span>{article.date}</span>
-                      <span>·</span>
-                      <span>{article.readTime}</span>
+                      <span>{formatDate(article.publishDate)}</span>
+                      {article.estimatedReadTime && (
+                        <>
+                          <span>·</span>
+                          <span>{formatReadTime(article.estimatedReadTime)}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </Link>
