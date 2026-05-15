@@ -155,18 +155,18 @@ export async function POST(req: NextRequest) {
   const issueLabel = `Vol. ${issue.volume}, Issue ${String(issue.issueNumber).padStart(3, "0")}`;
   const resend     = new Resend(resendKey);
 
-  // 3. Send in batches of 50
-  const batchSize = 50;
+  // 3. Send individually using Resend batch API (100 per call — each recipient private)
+  const batchSize = 100;
   let sent = 0;
 
   for (let i = 0; i < subscribers.length; i += batchSize) {
-    const batch = subscribers.slice(i, i + batchSize);
-    const { error } = await resend.emails.send({
+    const batch = subscribers.slice(i, i + batchSize).map((email) => ({
       from:    "APRN Intelligence Briefing <newsletter@aprn-africa.org>",
-      to:      batch,
+      to:      [email],
       subject: `${issueLabel} — ${issue.title}`,
       html,
-    });
+    }));
+    const { error } = await resend.batch.send(batch);
     if (error) {
       console.error("[newsletter/send] Resend batch error:", error);
     } else {
