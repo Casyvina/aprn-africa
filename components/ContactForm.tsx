@@ -16,33 +16,51 @@ const inquiryTypes = [
   "General Information",
 ];
 
+type FormState = "idle" | "loading" | "success" | "error";
+
 export default function ContactForm() {
-  const [submitted, setSubmitted] = useState(false);
+  const [state, setState]     = useState<FormState>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const name = data.get("name") as string;
-    const org = data.get("org") as string;
-    const email = data.get("email") as string;
-    const country = data.get("country") as string;
-    const type = data.get("type") as string;
-    const message = data.get("message") as string;
+    setState("loading");
+    setErrorMsg("");
 
-    const subject = encodeURIComponent(`[APRN Inquiry] ${type} — ${org}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nOrganisation: ${org}\nEmail: ${email}\nCountry: ${country}\nInquiry Type: ${type}\n\n${message}`
-    );
-    window.location.href = `mailto:info@aprn-africa.org?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+    const data = new FormData(e.currentTarget);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name:    data.get("name"),
+          org:     data.get("org"),
+          email:   data.get("email"),
+          country: data.get("country"),
+          type:    data.get("type"),
+          message: data.get("message"),
+        }),
+      });
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.message ?? "Failed to send. Please try again.");
+      }
+
+      setState("success");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
+      setState("error");
+    }
   }
 
-  if (submitted) {
+  if (state === "success") {
     return (
       <div className="glass-panel p-10 rounded-sm border border-navy-700 text-center py-16">
         <i className="fa-solid fa-circle-check text-gold-500 text-4xl mb-4 block" />
-        <p className="text-white font-semibold mb-2">Inquiry Submitted</p>
-        <p className="text-slate-400 text-sm">Your email client has been opened. We look forward to connecting.</p>
+        <p className="text-white font-semibold mb-2">Inquiry Received</p>
+        <p className="text-slate-400 text-sm">Your message has been sent to the APRN team. We will be in touch within 2 business days.</p>
       </div>
     );
   }
@@ -118,11 +136,21 @@ export default function ContactForm() {
             placeholder="Detail your objective..."
           />
         </div>
+        {state === "error" && (
+          <p className="text-xs text-red-400 border border-red-400/20 bg-red-400/5 px-4 py-3 rounded-sm">
+            {errorMsg}
+          </p>
+        )}
         <button
           type="submit"
-          className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold py-4 rounded-sm transition-colors flex justify-center items-center gap-2"
+          disabled={state === "loading"}
+          className="w-full bg-gold-500 hover:bg-gold-400 disabled:opacity-60 disabled:cursor-not-allowed text-navy-900 font-bold py-4 rounded-sm transition-colors flex justify-center items-center gap-2"
         >
-          Submit Inquiry <i className="fa-solid fa-arrow-right" />
+          {state === "loading" ? (
+            <><i className="fa-solid fa-circle-notch animate-spin" /> Sending...</>
+          ) : (
+            <>Submit Inquiry <i className="fa-solid fa-arrow-right" /></>
+          )}
         </button>
       </form>
     </div>
