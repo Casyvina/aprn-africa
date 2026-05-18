@@ -65,13 +65,13 @@ const leadership = [
   {
     name: "Lucy Okeke",
     title: "Founder & President",
-    photo: "/images/lucy-okeke.jpg",
+    photo: "",
     bio: "Lucy Okeke is the founding force behind APRN, bringing two decades of experience in oil and gas regulations, energy policy, sustainability, stakeholder engagement, and institutional development across West Africa. She leads APRN's strategic vision and continental partnerships.",
   },
   {
     name: "Joseph Agwuh",
     title: "Director, Applied Engineering & Innovation",
-    photo: "/images/joseph-agwuh.png",
+    photo: "",
     bio: "Joseph Agwuh is a Civil Engineer and the digital architect behind APRN's operational infrastructure. He leads APRN's applied research programmes, technical documentation, digital platforms, and industry database development — bringing hands-on experience in digital strategy, web infrastructure, AI-powered research tools, and pipeline sector intelligence across Africa.",
   },
 ];
@@ -286,15 +286,29 @@ export default function AboutPage() {
                 key={person.name}
                 className="border-r border-b border-white/10 group overflow-hidden"
               >
-                {/* Photo */}
-                <div className="relative h-120 overflow-hidden bg-navy-800">
-                  <Image
-                    src={person.photo}
-                    alt={person.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105"
-                  />
+                {/* Photo / Avatar */}
+                <div className="relative h-120 overflow-hidden bg-navy-800 flex items-center justify-center">
+                  {person.photo ? (
+                    <Image
+                      src={person.photo}
+                      alt={person.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div
+                      className="w-32 h-32 rounded-full flex items-center justify-center border border-gold-500/30"
+                      style={{ background: "rgba(212,160,23,0.08)" }}
+                    >
+                      <span
+                        className="text-5xl font-bold text-gold-500/60 leading-none"
+                        style={{ fontFamily: "var(--font-oswald), sans-serif" }}
+                      >
+                        {person.name.split(" ").map((n) => n[0]).join("")}
+                      </span>
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/20 to-transparent" />
                 </div>
                 {/* Info */}
