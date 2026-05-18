@@ -49,46 +49,69 @@ export default async function NewsletterIssuePage({
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Back link ──────────────────────────────────────────── */}
-        <div className="pt-28 pb-0 px-6 lg:px-12">
-          <div className="max-w-360 mx-auto">
+        {/* ── Cinematic Issue Header ──────────────────────────────── */}
+        <header className="relative pt-28 pb-16 lg:pb-24 px-6 lg:px-12 min-h-[55vh] flex items-end overflow-hidden border-b border-navy-800">
+          {/* Pipeline image backdrop */}
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-15 mix-blend-luminosity"
+            style={{ backgroundImage: "url('/images/pipeline-aerial.png')" }}
+          />
+          {/* Gradient overlays */}
+          <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/80 to-navy-900/40" />
+          <div className="absolute inset-0 bg-linear-to-r from-navy-900 via-navy-900/70 to-transparent" />
+          {/* Grid texture */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.025]"
+            style={{
+              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.5) 39px, rgba(255,255,255,0.5) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.5) 39px, rgba(255,255,255,0.5) 40px)",
+            }}
+          />
+
+          <div className="relative z-10 w-full max-w-360 mx-auto">
+            {/* Back link */}
             <Link
               href="/newsletter"
-              className="inline-flex items-center gap-2 text-xs text-slate-500 uppercase tracking-widest hover:text-gold-500 transition-colors"
+              className="inline-flex items-center gap-2 text-xs text-slate-400 uppercase tracking-widest hover:text-gold-500 transition-colors mb-8 block"
             >
               <i className="fa-solid fa-arrow-left text-[10px]" />
               APRN Intelligence Briefing
             </Link>
-          </div>
-        </div>
 
-        {/* ── Issue Header ─────────────────────────────────────────── */}
-        <header className="py-16 px-6 lg:px-12 border-b border-navy-800">
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-4">
-              {issueLabel}
-            </p>
-            <h1
-              className="text-4xl md:text-6xl font-bold leading-tight mb-6"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              {data.title}
-            </h1>
-            <p className="text-slate-400 text-xl leading-relaxed mb-8 max-w-3xl mx-auto">
-              {data.leadSummary}
-            </p>
-            <div className="flex items-center justify-center gap-6 text-[11px] text-slate-500 uppercase tracking-widest">
-              <span>{formatDate(data.publishDate)}</span>
-              <span className="w-1 h-1 rounded-full bg-slate-700" />
-              <span>{data.stories.length} Stories</span>
-              {data.sentAt && (
-                <>
-                  <span className="w-1 h-1 rounded-full bg-slate-700" />
-                  <span className="text-gold-500">
+            <div className="max-w-4xl">
+              {/* Issue badge */}
+              <div className="flex items-center gap-3 flex-wrap mb-5">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
+                  <span className="text-xs font-bold text-gold-500 uppercase tracking-widest">{issueLabel}</span>
+                </span>
+                {data.sentAt && (
+                  <span className="text-[11px] text-gold-500/70 uppercase tracking-widest">
                     Sent to {data.recipientCount?.toLocaleString() ?? ""} subscribers
                   </span>
-                </>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1
+                className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                {data.title}
+              </h1>
+
+              {/* Lead summary */}
+              {data.leadSummary && (
+                <p className="text-base lg:text-xl text-slate-300 leading-relaxed mb-8 max-w-3xl font-light">
+                  {data.leadSummary}
+                </p>
               )}
+
+              {/* Meta row */}
+              <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500 uppercase tracking-widest">
+                <span>{formatDate(data.publishDate)}</span>
+                <span className="w-1 h-1 rounded-full bg-slate-700" />
+                <span>{data.stories.length} Stories</span>
+              </div>
             </div>
           </div>
         </header>
@@ -103,29 +126,24 @@ export default async function NewsletterIssuePage({
               {data.stories.map((story, i) => (
                 <article
                   key={i}
-                  className="glass-panel border border-navy-700 p-8 rounded-sm flex flex-col gap-4"
+                  className="glass-panel border border-navy-700 hover:border-gold-500/30 transition-colors p-8 rounded-sm flex flex-col gap-4"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2.5 py-1 border border-gold-500/30 bg-gold-500/10 rounded-full">
-                      {story.tag}
-                    </span>
-                    <span className="text-[11px] text-slate-600 uppercase tracking-wider">
-                      Story {i + 1}
-                    </span>
-                  </div>
+                  <span className="text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2.5 py-1 border border-gold-500/30 bg-gold-500/10 rounded-full self-start">
+                    {story.tag}
+                  </span>
                   <h2
                     className="text-xl font-bold leading-snug text-white"
                     style={{ fontFamily: "var(--font-playfair), serif" }}
                   >
                     {story.headline}
                   </h2>
-                  <p className="text-sm text-slate-400 leading-relaxed">{story.summary}</p>
+                  <p className="text-sm text-slate-400 leading-relaxed flex-1">{story.summary}</p>
                   {story.sourceUrl && (
                     <a
                       href={story.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[11px] text-gold-500 uppercase tracking-widest hover:underline"
+                      className="inline-flex items-center gap-1.5 text-[11px] text-gold-500 uppercase tracking-widest hover:underline self-start"
                     >
                       Source <i className="fa-solid fa-arrow-up-right-from-square text-[9px]" />
                     </a>
@@ -137,39 +155,44 @@ export default async function NewsletterIssuePage({
         </section>
 
         {/* ── Editor's Analysis ────────────────────────────────────── */}
-        <section className="py-24 px-6 lg:px-12 bg-navy-800 border-t border-navy-700 relative overflow-hidden">
-          <div className="absolute inset-0 bg-navy-800/90" />
-          <div className="relative z-10 max-w-4xl mx-auto">
-            <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8 text-center">
-              Editor&apos;s Analysis
-            </p>
-            {data.pullQuote && (
-              <div className="text-center mb-12">
-                <i className="fa-solid fa-quote-left text-gold-500/20 text-6xl mb-6 block" />
-                <blockquote
-                  className="text-2xl md:text-3xl font-bold text-white leading-tight italic"
-                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                >
-                  &ldquo;{data.pullQuote}&rdquo;
-                </blockquote>
-              </div>
-            )}
-            <div className="glass-panel border border-navy-700 p-8 rounded-sm">
-              <p className="text-slate-300 leading-relaxed text-base whitespace-pre-wrap">
-                {data.editorAnalysis}
+        {(data.pullQuote || data.editorAnalysis) && (
+          <section className="py-24 px-6 lg:px-12 bg-navy-800 border-t border-navy-700">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-10 text-center">
+                Editor&apos;s Analysis
               </p>
-              <div className="mt-6 pt-6 border-t border-navy-700 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center">
-                  <i className="fa-solid fa-user text-gold-500 text-xs" />
+
+              {data.pullQuote && (
+                <div className="text-center mb-12">
+                  <i className="fa-solid fa-quote-left text-gold-500/20 text-5xl mb-6 block" />
+                  <blockquote
+                    className="text-2xl md:text-3xl font-bold text-white leading-tight italic"
+                    style={{ fontFamily: "var(--font-playfair), serif" }}
+                  >
+                    &ldquo;{data.pullQuote}&rdquo;
+                  </blockquote>
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-white">Lucy Okeke</div>
-                  <div className="text-[11px] text-slate-500">Founder & Executive Director, APRN</div>
+              )}
+
+              {data.editorAnalysis && (
+                <div className="glass-panel border border-navy-700 p-8 rounded-sm">
+                  <p className="text-slate-300 leading-relaxed text-base whitespace-pre-wrap">
+                    {data.editorAnalysis}
+                  </p>
+                  <div className="mt-8 pt-6 border-t border-navy-700 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-sm bg-gold-500/10 border border-gold-500/30 flex items-center justify-center shrink-0">
+                      <i className="fa-solid fa-pen-nib text-gold-500 text-sm" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-white">Lucy Okeke</div>
+                      <div className="text-xs text-slate-500">Founder &amp; Executive Director, APRN</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── Subscribe CTA ────────────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12 border-t border-navy-800">

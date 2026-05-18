@@ -60,6 +60,13 @@ export default async function NewsletterPage() {
 
         {/* ── Masthead Hero ────────────────────────────────────────── */}
         <section className="pt-32 pb-0 px-6 lg:px-12 border-b border-navy-800 relative overflow-hidden">
+          {/* Pipeline image backdrop */}
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-luminosity"
+            style={{ backgroundImage: "url('/images/pipeline-aerial.png')" }}
+          />
+          <div className="absolute inset-0 bg-linear-to-b from-navy-900/60 via-transparent to-navy-900" />
+          {/* Grid texture */}
           <div
             className="absolute inset-0 pointer-events-none opacity-[0.03]"
             style={{
@@ -78,7 +85,7 @@ export default async function NewsletterPage() {
               </span>
             </div>
 
-            <div className="text-center pb-12">
+            <div className="text-center py-12">
               <p className="text-[11px] text-slate-500 uppercase tracking-[0.4em] mb-4">
                 Africa&apos;s Pipeline Intelligence Weekly
               </p>
@@ -116,10 +123,10 @@ export default async function NewsletterPage() {
               Latest Issue
             </span>
             <div className="flex-1 overflow-hidden">
-              <div className="flex flex-wrap gap-4 text-navy-900 text-xs font-semibold uppercase tracking-wider">
-                <span>{issueLabel} · {issueDateLabel}</span>
+              <div className="flex items-center gap-4 text-navy-900 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden">
+                <span className="shrink-0">{issueLabel} · {issueDateLabel}</span>
                 {previewStories.slice(0, 3).map((s) => (
-                  <span key={s.tag}>· {s.tag}</span>
+                  <span key={s.tag} className="shrink-0">· {s.tag}</span>
                 ))}
               </div>
             </div>
