@@ -65,7 +65,7 @@ export default async function InsightsPage() {
 
         {/* ── Hero ──────────────────────────────────────────────── */}
         <section className="pt-32 pb-16 px-6 lg:px-12 border-b border-navy-800">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-gold-500/30 rounded-full bg-gold-500/10">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
               <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">APRN Publishing</span>
@@ -97,7 +97,7 @@ export default async function InsightsPage() {
 
         {/* ── Featured Article ───────────────────────────────────── */}
         <section className="py-16 px-6 lg:px-12 border-b border-navy-800">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Featured</p>
             <Link
               href={`/insights/${featured.slug}`}
@@ -144,7 +144,7 @@ export default async function InsightsPage() {
 
         {/* ── Article Grid ───────────────────────────────────────── */}
         <section className="py-16 px-6 lg:px-12">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-10">All Publications</p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {rest.map((article) => (

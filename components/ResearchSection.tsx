@@ -81,7 +81,7 @@ export default async function ResearchSection() {
 
   return (
     <section id="research" className="py-24 bg-navy-900 border-t border-navy-800 relative">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div className="max-w-360 mx-auto px-6 md:px-12">
 
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-end mb-14 gap-6">
@@ -167,7 +167,7 @@ export default async function ResearchSection() {
                     <span className="text-[10px] text-slate-500 ml-auto">{formatMonth(pub.publishDate)}</span>
                   </div>
                   <div className="flex gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-sm bg-navy-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-sm bg-navy-800 flex items-center justify-center shrink-0 mt-0.5">
                       <i className={`fa-solid ${pcfg.icon} text-gold-500 text-sm`} />
                     </div>
                     <h4 className="font-display text-sm font-bold text-white leading-snug group-hover:text-gold-500 transition-colors">

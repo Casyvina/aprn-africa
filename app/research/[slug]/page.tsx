@@ -165,7 +165,7 @@ export default async function ResearchReportPage({
           className="border-b border-slate-200 pt-24"
           style={{ backgroundColor: "#F5F7FA" }}
         >
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-4">
+          <div className="max-w-360 mx-auto px-6 lg:px-12 py-4">
             <nav className="flex items-center gap-2 text-xs uppercase tracking-widest">
               <Link href="/" className="text-slate-400 hover:text-navy-900 transition-colors">
                 Home
@@ -175,7 +175,7 @@ export default async function ResearchReportPage({
                 Research
               </Link>
               <i className="fa-solid fa-chevron-right text-[8px] text-slate-300" />
-              <span style={{ color: "#071B2A" }} className="font-medium truncate max-w-[200px]">
+              <span style={{ color: "#071B2A" }} className="font-medium truncate max-w-50">
                 {report.title}
               </span>
             </nav>
@@ -184,7 +184,7 @@ export default async function ResearchReportPage({
 
         {/* ── Hero ────────────────────────────────────────────────── */}
         <header className="py-16 px-6 lg:px-12 border-b border-slate-200" style={{ backgroundColor: "#F5F7FA" }}>
-          <div className="max-w-[1440px] mx-auto grid lg:grid-cols-12 gap-12 items-start">
+          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-12 items-start">
 
             {/* Left: title block */}
             <div className="lg:col-span-8">
@@ -232,7 +232,7 @@ export default async function ResearchReportPage({
                 </div>
                 <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100">
                   <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
                     style={{ backgroundColor: "#071B2A" }}
                   >
                     <i className="fa-solid fa-user text-gold-500 text-sm" />
@@ -285,7 +285,7 @@ export default async function ResearchReportPage({
 
         {/* ── Featured Image ──────────────────────────────────────── */}
         {report.coverImageUrl && (
-          <div className="w-full h-[520px] relative overflow-hidden">
+          <div className="w-full h-130 relative overflow-hidden">
             <img
               src={report.coverImageUrl}
               alt={report.title}
@@ -302,7 +302,7 @@ export default async function ResearchReportPage({
 
         {/* ── Content: Executive summary + body + sticky metrics ── */}
         <section className="py-20 px-6 lg:px-12" style={{ backgroundColor: "#F5F7FA" }}>
-          <div className="max-w-[1440px] mx-auto grid lg:grid-cols-12 gap-16">
+          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-16">
 
             {/* ── Left: article body (8 cols) ── */}
             <article className="lg:col-span-8">
@@ -427,7 +427,7 @@ export default async function ResearchReportPage({
                     </div>
                     <div className="flex justify-between items-center">
                       <span style={{ color: "#94a3b8" }}>Author</span>
-                      <span style={{ color: "#071B2A" }} className="font-medium text-right max-w-[140px] leading-tight">
+                      <span style={{ color: "#071B2A" }} className="font-medium text-right max-w-35 leading-tight">
                         {report.authorName}
                       </span>
                     </div>
@@ -488,7 +488,7 @@ export default async function ResearchReportPage({
         {/* ── Related Research ────────────────────────────────────── */}
         {related.length > 0 && (
           <section className="py-20 px-6 lg:px-12 border-t border-slate-200 bg-white">
-            <div className="max-w-[1440px] mx-auto">
+            <div className="max-w-360 mx-auto">
               <p
                 className="text-[10px] font-semibold uppercase tracking-widest mb-10"
                 style={{ color: "#D4A017" }}

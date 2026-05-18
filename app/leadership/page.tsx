@@ -69,7 +69,7 @@ export default function LeadershipPage() {
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="pt-40 pb-32 px-6 lg:px-12 min-h-[90vh] flex flex-col justify-center relative overflow-hidden max-w-[1440px] mx-auto">
+        <section className="pt-40 pb-32 px-6 lg:px-12 min-h-[90vh] flex flex-col justify-center relative overflow-hidden max-w-360 mx-auto">
           {/* Decorative glow */}
           <div className="absolute top-1/4 left-10 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-gold-500/3 rounded-full blur-3xl pointer-events-none" />
@@ -110,7 +110,7 @@ export default function LeadershipPage() {
                   and taught across Africa.
                 </p>
               </div>
-              <div className="hidden md:block w-px h-24 bg-gold-500/20 flex-shrink-0" />
+              <div className="hidden md:block w-px h-24 bg-gold-500/20 shrink-0" />
               <div className="flex-1 grid grid-cols-3 gap-4 text-center">
                 {[
                   { value: "42+", label: "Institutional Partners" },
@@ -138,12 +138,12 @@ export default function LeadershipPage() {
             key={person.name}
             className="py-32 px-6 lg:px-12 border-t border-white/10 relative"
           >
-            <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div className="max-w-360 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
               {/* Portrait — alternate sides */}
               <div className={`lg:col-span-5 relative ${i % 2 === 1 ? "lg:order-last" : ""}`}>
                 <div className="absolute inset-0 bg-gold-500/10 translate-x-4 translate-y-4 rounded-sm" />
                 <div className="relative rounded-sm overflow-hidden border border-gold-500/30 group">
-                  <div className="relative h-[560px] overflow-hidden bg-navy-800">
+                  <div className="relative h-140 overflow-hidden bg-navy-800">
                     <Image
                       src={person.photo}
                       alt={person.name}
@@ -151,7 +151,7 @@ export default function LeadershipPage() {
                       sizes="(max-width: 1024px) 100vw, 600px"
                       className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/20 to-transparent" />
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3
@@ -203,7 +203,7 @@ export default function LeadershipPage() {
 
         {/* ── Advisory Pillars ──────────────────────────────────── */}
         <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-800/30">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <div className="text-center mb-20">
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 Governance Structure
@@ -244,7 +244,7 @@ export default function LeadershipPage() {
 
         {/* ── Youth Ambassador ─────────────────────────────────── */}
         <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-900">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <div className="text-center mb-20">
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 Next Generation
@@ -264,7 +264,7 @@ export default function LeadershipPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12">
                 {/* Photo */}
                 <div className="lg:col-span-4 relative">
-                  <div className="relative h-[420px] lg:h-full min-h-[360px] group">
+                  <div className="relative h-105 lg:h-full min-h-90 group">
                     <Image
                       src="/images/allison-gabriel.jpeg"
                       alt="Allison Gabriel"
@@ -272,8 +272,8 @@ export default function LeadershipPage() {
                       sizes="(max-width: 1024px) 100vw, 360px"
                       className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-navy-900/60 lg:block hidden" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy-900/80 via-transparent to-transparent lg:hidden" />
+                    <div className="absolute inset-0 bg-linear-to-r from-transparent to-navy-900/60 lg:block hidden" />
+                    <div className="absolute inset-0 bg-linear-to-t from-navy-900/80 via-transparent to-transparent lg:hidden" />
                   </div>
                 </div>
 

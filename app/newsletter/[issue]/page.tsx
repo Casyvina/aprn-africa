@@ -51,7 +51,7 @@ export default async function NewsletterIssuePage({
 
         {/* ── Back link ──────────────────────────────────────────── */}
         <div className="pt-28 pb-0 px-6 lg:px-12">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <Link
               href="/newsletter"
               className="inline-flex items-center gap-2 text-xs text-slate-500 uppercase tracking-widest hover:text-gold-500 transition-colors"
@@ -95,7 +95,7 @@ export default async function NewsletterIssuePage({
 
         {/* ── Stories ──────────────────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-10">
               This Issue
             </p>
@@ -194,7 +194,7 @@ export default async function NewsletterIssuePage({
 
         {/* ── Bottom nav ───────────────────────────────────────────── */}
         <section className="py-12 px-6 lg:px-12 border-t border-navy-800">
-          <div className="max-w-[1440px] mx-auto flex flex-wrap justify-between items-center gap-4">
+          <div className="max-w-360 mx-auto flex flex-wrap justify-between items-center gap-4">
             <Link
               href="/newsletter"
               className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-gold-500 uppercase tracking-widest transition-colors"

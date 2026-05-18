@@ -82,11 +82,11 @@ export default async function TrainingPage() {
               priority
             />
             <div className="absolute inset-0 bg-navy-900/80" />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-navy-900 via-navy-900/80 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-r from-navy-900 via-navy-900/80 to-transparent" />
           </div>
 
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12 relative z-20 grid lg:grid-cols-12 gap-12 items-center w-full">
+          <div className="max-w-360 mx-auto px-6 lg:px-12 relative z-20 grid lg:grid-cols-12 gap-12 items-center w-full">
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 mb-6">
                 <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
@@ -124,7 +124,7 @@ export default async function TrainingPage() {
             {/* Floating metrics card */}
             <div className="lg:col-span-5 relative hidden lg:block">
               <div className="relative w-full aspect-square max-w-md mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold-500/20 to-transparent rounded-full blur-3xl" />
+                <div className="absolute inset-0 bg-linear-to-br from-gold-500/20 to-transparent rounded-full blur-3xl" />
                 <div className="glass-panel rounded-sm p-6 relative z-10 border border-navy-700 hover:border-gold-500/40 transition-all duration-500 rotate-2 hover:rotate-0">
                   <div className="flex items-center justify-between mb-6 pb-4 border-b border-navy-700">
                     <span className="text-sm font-semibold text-slate-300 uppercase tracking-widest">
@@ -146,7 +146,7 @@ export default async function TrainingPage() {
                         </div>
                         <div className="h-1.5 w-full bg-navy-900 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-gold-500 to-copper-500 rounded-full"
+                            className="h-full bg-linear-to-r from-gold-500 to-copper-500 rounded-full"
                             style={{ width: m.pct }}
                           />
                         </div>
@@ -155,7 +155,7 @@ export default async function TrainingPage() {
                   </div>
 
                   <div className="mt-6 p-4 rounded-sm bg-navy-900 border border-navy-700 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center text-gold-500 flex-shrink-0">
+                    <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center text-gold-500 shrink-0">
                       <i className="fa-solid fa-shield-halved text-xl" />
                     </div>
                     <div>
@@ -171,7 +171,7 @@ export default async function TrainingPage() {
 
         {/* ── Why Training Matters ─────────────────────────────── */}
         <section className="py-24 bg-navy-900 border-t border-navy-800">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
@@ -205,7 +205,7 @@ export default async function TrainingPage() {
                   alt="African engineers"
                   width={900}
                   height={600}
-                  className="relative rounded-sm border border-navy-700 object-cover h-[420px] w-full"
+                  className="relative rounded-sm border border-navy-700 object-cover h-105 w-full"
                 />
               </div>
             </div>
@@ -214,7 +214,7 @@ export default async function TrainingPage() {
 
         {/* ── Training Tracks ──────────────────────────────────── */}
         <section id="tracks" className="py-24 bg-navy-800 border-t border-navy-700">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 Curriculum
@@ -252,7 +252,7 @@ export default async function TrainingPage() {
         {/* ── Active Programs ──────────────────────────────────── */}
         {programs.length > 0 && (
           <section className="py-24 bg-navy-900 border-t border-navy-800">
-            <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+            <div className="max-w-360 mx-auto px-6 lg:px-12">
               <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
                 <div>
                   <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">Now Enrolling</span>
@@ -298,7 +298,7 @@ export default async function TrainingPage() {
               style={{ backgroundImage: "url('/images/pipeline-aerial.png')" }}
               className="w-full h-full bg-cover bg-center opacity-10 mix-blend-luminosity"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/80 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/80 to-transparent" />
           </div>
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <h2 className="font-display text-3xl lg:text-5xl font-bold mb-6 text-white leading-tight">

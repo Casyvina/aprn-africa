@@ -57,7 +57,7 @@ export default function TermsPage() {
 
         {/* ── Quick Policy Summary ────────────────────────────── */}
         <section className="py-16 px-6 lg:px-12 bg-navy-800 border-y border-navy-700">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-10 text-center">
               Quick Policy Overview
             </h2>
@@ -111,7 +111,7 @@ export default function TermsPage() {
 
         {/* ── Main Content + Sidebar ──────────────────────────── */}
         <section className="py-24 px-6 lg:px-12">
-          <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row gap-16">
+          <div className="max-w-360 mx-auto flex flex-col lg:flex-row gap-16">
 
             {/* Sticky sidebar */}
             <aside className="lg:w-1/4 hidden lg:block">
@@ -222,7 +222,7 @@ export default function TermsPage() {
                     }}
                   />
                   <div className="relative z-10 flex items-start gap-6">
-                    <i className="fa-solid fa-triangle-exclamation text-gold-500 text-xl flex-shrink-0 mt-0.5" />
+                    <i className="fa-solid fa-triangle-exclamation text-gold-500 text-xl shrink-0 mt-0.5" />
                     <div>
                       <h4
                         className="text-white font-semibold mb-2"
@@ -403,7 +403,7 @@ export default function TermsPage() {
                         </a>
                       </p>
                     </div>
-                    <div className="flex gap-3 flex-shrink-0">
+                    <div className="flex gap-3 shrink-0">
                       <Link
                         href="/contact"
                         className="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold px-6 py-3 text-xs uppercase tracking-wider transition-colors"
@@ -427,7 +427,7 @@ export default function TermsPage() {
 
         {/* ── Footer banner ───────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12 bg-navy-800 border-t border-navy-700">
-          <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="max-w-360 mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
               <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Document Reference</p>
               <p className="text-slate-200 font-mono text-sm tracking-wider">APRN-TOC-USE-24V4.2</p>

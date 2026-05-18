@@ -31,7 +31,7 @@ export default async function IntelligenceStrip() {
 
   return (
     <div className="fixed top-20 w-full z-40 bg-navy-800 border-b border-navy-700 h-10 flex items-center overflow-hidden">
-      <div className="absolute left-0 z-10 h-full w-24 bg-gradient-to-r from-navy-800 to-transparent flex items-center px-4 border-r border-navy-700/50">
+      <div className="absolute left-0 z-10 h-full w-24 bg-linear-to-r from-navy-800 to-transparent flex items-center px-4 border-r border-navy-700/50">
         <span className="text-xs font-bold text-gold-500 uppercase tracking-widest">
           <i className="fa-solid fa-bolt mr-2" />Live
         </span>

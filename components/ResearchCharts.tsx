@@ -2,13 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    Plotly?: {
-      newPlot(el: HTMLDivElement, data: unknown[], layout: Record<string, unknown>, config: Record<string, unknown>): void;
-    };
-  }
-}
 
 const commonLayout = {
   plot_bgcolor: "transparent",
@@ -40,7 +33,7 @@ export default function ResearchCharts() {
 
     function renderCharts() {
       if (capexRef.current) {
-        window.Plotly.newPlot(
+        window.Plotly?.newPlot(
           capexRef.current,
           [
             {
@@ -59,7 +52,7 @@ export default function ResearchCharts() {
       }
 
       if (capacityRef.current) {
-        window.Plotly.newPlot(
+        window.Plotly?.newPlot(
           capacityRef.current,
           [
             {

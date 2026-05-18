@@ -60,7 +60,7 @@ export default async function NotFound() {
         />
 
         {/* Main layout — fills between nav and footer */}
-        <main className="flex-1 flex flex-col lg:flex-row max-w-[1440px] w-full mx-auto pt-20">
+        <main className="flex-1 flex flex-col lg:flex-row max-w-360 w-full mx-auto pt-20">
 
           {/* ── Left: Error content ────────────────────────────────── */}
           <div className="flex-1 flex flex-col justify-center px-6 lg:px-20 py-20 lg:py-0 border-r border-navy-800 relative overflow-hidden">
@@ -71,7 +71,7 @@ export default async function NotFound() {
               aria-hidden="true"
             >
               <span
-                className="text-[20rem] font-bold leading-none text-white/[0.02] tracking-tighter"
+                className="text-[20rem] font-bold leading-none text-white/2 tracking-tighter"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
               >
                 404
@@ -122,7 +122,7 @@ export default async function NotFound() {
           </div>
 
           {/* ── Right: Sidebar ─────────────────────────────────────── */}
-          <aside className="w-full lg:w-[400px] flex-shrink-0 border-t lg:border-t-0 border-navy-800 bg-navy-800/40 p-8 lg:p-12 flex flex-col justify-center">
+          <aside className="w-full lg:w-100 shrink-0 border-t lg:border-t-0 border-navy-800 bg-navy-800/40 p-8 lg:p-12 flex flex-col justify-center">
 
             <div className="mb-8">
               <h3 className="text-xs font-semibold text-white uppercase tracking-widest mb-4">
@@ -153,7 +153,7 @@ export default async function NotFound() {
             <div className="mt-12 pt-8 border-t border-navy-700">
               <div className="glass-panel border border-navy-700 rounded-sm p-5">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-sm bg-navy-900 border border-navy-700 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-sm bg-navy-900 border border-navy-700 flex items-center justify-center shrink-0">
                     <i className="fa-solid fa-headset text-gold-500 text-sm" />
                   </div>
                   <div>

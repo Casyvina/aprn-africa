@@ -143,7 +143,7 @@ function PipelineMap() {
 export default function MapSection() {
   return (
     <section id="map" className="py-24 bg-navy-900 border-y border-navy-700">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div className="max-w-360 mx-auto px-6 md:px-12">
         <div className="flex flex-col lg:flex-row justify-between items-end mb-12 gap-6">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
@@ -164,7 +164,7 @@ export default function MapSection() {
           </div>
         </div>
 
-        <div className="glass-panel rounded-sm p-2 w-full h-[600px]">
+        <div className="glass-panel rounded-sm p-2 w-full h-150">
           <PipelineMap />
         </div>
 

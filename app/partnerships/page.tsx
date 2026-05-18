@@ -98,11 +98,11 @@ export default async function PartnershipsPage() {
               className="object-cover opacity-30 mix-blend-luminosity"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-navy-900 via-navy-900/90 to-navy-900/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-r from-navy-900 via-navy-900/90 to-navy-900/40" />
+            <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-transparent to-transparent" />
           </div>
 
-          <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 w-full grid lg:grid-cols-12 gap-12 items-center">
+          <div className="relative z-10 max-w-360 mx-auto px-6 lg:px-12 w-full grid lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 py-20">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-gold-500/30 mb-6">
                 <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
@@ -174,7 +174,7 @@ export default async function PartnershipsPage() {
 
         {/* ── Ecosystem Node Map ────────────────────────────────── */}
         <section id="ecosystem" className="py-24 bg-navy-800 border-t border-navy-700">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center mb-16 max-w-3xl mx-auto">
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 The Connectivity Matrix
@@ -189,7 +189,7 @@ export default async function PartnershipsPage() {
             </div>
 
             {/* SVG node map */}
-            <div className="relative h-[580px] w-full glass-panel rounded-sm overflow-hidden border border-navy-700">
+            <div className="relative h-145 w-full glass-panel rounded-sm overflow-hidden border border-navy-700">
               {/* Grid background */}
               <div
                 className="absolute inset-0"
@@ -282,7 +282,7 @@ export default async function PartnershipsPage() {
 
         {/* ── Partner Categories ────────────────────────────────── */}
         <section className="py-24 bg-navy-900 border-t border-navy-800">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
               <div>
                 <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
@@ -322,7 +322,7 @@ export default async function PartnershipsPage() {
 
         {/* ── Why Partner ───────────────────────────────────────── */}
         <section className="py-24 bg-navy-800 border-t border-navy-700">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 Partnership Benefits
@@ -356,7 +356,7 @@ export default async function PartnershipsPage() {
         {/* ── Featured Partners (from Sanity) ───────────────────── */}
         {partners.length > 0 && (
           <section className="py-24 bg-navy-900 border-t border-navy-700">
-            <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+            <div className="max-w-360 mx-auto px-6 lg:px-12">
               <div className="text-center mb-16">
                 <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                   Our Partners
@@ -409,7 +409,7 @@ export default async function PartnershipsPage() {
               style={{ backgroundImage: "url('/images/pipeline-aerial.png')" }}
               className="w-full h-full bg-cover bg-center opacity-10 mix-blend-luminosity"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/80 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/80 to-transparent" />
           </div>
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-6 uppercase">Join the Alliance</p>

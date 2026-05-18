@@ -83,7 +83,7 @@ export default async function ArticlePage({
 
         {/* ── Back link ──────────────────────────────────────────── */}
         <div className="pt-28 pb-0 px-6 lg:px-12">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <Link
               href="/insights"
               className="inline-flex items-center gap-2 text-xs text-slate-500 uppercase tracking-widest hover:text-gold-500 transition-colors"
@@ -129,7 +129,7 @@ export default async function ArticlePage({
             )}
 
             <div className="flex items-center gap-4 pt-6 border-t border-navy-800">
-              <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center shrink-0">
                 <i className="fa-solid fa-user text-gold-500 text-sm" />
               </div>
               <div>
@@ -143,17 +143,17 @@ export default async function ArticlePage({
         {/* ── Featured Image ──────────────────────────────────────── */}
         {article.heroImage && (
           <div
-            className="w-full h-[480px] bg-cover bg-center relative"
+            className="w-full h-120 bg-cover bg-center relative"
             style={{ backgroundImage: `url('${article.heroImage}')` }}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/30 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/30 to-transparent" />
           </div>
         )}
 
         {/* ── Key Insights Panel ─────────────────────────────────── */}
         {article.keyInsights && article.keyInsights.length > 0 && (
           <section className="py-16 px-6 lg:px-12 bg-navy-800 border-b border-navy-700">
-            <div className="max-w-[1440px] mx-auto">
+            <div className="max-w-360 mx-auto">
               <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Key Intelligence</p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {article.keyInsights.map((insight, i) => (
@@ -179,7 +179,7 @@ export default async function ArticlePage({
 
         {/* ── Body + Sidebar ─────────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12">
-          <div className="max-w-[1440px] mx-auto grid lg:grid-cols-12 gap-16">
+          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-16">
 
             {/* Article body */}
             <article className="lg:col-span-8">
@@ -194,7 +194,7 @@ export default async function ArticlePage({
                 <div className="glass-panel border border-navy-700 p-6 rounded-sm">
                   <h4 className="text-xs font-semibold text-gold-500 uppercase tracking-widest mb-4">Author</h4>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center shrink-0">
                       <i className="fa-solid fa-user text-gold-500 text-sm" />
                     </div>
                     <div>
@@ -278,7 +278,7 @@ export default async function ArticlePage({
         {/* ── Related Research ───────────────────────────────────── */}
         {related.length > 0 && (
           <section className="py-20 px-6 lg:px-12 border-t border-navy-800">
-            <div className="max-w-[1440px] mx-auto">
+            <div className="max-w-360 mx-auto">
               <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-10">
                 Related Research
               </p>

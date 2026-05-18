@@ -26,7 +26,7 @@ const resources = [
 export default function Footer() {
   return (
     <footer id="footer" className="bg-[#041019] border-t border-navy-800 pt-16 pb-8">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div className="max-w-360 mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1">

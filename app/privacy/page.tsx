@@ -17,7 +17,7 @@ export default function PrivacyPage() {
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
         {/* ── Hero ────────────────────────────────────────────── */}
-        <section className="pt-32 pb-20 px-6 lg:px-12 max-w-[1440px] mx-auto">
+        <section className="pt-32 pb-20 px-6 lg:px-12 max-w-360 mx-auto">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-500 text-xs font-semibold tracking-widest uppercase mb-8">
               <span className="w-2 h-2 rounded-full bg-gold-500" />
@@ -57,7 +57,7 @@ export default function PrivacyPage() {
         </section>
 
         {/* ── Overview Cards ──────────────────────────────────── */}
-        <section className="py-16 px-6 lg:px-12 max-w-[1440px] mx-auto border-t border-navy-700/50 bg-gradient-to-b from-navy-900 to-navy-800">
+        <section className="py-16 px-6 lg:px-12 max-w-360 mx-auto border-t border-navy-700/50 bg-linear-to-b from-navy-900 to-navy-800">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
@@ -99,7 +99,7 @@ export default function PrivacyPage() {
         </section>
 
         {/* ── Main Policy Content ─────────────────────────────── */}
-        <section className="py-24 px-6 lg:px-12 max-w-[1440px] mx-auto bg-navy-800">
+        <section className="py-24 px-6 lg:px-12 max-w-360 mx-auto bg-navy-800">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
 
             {/* Sidebar nav */}
@@ -354,13 +354,13 @@ export default function PrivacyPage() {
                 </p>
                 <div className="bg-navy-900 border border-navy-700 p-6 rounded-sm space-y-3 text-sm">
                   <div className="flex gap-3">
-                    <span className="text-slate-500 w-28 flex-shrink-0">Organisation</span>
+                    <span className="text-slate-500 w-28 shrink-0">Organisation</span>
                     <span className="text-slate-200">
                       African Pipeline Resource Network (APRN)
                     </span>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-slate-500 w-28 flex-shrink-0">DPO Email</span>
+                    <span className="text-slate-500 w-28 shrink-0">DPO Email</span>
                     <a
                       href="mailto:info@aprn-africa.org"
                       className="text-gold-500 hover:text-gold-400 transition-colors"
@@ -369,7 +369,7 @@ export default function PrivacyPage() {
                     </a>
                   </div>
                   <div className="flex gap-3">
-                    <span className="text-slate-500 w-28 flex-shrink-0">Website</span>
+                    <span className="text-slate-500 w-28 shrink-0">Website</span>
                     <span className="text-slate-200">aprn-africa.org</span>
                   </div>
                 </div>
@@ -402,7 +402,7 @@ export default function PrivacyPage() {
             }}
           />
 
-          <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 text-center">
+          <div className="relative z-10 max-w-360 mx-auto px-6 lg:px-12 text-center">
             <i className="fa-solid fa-network-wired text-gold-500 text-4xl mb-6 block" />
             <h2
               className="text-3xl md:text-5xl text-white mb-6"
@@ -445,7 +445,7 @@ export default function PrivacyPage() {
         </section>
 
         {/* ── Contact Module ──────────────────────────────────── */}
-        <section className="py-24 px-6 lg:px-12 max-w-[1440px] mx-auto bg-navy-800">
+        <section className="py-24 px-6 lg:px-12 max-w-360 mx-auto bg-navy-800">
           <div className="max-w-4xl mx-auto bg-navy-900 border border-navy-700 p-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/5 rounded-bl-[100px]" />
 
@@ -463,7 +463,7 @@ export default function PrivacyPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <i className="fa-solid fa-envelope text-gold-500 mt-0.5 flex-shrink-0" />
+                  <i className="fa-solid fa-envelope text-gold-500 mt-0.5 shrink-0" />
                   <div>
                     <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">
                       Email
@@ -477,7 +477,7 @@ export default function PrivacyPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <i className="fa-solid fa-globe text-gold-500 mt-0.5 flex-shrink-0" />
+                  <i className="fa-solid fa-globe text-gold-500 mt-0.5 shrink-0" />
                   <div>
                     <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">
                       Website
@@ -486,7 +486,7 @@ export default function PrivacyPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <i className="fa-solid fa-file-contract text-gold-500 mt-0.5 flex-shrink-0" />
+                  <i className="fa-solid fa-file-contract text-gold-500 mt-0.5 shrink-0" />
                   <div>
                     <div className="text-xs text-slate-500 uppercase tracking-widest mb-1">
                       Document Ref

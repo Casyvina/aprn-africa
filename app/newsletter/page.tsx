@@ -66,7 +66,7 @@ export default async function NewsletterPage() {
               backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.5) 39px, rgba(255,255,255,0.5) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.5) 39px, rgba(255,255,255,0.5) 40px)",
             }}
           />
-          <div className="max-w-[1440px] mx-auto relative z-10">
+          <div className="max-w-360 mx-auto relative z-10">
 
             <div className="border-b border-white/10 pb-5 mb-8 flex items-center justify-between flex-wrap gap-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 border border-gold-500/30 rounded-full bg-gold-500/10">
@@ -108,7 +108,7 @@ export default async function NewsletterPage() {
 
         {/* ── Ticker bar ───────────────────────────────────────────── */}
         <div className="bg-gold-500 py-2.5 px-6">
-          <div className="max-w-[1440px] mx-auto flex items-center gap-6">
+          <div className="max-w-360 mx-auto flex items-center gap-6">
             <span
               className="text-navy-900 font-black text-xs uppercase tracking-widest whitespace-nowrap"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
@@ -128,7 +128,7 @@ export default async function NewsletterPage() {
 
         {/* ── What you get ─────────────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12 border-b border-navy-800">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-4">What You Receive</p>
@@ -167,7 +167,7 @@ export default async function NewsletterPage() {
 
         {/* ── Latest Issue Preview ─────────────────────────────────── */}
         <section className="py-20 px-6 lg:px-12 border-b border-navy-800 bg-navy-800">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
 
             <div className="flex flex-wrap items-end justify-between gap-6 mb-12 pb-6 border-b border-navy-700">
               <div>
@@ -222,7 +222,7 @@ export default async function NewsletterPage() {
         {/* ── Archive ───────────────────────────────────────────────── */}
         {archive.length > 1 && (
           <section className="py-16 px-6 lg:px-12 border-b border-navy-800">
-            <div className="max-w-[1440px] mx-auto">
+            <div className="max-w-360 mx-auto">
               <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-8">Archive</p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {archive.map((issue) => (
@@ -231,7 +231,7 @@ export default async function NewsletterPage() {
                     href={`/newsletter/${issue.slug}`}
                     className="group glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors rounded-sm p-5 flex items-start gap-4"
                   >
-                    <div className="flex-shrink-0 w-12 h-12 rounded-sm bg-navy-800 border border-navy-700 flex items-center justify-center">
+                    <div className="shrink-0 w-12 h-12 rounded-sm bg-navy-800 border border-navy-700 flex items-center justify-center">
                       <span
                         className="text-lg font-bold text-gold-500"
                         style={{ fontFamily: "var(--font-oswald), sans-serif" }}
@@ -282,7 +282,7 @@ export default async function NewsletterPage() {
 
         {/* ── Social proof ─────────────────────────────────────────── */}
         <section className="py-16 px-6 lg:px-12 border-b border-navy-800">
-          <div className="max-w-[1440px] mx-auto">
+          <div className="max-w-360 mx-auto">
             <div className="grid md:grid-cols-3 gap-8 text-center">
               {[
                 { stat: "2,400+",  label: "Active Subscribers" },
