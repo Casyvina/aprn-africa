@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { sanityFetch } from "@/lib/sanity/fetch";
+import { FEATURED_PARTNERS_QUERY, type PartnerCard } from "@/lib/queries/partners";
 
 const partnerCategories = [
   {
@@ -73,7 +75,13 @@ const nodes = [
   { x: 170, y: 180, label: "Technology Partners",      icon: "fa-microchip",      pos: "left" },
 ];
 
-export default function PartnershipsPage() {
+export default async function PartnershipsPage() {
+  let partners: PartnerCard[] = [];
+  try {
+    const fetched = await sanityFetch<PartnerCard[]>(FEATURED_PARTNERS_QUERY, {}, ["organizationPartner"]);
+    if (fetched?.length) partners = fetched;
+  } catch { /* no partners yet */ }
+
   return (
     <>
       <Navigation />
@@ -344,6 +352,55 @@ export default function PartnershipsPage() {
             </div>
           </div>
         </section>
+
+        {/* ── Featured Partners (from Sanity) ───────────────────── */}
+        {partners.length > 0 && (
+          <section className="py-24 bg-navy-900 border-t border-navy-700">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+              <div className="text-center mb-16">
+                <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
+                  Our Partners
+                </span>
+                <h2 className="font-display text-3xl lg:text-4xl font-bold text-white">
+                  Institutional Partner Network
+                </h2>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {partners.map((partner) => (
+                  <a
+                    key={partner._id}
+                    href={partner.website ?? "#"}
+                    target={partner.website ? "_blank" : undefined}
+                    rel={partner.website ? "noopener noreferrer" : undefined}
+                    className="glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors p-6 flex flex-col items-center gap-4 group"
+                  >
+                    {partner.logoUrl ? (
+                      <img
+                        src={partner.logoUrl}
+                        alt={partner.name}
+                        className="h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity filter grayscale group-hover:grayscale-0"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 rounded-sm bg-navy-800 border border-navy-700 flex items-center justify-center text-gold-500 text-xl">
+                        <i className="fa-solid fa-building" />
+                      </div>
+                    )}
+                    <div className="text-center">
+                      <p className="text-sm font-semibold text-white group-hover:text-gold-500 transition-colors">
+                        {partner.name}
+                      </p>
+                      {partner.type && (
+                        <p className="text-xs text-slate-500 uppercase tracking-wider mt-1">
+                          {partner.type.replace(/-/g, " ")}
+                        </p>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── CTA ──────────────────────────────────────────────── */}
         <section className="py-32 bg-navy-900 border-t border-navy-800 relative overflow-hidden">

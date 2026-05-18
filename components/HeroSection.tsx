@@ -7,13 +7,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
-const metrics = [
+const DEFAULT_METRICS = [
   { label: "Active Projects", value: "42", width: "75%" },
   { label: "Engineering Trainees", value: "1,250+", width: "60%" },
   { label: "Policy Frameworks", value: "18", width: "45%" },
 ];
 
-export default function HeroSection() {
+interface HeroMetric { label: string; value: string; width: string }
+
+export default function HeroSection({ stats }: { stats?: HeroMetric[] }) {
+  const metrics = stats ?? DEFAULT_METRICS;
   return (
     <section id="hero" className="relative pt-32 pb-20 min-h-[90vh] flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
