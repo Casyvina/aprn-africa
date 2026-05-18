@@ -2,6 +2,14 @@
 
 import { useEffect, useRef } from "react";
 
+declare global {
+  interface Window {
+    Plotly?: {
+      newPlot(el: HTMLDivElement, data: unknown[], layout: Record<string, unknown>, config: Record<string, unknown>): void;
+    };
+  }
+}
+
 const commonLayout = {
   plot_bgcolor: "transparent",
   paper_bgcolor: "transparent",
@@ -22,7 +30,7 @@ export default function ResearchCharts() {
     let tries = 0;
     const poll = setInterval(() => {
       tries++;
-      if ((window as any).Plotly) {
+      if (window.Plotly) {
         clearInterval(poll);
         renderCharts();
       } else if (tries > 80) {
@@ -32,7 +40,7 @@ export default function ResearchCharts() {
 
     function renderCharts() {
       if (capexRef.current) {
-        (window as any).Plotly.newPlot(
+        window.Plotly.newPlot(
           capexRef.current,
           [
             {
@@ -51,7 +59,7 @@ export default function ResearchCharts() {
       }
 
       if (capacityRef.current) {
-        (window as any).Plotly.newPlot(
+        window.Plotly.newPlot(
           capacityRef.current,
           [
             {
@@ -93,7 +101,7 @@ export default function ResearchCharts() {
             <i className="fa-solid fa-download mr-1" /> CSV
           </span>
         </div>
-        <div ref={capexRef} className="h-[350px] w-full" />
+        <div ref={capexRef} className="h-87.5 w-full" />
       </div>
 
       {/* Capacity Chart */}
@@ -114,7 +122,7 @@ export default function ResearchCharts() {
             <i className="fa-solid fa-download mr-1" /> CSV
           </span>
         </div>
-        <div ref={capacityRef} className="h-[350px] w-full" />
+        <div ref={capacityRef} className="h-87.5 w-full" />
       </div>
     </div>
   );

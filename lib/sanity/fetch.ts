@@ -7,7 +7,7 @@ export async function sanityFetch<T>(
 ): Promise<T> {
   return client.fetch<T>(query, params, {
     next: {
-      revalidate: process.env.NODE_ENV === 'development' ? 0 : 3600,
+      revalidate: process.env.NODE_ENV === 'development' ? 60 : 3600,
       tags,
     },
   })

@@ -1,4 +1,24 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
+};
+
+const fadeLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+};
+
+const fadeRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+};
+
+const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
 const leadership = [
   {
@@ -16,29 +36,36 @@ const leadership = [
 export default function AboutSection() {
   return (
     <section id="about" className="py-24 bg-navy-900 relative border-t border-navy-800">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+      <div className="max-w-360 mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-6 text-white">
+
+          {/* Left — staggered fade from left */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{ ...stagger, ...fadeLeft }}
+          >
+            <motion.h2 variants={fadeUp} className="font-display text-3xl md:text-5xl font-bold mb-6 text-white">
               The Institutional Foundation for{" "}
               <span className="text-gold-500">African Energy</span>
-            </h2>
-            <p className="text-slate-400 text-lg leading-relaxed mb-6">
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-6">
               The African Pipeline Resource Network (APRN) is the premier continental think-tank and
               training ecosystem dedicated to the engineering, policy, and operational excellence of
               Africa&apos;s midstream infrastructure.
-            </p>
+            </motion.p>
 
             {/* EITEP strategic partner */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-gold-500/30 bg-gold-500/5 mb-8">
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-gold-500/30 bg-gold-500/5 mb-8">
               <i className="fa-solid fa-handshake text-gold-500 text-xs" />
               <span className="text-xs text-slate-300 tracking-wide">
                 Strategic Partner: <span className="text-gold-500 font-semibold">EITEP</span>
               </span>
-            </div>
+            </motion.div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-8 border-t border-navy-700 pt-8 mb-10">
+            <motion.div variants={fadeUp} className="grid grid-cols-2 gap-8 border-t border-navy-700 pt-8 mb-10">
               <div>
                 <div className="text-4xl font-display font-bold text-white mb-2">
                   15<span className="text-gold-500">+</span>
@@ -51,10 +78,10 @@ export default function AboutSection() {
                 </div>
                 <div className="text-sm text-slate-400 uppercase tracking-wider">Km of Pipeline Tracked</div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Leadership */}
-            <div>
+            <motion.div variants={fadeUp}>
               <span className="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-4 block">
                 Leadership
               </span>
@@ -80,14 +107,22 @@ export default function AboutSection() {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          <div className="relative">
-            <div className="aspect-square md:aspect-[4/3] rounded-sm overflow-hidden border border-navy-700 relative group">
+          {/* Right — image slides from right */}
+          <motion.div
+            className="relative"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={fadeRight}
+          >
+            <div className="aspect-square md:aspect-4/3 rounded-sm overflow-hidden border border-navy-700 relative group">
               <div className="absolute inset-0 bg-navy-800/50 mix-blend-multiply z-10 transition-opacity group-hover:opacity-0" />
               <Image
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
                 src="/images/engineers-group.png"
                 alt="African engineers in hard hats and safety vests inspecting pipeline infrastructure"
@@ -97,7 +132,7 @@ export default function AboutSection() {
                 <span className="text-sm font-semibold text-white">Regional Training Facility</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

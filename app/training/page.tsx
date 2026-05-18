@@ -1,6 +1,22 @@
 import Image from "next/image";
+import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { sanityFetch } from "@/lib/sanity/fetch";
+import { TRAINING_PROGRAMS_QUERY, type TrainingProgramCard } from "@/lib/queries/training";
+
+const PROGRAM_TYPE_LABEL: Record<string, string> = {
+  certification: "Certification",
+  fellowship: "Fellowship",
+  "short-course": "Short Course",
+  workshop: "Workshop",
+};
+
+const LEVEL_COLOR: Record<string, string> = {
+  entry: "text-emerald-400 border-emerald-400/30 bg-emerald-400/5",
+  professional: "text-gold-500 border-gold-500/30 bg-gold-500/5",
+  executive: "text-copper-500 border-copper-500/30 bg-copper-500/5",
+};
 
 const tracks = [
   {
@@ -42,7 +58,13 @@ const stats = [
   { value: "12", label: "AU member states with no domestically certified standards body" },
 ];
 
-export default function TrainingPage() {
+export default async function TrainingPage() {
+  let programs: TrainingProgramCard[] = [];
+  try {
+    const fetched = await sanityFetch<TrainingProgramCard[]>(TRAINING_PROGRAMS_QUERY, {}, ["trainingProgram"]);
+    if (fetched?.length) programs = fetched;
+  } catch { /* show nothing if Sanity unavailable */ }
+
   return (
     <>
       <Navigation />
@@ -55,6 +77,7 @@ export default function TrainingPage() {
               src="/images/hero-pipeline.jpg"
               alt="Pipeline infrastructure"
               fill
+              sizes="100vw"
               className="object-cover opacity-30 mix-blend-luminosity"
               priority
             />
@@ -225,6 +248,48 @@ export default function TrainingPage() {
             </div>
           </div>
         </section>
+
+        {/* ── Active Programs ──────────────────────────────────── */}
+        {programs.length > 0 && (
+          <section className="py-24 bg-navy-900 border-t border-navy-800">
+            <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+              <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                <div>
+                  <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">Now Enrolling</span>
+                  <h2 className="font-display text-3xl lg:text-4xl font-bold text-white">APRN Programs</h2>
+                </div>
+                <Link href="/contact" className="text-gold-500 text-sm tracking-widest uppercase hover:underline flex items-center gap-2">
+                  Apply Now <i className="fa-solid fa-arrow-right" />
+                </Link>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                {programs.map((p) => (
+                  <div key={p._id} className="glass-panel rounded-sm p-8 border border-navy-700 hover:border-gold-500/40 transition-all group flex flex-col gap-4">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${LEVEL_COLOR[p.level] ?? LEVEL_COLOR.professional}`}>
+                        {p.level.charAt(0).toUpperCase() + p.level.slice(1)}
+                      </span>
+                      <span className="text-xs text-slate-500 uppercase tracking-widest">
+                        {PROGRAM_TYPE_LABEL[p.programType] ?? p.programType}
+                        {p.durationWeeks ? ` · ${p.durationWeeks} weeks` : ""}
+                      </span>
+                      {p.featured && (
+                        <span className="ml-auto text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2 py-0.5 border border-gold-500/30 rounded-full">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-display text-xl font-bold text-white group-hover:text-gold-500 transition-colors leading-snug">{p.name}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed flex-1">{p.description}</p>
+                    <Link href="/contact" className="text-gold-500 text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all mt-2">
+                      Apply or Enquire <i className="fa-solid fa-arrow-right text-xs" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── CTA ──────────────────────────────────────────────── */}
         <section className="py-24 bg-navy-900 border-t border-navy-800 relative overflow-hidden">

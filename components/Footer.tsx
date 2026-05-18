@@ -2,23 +2,23 @@ import Image from "next/image";
 
 const initiatives = [
   { label: "Engineering Academy", href: "/training" },
-  { label: "Policy Think-Tank", href: "#" },
+  { label: "Policy Think-Tank", href: "/insights" },
   { label: "Data Observatory", href: "/research" },
-  { label: "Research Grants", href: "#" },
+  { label: "Research Grants", href: "/contact" },
 ];
 
 const organisation = [
   { label: "About APRN", href: "/about" },
   { label: "Leadership", href: "/leadership" },
-  { label: "Member Directory", href: "#" },
-  { label: "Careers", href: "#" },
-  { label: "Press & Media", href: "#" },
+  { label: "Member Directory", href: "/partnerships" },
+  { label: "Careers", href: "/contact" },
+  { label: "Press & Media", href: "/contact" },
 ];
 
 const resources = [
   { label: "Pipeline Database", href: "/research" },
   { label: "Research Library", href: "/research" },
-  { label: "Standards & Codes", href: "#" },
+  { label: "Standards & Codes", href: "/research" },
   { label: "Training Calendar", href: "/training" },
   { label: "Contact Us", href: "/contact" },
 ];
@@ -52,13 +52,17 @@ export default function Footer() {
             </a>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://www.linkedin.com/company/aprn-africa"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-8 h-8 rounded-full glass-panel flex items-center justify-center text-slate-400 hover:text-gold-500 transition-colors"
               >
                 <i className="fa-brands fa-linkedin-in" />
               </a>
               <a
-                href="#"
+                href="https://twitter.com/aprnafrica"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-8 h-8 rounded-full glass-panel flex items-center justify-center text-slate-400 hover:text-gold-500 transition-colors"
               >
                 <i className="fa-brands fa-twitter" />
@@ -74,7 +78,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               {initiatives.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="hover:text-gold-500 transition-colors">
+                  <a href={item.href} className="inline-flex items-center gap-1.5 hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200 cursor-pointer">
                     {item.label}
                   </a>
                 </li>
@@ -90,7 +94,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               {organisation.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="hover:text-gold-500 transition-colors">
+                  <a href={item.href} className="inline-flex items-center gap-1.5 hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200 cursor-pointer">
                     {item.label}
                   </a>
                 </li>
@@ -106,7 +110,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               {resources.map((item) => (
                 <li key={item.label}>
-                  <a href={item.href} className="hover:text-gold-500 transition-colors">
+                  <a href={item.href} className="inline-flex items-center gap-1.5 hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200 cursor-pointer">
                     {item.label}
                   </a>
                 </li>
@@ -121,9 +125,9 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} African Pipeline Resource Network. All rights reserved.
           </p>
           <div className="flex gap-6 text-xs text-slate-500">
-            <a href="#" className="hover:text-gold-500 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-gold-500 transition-colors">Terms of Use</a>
-            <a href="#" className="hover:text-gold-500 transition-colors">Cookie Policy</a>
+            <a href="/privacy" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Privacy Policy</a>
+            <a href="/terms" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Terms of Use</a>
+            <a href="/privacy" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Cookie Policy</a>
           </div>
         </div>
       </div>

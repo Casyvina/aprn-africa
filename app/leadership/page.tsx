@@ -148,6 +148,7 @@ export default function LeadershipPage() {
                       src={person.photo}
                       alt={person.name}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 600px"
                       className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/20 to-transparent" />
@@ -265,9 +266,10 @@ export default function LeadershipPage() {
                 <div className="lg:col-span-4 relative">
                   <div className="relative h-[420px] lg:h-full min-h-[360px] group">
                     <Image
-                      src="/images/allison-gabriel.png"
+                      src="/images/allison-gabriel.jpeg"
                       alt="Allison Gabriel"
                       fill
+                      sizes="(max-width: 1024px) 100vw, 360px"
                       className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-navy-900/60 lg:block hidden" />

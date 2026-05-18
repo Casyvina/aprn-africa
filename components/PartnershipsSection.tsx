@@ -1,3 +1,12 @@
+"use client";
+
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
+};
+
 const partners = [
   {
     acronym: "NMDPRA",
@@ -62,8 +71,15 @@ export default function PartnershipsSection() {
             "radial-gradient(circle at 20% 100%, rgba(212, 160, 23, 0.05) 0%, transparent 50%)",
         }}
       />
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center mb-16">
+      <div className="max-w-360 mx-auto px-6 md:px-12 relative z-10">
+        {/* Heading */}
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" as const }}
+        >
           <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">
             Institutional Network
           </span>
@@ -74,19 +90,26 @@ export default function PartnershipsSection() {
             APRN operates within a framework of regulatory, academic, and industry partnerships that
             ensure our programmes meet the highest continental standards.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Primary partners */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+        {/* Primary partners — staggered cards */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.09 } } }}
+        >
           {partners.map((p) => (
-            <div
+            <motion.div
               key={p.acronym}
+              variants={fadeUp}
               className={`glass-panel p-6 rounded-sm border transition-all group hover:border-gold-500/50 ${
                 p.tier === "primary" ? "border-navy-700" : "border-navy-800 opacity-80"
               }`}
             >
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
+                <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center shrink-0 group-hover:bg-gold-500/20 transition-colors">
                   <i className={`fa-solid ${p.icon} text-gold-500 text-lg`} />
                 </div>
                 <div>
@@ -97,12 +120,18 @@ export default function PartnershipsSection() {
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Associate partners bar */}
-        <div className="glass-panel rounded-sm p-6 border border-navy-700">
+        <motion.div
+          className="glass-panel rounded-sm p-6 border border-navy-700"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" as const }}
+        >
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-xs text-slate-500 uppercase tracking-widest font-semibold mr-2 shrink-0">
               Academic &amp; Industry Associates:
@@ -113,7 +142,7 @@ export default function PartnershipsSection() {
                 className="inline-flex items-center gap-1.5 px-3 py-1 text-xs text-slate-300 bg-navy-900 border border-navy-700 rounded-sm"
               >
                 <span
-                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                     ap.category === "Academia" ? "bg-gold-500" : "bg-copper-500"
                   }`}
                 />
@@ -121,7 +150,7 @@ export default function PartnershipsSection() {
               </span>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

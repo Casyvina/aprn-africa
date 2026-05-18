@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
@@ -84,7 +85,7 @@ export default function AboutPage() {
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
         {/* ── HERO ────────────────────────────────────────────── */}
-        <section className="relative min-h-[90vh] flex flex-col justify-between border-b border-white/10 px-6 pb-12 pt-24 max-w-[1440px] mx-auto">
+        <section className="relative min-h-[90vh] flex flex-col justify-between border-b border-white/10 px-6 pb-12 pt-24 max-w-360 mx-auto">
           {/* Grid overlay */}
           <div
             className="absolute inset-0 opacity-30 pointer-events-none"
@@ -97,7 +98,7 @@ export default function AboutPage() {
 
           <div className="z-10 w-full">
             <h1
-              className="font-bold tracking-tighter mb-12 w-full break-words uppercase leading-[0.85]"
+              className="font-bold tracking-tighter mb-12 w-full wrap-break-word uppercase leading-[0.85]"
               style={{
                 fontFamily: "var(--font-oswald), sans-serif",
                 fontSize: "clamp(3rem, 8vw, 8rem)",
@@ -109,15 +110,16 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 z-10 w-full items-end">
             {/* Main image */}
-            <div className="lg:col-span-8 h-[500px] relative overflow-hidden bg-navy-800">
+            <div className="lg:col-span-8 h-125 relative overflow-hidden bg-navy-800">
               <Image
                 src="/images/hero-pipeline.jpg"
                 alt="Pipeline Infrastructure"
                 fill
+                sizes="(max-width: 1024px) 100vw, 66vw"
                 className="object-cover opacity-80 mix-blend-luminosity"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="bg-navy-900/80 backdrop-blur p-4 border border-white/10 max-w-xl">
                   <p className="text-sm leading-relaxed text-slate-200">
@@ -129,7 +131,7 @@ export default function AboutPage() {
             </div>
 
             {/* Side panel */}
-            <div className="lg:col-span-4 h-[500px] flex flex-col justify-between border-l border-white/10 pl-6">
+            <div className="lg:col-span-4 h-125 flex flex-col justify-between border-l border-white/10 pl-6">
               <div>
                 <h2
                   className="text-xl mb-4 text-gold-500 uppercase"
@@ -150,13 +152,13 @@ export default function AboutPage() {
                   <span className="text-sm font-medium tracking-widest uppercase">Meet the Team</span>
                   <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform" />
                 </a>
-                <a
+                <Link
                   href="/research"
                   className="inline-flex items-center justify-between border border-white/20 px-6 py-4 hover:bg-white hover:text-navy-900 transition-all group"
                 >
                   <span className="text-sm font-medium tracking-widest uppercase">Explore Research</span>
                   <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform" />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -179,7 +181,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── THE CHALLENGE ───────────────────────────────────── */}
-        <section className="py-24 border-b border-white/10 px-6 max-w-[1440px] mx-auto">
+        <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <h2
               className="text-4xl md:text-5xl font-bold uppercase"
@@ -217,7 +219,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── WHAT APRN BUILDS ────────────────────────────────── */}
-        <section className="py-24 border-b border-white/10 px-6 max-w-[1440px] mx-auto bg-navy-800/30">
+        <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto bg-navy-800/30">
           <div className="text-center mb-20">
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-4 uppercase">Our Ecosystem</p>
             <h3
@@ -248,7 +250,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── NUMBERS ─────────────────────────────────────────── */}
-        <section className="py-24 border-b border-white/10 px-6 max-w-[1440px] mx-auto">
+        <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 border-l border-t border-white/10">
             {stats.map((s) => (
               <div key={s.label} className="border-r border-b border-white/10 p-10">
@@ -267,7 +269,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── LEADERSHIP ──────────────────────────────────────── */}
-        <section id="leadership" className="py-24 border-b border-white/10 px-6 max-w-[1440px] mx-auto">
+        <section id="leadership" className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
           <div className="mb-16">
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-4 uppercase">The People</p>
             <h2
@@ -285,14 +287,15 @@ export default function AboutPage() {
                 className="border-r border-b border-white/10 group overflow-hidden"
               >
                 {/* Photo */}
-                <div className="relative h-[480px] overflow-hidden bg-navy-800">
+                <div className="relative h-120 overflow-hidden bg-navy-800">
                   <Image
                     src={person.photo}
                     alt={person.name}
                     fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500 scale-100 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/20 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/20 to-transparent" />
                 </div>
                 {/* Info */}
                 <div className="p-8 border-t border-white/10">
@@ -311,7 +314,7 @@ export default function AboutPage() {
         </section>
 
         {/* ── MISSION STATEMENT ───────────────────────────────── */}
-        <section className="py-32 px-6 max-w-[1440px] mx-auto text-center relative">
+        <section className="py-32 px-6 max-w-360 mx-auto text-center relative">
           <div
             className="absolute inset-0 opacity-20 pointer-events-none"
             style={{
@@ -334,12 +337,12 @@ export default function AboutPage() {
             >
               Get In Touch <i className="fa-solid fa-arrow-right" />
             </a>
-            <a
+            <Link
               href="/"
               className="inline-flex items-center justify-center gap-3 border border-white/20 px-8 py-4 text-sm font-medium tracking-widest uppercase hover:bg-white hover:text-navy-900 transition-all"
             >
               Back to Home <i className="fa-solid fa-arrow-right" />
-            </a>
+            </Link>
           </div>
         </section>
       </main>

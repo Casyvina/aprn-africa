@@ -7,12 +7,19 @@
   --color-gold-500: #D4A017;
   --color-gold-400: #E5B83B;
   --color-copper-500: #C97A2B;
-  --animate-ticker: ticker 30s linear infinite;
+  --animate-ticker: ticker 65s linear infinite;
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), 'Inter', sans-serif;
-  --font-display: var(--font-space-grotesk), 'Space Grotesk', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+}
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-space-grotesk: 'Space Grotesk', sans-serif;
+  --font-oswald: 'Oswald', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
 }
 
 @keyframes ticker {

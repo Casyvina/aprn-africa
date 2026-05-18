@@ -86,6 +86,7 @@ export default function PartnershipsPage() {
               src="/images/hero-pipeline.jpg"
               alt="Pipeline infrastructure"
               fill
+              sizes="100vw"
               className="object-cover opacity-30 mix-blend-luminosity"
               priority
             />
@@ -137,6 +138,7 @@ export default function PartnershipsPage() {
                     src="/images/engineers-group.png"
                     alt="Engineering Collaboration"
                     fill
+                    sizes="(max-width: 1280px) 40vw, 600px"
                     className="object-cover opacity-80 mix-blend-luminosity"
                   />
                 </div>
