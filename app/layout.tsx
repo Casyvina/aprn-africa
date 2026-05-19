@@ -3,9 +3,28 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "African Pipeline Resource Network",
+  metadataBase: new URL("https://aprn-africa.org"),
+  title: {
+    default: "APRN — African Pipeline Resource Network",
+    template: "%s | APRN",
+  },
   description:
     "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure Africa's energy future.",
+  openGraph: {
+    title: "APRN — African Pipeline Resource Network",
+    description:
+      "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure Africa's energy future.",
+    url: "https://aprn-africa.org",
+    siteName: "African Pipeline Resource Network",
+    locale: "en_GB",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "APRN — African Pipeline Resource Network",
+    description:
+      "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure Africa's energy future.",
+  },
 };
 
 export default function RootLayout({
