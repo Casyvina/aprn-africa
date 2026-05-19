@@ -32,9 +32,9 @@ export type NewsletterCard = Pick<
 
 // ── Queries ───────────────────────────────────────────────────────────────────
 
-/** All published/sent issues for the archive listing — newest first */
+/** All published/sent issues for the archive listing — newest first (capped at 24) */
 export const ALL_NEWSLETTERS_QUERY = groq`
-  *[_type == "newsletter" && status in ["approved", "sent"]] | order(publishDate desc) {
+  *[_type == "newsletter" && status in ["approved", "sent"]] | order(publishDate desc) [0...24] {
     _id,
     "slug": slug.current,
     title,

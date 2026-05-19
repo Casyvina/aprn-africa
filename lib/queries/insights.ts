@@ -49,9 +49,18 @@ const CARD_FIELDS = groq`
 
 // ── Queries ───────────────────────────────────────────────────────────────────
 
-/** All insights for the /insights listing — newest first */
+export const PAGE_SIZE = 9
+
+/** Initial page of insights — featured (1) + grid (PAGE_SIZE) */
 export const ALL_INSIGHTS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight"]] | order(publishDate desc) {
+  *[_type in ["researchReport", "editorialInsight"]] | order(publishDate desc) [0...${PAGE_SIZE + 1}] {
+    ${CARD_FIELDS}
+  }
+`
+
+/** Load-more batch — called from server action with $start / $end */
+export const MORE_INSIGHTS_QUERY = groq`
+  *[_type in ["researchReport", "editorialInsight"]] | order(publishDate desc) [$start...$end] {
     ${CARD_FIELDS}
   }
 `

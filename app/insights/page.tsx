@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import InsightGrid from "@/components/InsightGrid";
 import { sanityFetch } from "@/lib/sanity/fetch";
-import { ALL_INSIGHTS_QUERY, type InsightCard, type InsightCategory } from "@/lib/queries/insights";
+import { ALL_INSIGHTS_QUERY, PAGE_SIZE, type InsightCard, type InsightCategory } from "@/lib/queries/insights";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -45,6 +46,9 @@ export default async function InsightsPage() {
 
   const featured = allInsights.find((a) => a.featured) ?? allInsights[0];
   const rest = allInsights.filter((a) => a.slug !== featured?.slug);
+  // initial offset = featured(1) + grid items shown; hasMore if we got a full batch
+  const initialOffset = PAGE_SIZE + 1;
+  const hasMoreInitial = allInsights.length === PAGE_SIZE + 1;
 
   if (!featured) {
     return (
@@ -146,46 +150,11 @@ export default async function InsightsPage() {
         <section className="py-16 px-6 lg:px-12">
           <div className="max-w-360 mx-auto">
             <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-10">All Publications</p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {rest.map((article) => (
-                <Link
-                  key={article._id}
-                  href={`/insights/${article.slug}`}
-                  className="group glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors rounded-sm overflow-hidden block"
-                >
-                  <div
-                    className="aspect-video bg-cover bg-center relative"
-                    style={{ backgroundImage: article.heroImage ? `url('${article.heroImage}')` : undefined }}
-                  >
-                    <div className="absolute inset-0 bg-navy-900/50 group-hover:bg-navy-900/30 transition-colors" />
-                    <div className="absolute top-4 left-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-full text-[10px] font-semibold uppercase tracking-wider ${categoryMeta[article.category].badge}`}>
-                        <span className={`w-1 h-1 rounded-full ${categoryMeta[article.category].dot}`} />
-                        {categoryMeta[article.category].label}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3
-                      className="text-lg font-bold mb-3 leading-snug group-hover:text-gold-500 transition-colors"
-                      style={{ fontFamily: "var(--font-playfair), serif" }}
-                    >
-                      {article.title}
-                    </h3>
-                    <p className="text-slate-400 text-sm leading-relaxed mb-4">{article.excerpt}</p>
-                    <div className="flex items-center gap-3 text-[11px] text-slate-500 uppercase tracking-wider border-t border-navy-700 pt-4">
-                      <span>{formatDate(article.publishDate)}</span>
-                      {article.estimatedReadTime && (
-                        <>
-                          <span>·</span>
-                          <span>{formatReadTime(article.estimatedReadTime)}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <InsightGrid
+              initial={rest}
+              initialOffset={initialOffset}
+              hasMoreInitial={hasMoreInitial}
+            />
           </div>
         </section>
 

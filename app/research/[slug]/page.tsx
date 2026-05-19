@@ -3,6 +3,8 @@ import Link from "next/link";
 import { PortableText, type PortableTextComponents } from "next-sanity";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import TableOfContents from "@/components/TableOfContents";
+import { extractHeadings } from "@/lib/extractHeadings";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import {
   RESEARCH_BY_SLUG_QUERY,
@@ -44,22 +46,32 @@ const lightComponents: PortableTextComponents = {
         {children}
       </p>
     ),
-    h2: ({ children }) => (
-      <h2
-        className="text-3xl font-bold mt-12 mb-4 pt-6 border-t border-slate-200"
-        style={{ color: "#071B2A", fontFamily: "var(--font-playfair), serif" }}
-      >
-        {children}
-      </h2>
-    ),
-    h3: ({ children }) => (
-      <h3
-        className="text-2xl font-bold mt-10 mb-3"
-        style={{ color: "#071B2A", fontFamily: "var(--font-playfair), serif" }}
-      >
-        {children}
-      </h3>
-    ),
+    h2: ({ children, value }) => {
+      const id = (value?.children ?? []).map(// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(c: any) => c.text ?? "").join("").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      return (
+        <h2
+          id={id}
+          className="text-3xl font-bold mt-12 mb-4 pt-6 border-t border-slate-200 scroll-mt-24"
+          style={{ color: "#071B2A", fontFamily: "var(--font-playfair), serif" }}
+        >
+          {children}
+        </h2>
+      );
+    },
+    h3: ({ children, value }) => {
+      const id = (value?.children ?? []).map(// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(c: any) => c.text ?? "").join("").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      return (
+        <h3
+          id={id}
+          className="text-2xl font-bold mt-10 mb-3 scroll-mt-24"
+          style={{ color: "#071B2A", fontFamily: "var(--font-playfair), serif" }}
+        >
+          {children}
+        </h3>
+      );
+    },
     h4: ({ children }) => (
       <h4
         className="text-xl font-bold mt-8 mb-3"
@@ -154,6 +166,7 @@ export default async function ResearchReportPage({
 
   const related: RelatedResearchCard[] = report.relatedReports ?? [];
   const typeLabel = reportTypeLabel(report.reportType);
+  const tocHeadings = extractHeadings(report.body ?? []);
 
   return (
     <>
@@ -330,6 +343,11 @@ export default async function ResearchReportPage({
             {/* ── Right: sticky sidebar (4 cols) ── */}
             <aside className="lg:col-span-4">
               <div className="sticky top-28 space-y-6">
+
+                {/* Table of Contents */}
+                {tocHeadings.length > 0 && (
+                  <TableOfContents headings={tocHeadings} />
+                )}
 
                 {/* Key metrics panel */}
                 {report.keyInsights && report.keyInsights.length > 0 && (
