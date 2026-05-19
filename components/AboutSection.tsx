@@ -128,7 +128,7 @@ export default function AboutSection() {
               <Image
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
+                className="object-cover object-top"
                 src="/images/female-engineer.png"
                 alt="African engineers in hard hats and safety vests inspecting pipeline infrastructure"
               />
