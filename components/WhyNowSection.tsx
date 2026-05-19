@@ -65,8 +65,8 @@ export default function WhyNowSection() {
               The Urgency
             </motion.span>
             <motion.h2 variants={fadeUp} className="font-display text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              Why APRN Needs This{" "}
-              <span className="text-gold-500">Institution Now</span>
+              Why Africa Needs This{" "}
+              <span className="text-gold-500">APRN Now</span>
             </motion.h2>
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-8">
               Africa is entering its most consequential energy decade. Billions in infrastructure

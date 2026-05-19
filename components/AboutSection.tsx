@@ -134,7 +134,7 @@ export default function AboutSection() {
               />
               <div className="absolute bottom-6 left-6 z-20 glass-panel px-4 py-3 border-l-4 border-gold-500">
                 <span className="block text-xs text-gold-500 uppercase tracking-widest mb-1">Facility</span>
-                <span className="text-sm font-semibold text-white">Regional Training Facility</span>
+                <span className="text-sm font-semibold text-white">Capacity building Programs</span>
               </div>
             </div>
           </motion.div>
