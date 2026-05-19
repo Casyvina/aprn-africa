@@ -67,12 +67,12 @@ const benefits = [
 ];
 
 const nodes = [
-  { x: 500, y: 80,  label: "National Oil Companies",  icon: "fa-industry",       pos: "top" },
-  { x: 830, y: 180, label: "Engineering Firms",        icon: "fa-hard-hat",       pos: "right" },
-  { x: 830, y: 430, label: "Financial Institutions",   icon: "fa-landmark",       pos: "right" },
-  { x: 500, y: 530, label: "Academic Institutions",    icon: "fa-university",     pos: "bottom" },
-  { x: 170, y: 430, label: "Regulatory Bodies",        icon: "fa-scale-balanced", pos: "left" },
-  { x: 170, y: 180, label: "Technology Partners",      icon: "fa-microchip",      pos: "left" },
+  { x: 500, y: 80, label: "National Oil Companies", icon: "fa-industry", pos: "top" },
+  { x: 830, y: 180, label: "Engineering Firms", icon: "fa-hard-hat", pos: "right" },
+  { x: 830, y: 430, label: "Financial Institutions", icon: "fa-landmark", pos: "right" },
+  { x: 500, y: 530, label: "Academic Institutions", icon: "fa-university", pos: "bottom" },
+  { x: 170, y: 430, label: "Regulatory Bodies", icon: "fa-scale-balanced", pos: "left" },
+  { x: 170, y: 180, label: "Technology Partners", icon: "fa-microchip", pos: "left" },
 ];
 
 export default async function PartnershipsPage() {

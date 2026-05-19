@@ -167,7 +167,7 @@ export const articles: Article[] = [
     authorRole: "Founder, APRN",
     excerpt:
       "When a nation cannot independently operate, inspect, or extend its own pipeline infrastructure, it has not achieved energy independence — regardless of what its policy documents say.",
-    heroImage: "/images/female-engineer-site.jpg",
+    heroImage: "/images/female-engineer.png",
     insights: [
       { value: "47", label: "African Nations with Pipeline Assets", icon: "fa-earth-africa" },
       { value: "<12%", label: "Independently Operated", icon: "fa-gauge" },

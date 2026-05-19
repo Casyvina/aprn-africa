@@ -57,7 +57,7 @@ export default function AboutSection() {
             </motion.h2>
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-6">
               The African Pipeline Resource Network (APRN) is the premier continental think-tank and
-              capacity building dedicated to the engineering, policy, and operational excellence of
+              capacity building network dedicated to the engineering, policy, and operational excellence of
               Africa&apos;s midstream infrastructure.
             </motion.p>
 
@@ -129,7 +129,7 @@ export default function AboutSection() {
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
-                src="/images/engineers-group.png"
+                src="/images/female-engineer.png"
                 alt="African engineers in hard hats and safety vests inspecting pipeline infrastructure"
               />
               <div className="absolute bottom-6 left-6 z-20 glass-panel px-4 py-3 border-l-4 border-gold-500">

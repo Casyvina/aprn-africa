@@ -65,7 +65,7 @@ export default function WhyNowSection() {
               The Urgency
             </motion.span>
             <motion.h2 variants={fadeUp} className="font-display text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              Why Africa Needs This{" "}
+              Why Africa Needs {" "}
               <span className="text-gold-500">APRN Now</span>
             </motion.h2>
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-8">

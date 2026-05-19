@@ -201,8 +201,8 @@ export default async function TrainingPage() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gold-500/5 rounded-sm transform -rotate-2" />
                 <Image
-                  src="/images/engineers-group.png"
-                  alt="African engineers"
+                  src="/images/female-engineer-training.png"
+                  alt="Female engineer in training"
                   width={900}
                   height={600}
                   className="relative rounded-sm border border-navy-700 object-cover h-105 w-full"
