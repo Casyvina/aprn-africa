@@ -88,7 +88,7 @@ export default function PartnershipsSection() {
           </h2>
           <p className="text-slate-400 mt-4 max-w-xl mx-auto">
             APRN operates within a framework of regulatory, academic, and industry partnerships that
-            ensure our programmes meet the highest continental standards.
+            ensure our programmes aligns with global standards.
           </p>
         </motion.div>
 
@@ -104,9 +104,8 @@ export default function PartnershipsSection() {
             <motion.div
               key={p.acronym}
               variants={fadeUp}
-              className={`glass-panel p-6 rounded-sm border transition-all group hover:border-gold-500/50 ${
-                p.tier === "primary" ? "border-navy-700" : "border-navy-800 opacity-80"
-              }`}
+              className={`glass-panel p-6 rounded-sm border transition-all group hover:border-gold-500/50 ${p.tier === "primary" ? "border-navy-700" : "border-navy-800 opacity-80"
+                }`}
             >
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center shrink-0 group-hover:bg-gold-500/20 transition-colors">
@@ -142,9 +141,8 @@ export default function PartnershipsSection() {
                 className="inline-flex items-center gap-1.5 px-3 py-1 text-xs text-slate-300 bg-navy-900 border border-navy-700 rounded-sm"
               >
                 <span
-                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    ap.category === "Academia" ? "bg-gold-500" : "bg-copper-500"
-                  }`}
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${ap.category === "Academia" ? "bg-gold-500" : "bg-copper-500"
+                    }`}
                 />
                 {ap.name}
               </span>
