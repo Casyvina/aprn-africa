@@ -60,7 +60,7 @@ const leadership = [
   },
   {
     name: "Joseph Agwuh",
-    title: "Director, Applied Engineering & Innovation",
+    title: "Head, Technology and Innovation",
     photo: "/images/joseph-agwuh.png",
     quote: "Applied engineering without applied knowledge transfer is a temporary solution. APRN exists to make Africa's infrastructure expertise permanent, indigenous, and self-sustaining.",
     stats: [

@@ -33,7 +33,7 @@ const leadership = [
   },
   {
     name: "Joseph Agwuh",
-    title: "Director, Applied Engineering and Innovation",
+    title: "Head, Technology and Innovation",
     photo: "/images/joseph-agwuh.png",
   },
 ];

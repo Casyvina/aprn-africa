@@ -76,7 +76,7 @@ const leadership = [
   },
   {
     name: "Joseph Agwuh",
-    title: "Director, Applied Engineering & Innovation",
+    title: "Head, Technology and Innovation",
     photo: "/images/joseph-agwuh.png",
     bio: "Joseph Agwuh is a Civil Engineer and the digital architect behind APRN's operational infrastructure. He leads APRN's applied research programmes, technical documentation, digital platforms, and industry database development — bringing hands-on experience in digital strategy, web infrastructure, AI-powered research tools, and pipeline sector intelligence across Africa.",
   },
