@@ -160,145 +160,119 @@ export default async function ResearchReportPage({
       <Navigation />
       <main style={{ backgroundColor: "#F5F7FA", fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Breadcrumb ──────────────────────────────────────────── */}
-        <div
-          className="border-b border-slate-200 pt-24"
-          style={{ backgroundColor: "#F5F7FA" }}
+        {/* ── Cinematic Hero ──────────────────────────────────────── */}
+        <header
+          className="relative pt-28 pb-16 lg:pb-24 px-6 lg:px-12 min-h-[65vh] flex items-end overflow-hidden"
+          style={
+            report.coverImageUrl
+              ? { backgroundImage: `url('${report.coverImageUrl}')`, backgroundSize: "cover", backgroundPosition: "center" }
+              : { backgroundColor: "#071B2A" }
+          }
         >
-          <div className="max-w-360 mx-auto px-6 lg:px-12 py-4">
-            <nav className="flex items-center gap-2 text-xs uppercase tracking-widest">
-              <Link href="/" className="text-slate-400 hover:text-navy-900 transition-colors">
-                Home
-              </Link>
-              <i className="fa-solid fa-chevron-right text-[8px] text-slate-300" />
-              <Link href="/research" className="text-slate-400 hover:text-navy-900 transition-colors">
-                Research
-              </Link>
-              <i className="fa-solid fa-chevron-right text-[8px] text-slate-300" />
-              <span style={{ color: "#071B2A" }} className="font-medium truncate max-w-50">
-                {report.title}
-              </span>
-            </nav>
-          </div>
-        </div>
-
-        {/* ── Hero ────────────────────────────────────────────────── */}
-        <header className="py-16 px-6 lg:px-12 border-b border-slate-200" style={{ backgroundColor: "#F5F7FA" }}>
-          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-12 items-start">
-
-            {/* Left: title block */}
-            <div className="lg:col-span-8">
-              <div className="flex flex-wrap items-center gap-3 mb-8">
-                <span
-                  className="px-3 py-1 text-xs font-bold uppercase tracking-widest border rounded-full"
-                  style={{
-                    backgroundColor: "rgba(212,160,23,0.08)",
-                    borderColor: "rgba(212,160,23,0.3)",
-                    color: "#D4A017",
-                  }}
-                >
-                  {typeLabel}
-                </span>
-                <span className="text-slate-400 text-xs uppercase tracking-wider">
-                  {formatDate(report.publishDate)}
-                </span>
-              </div>
-
-              <h1
-                className="text-4xl lg:text-6xl font-bold leading-tight mb-6"
-                style={{ color: "#071B2A", fontFamily: "var(--font-playfair), serif" }}
-              >
-                {report.title}
-              </h1>
-
-              {report.executiveSummary && (
-                <p
-                  className="text-xl leading-relaxed max-w-2xl"
-                  style={{ color: "#475569", fontFamily: "var(--font-playfair), serif", fontStyle: "italic" }}
-                >
-                  {report.executiveSummary.slice(0, 280)}{report.executiveSummary.length > 280 ? "…" : ""}
-                </p>
-              )}
-            </div>
-
-            {/* Right: author + download card */}
-            <div className="lg:col-span-4">
-              <div className="bg-white border border-slate-200 p-6 rounded-sm shadow-sm">
-                <div
-                  className="text-[10px] font-semibold uppercase tracking-widest mb-4"
-                  style={{ color: "#94a3b8" }}
-                >
-                  Lead Author
-                </div>
-                <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: "#071B2A" }}
-                  >
-                    <i className="fa-solid fa-user text-gold-500 text-sm" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold" style={{ color: "#071B2A" }}>
-                      {report.authorName}
-                    </div>
-                    <div className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>
-                      {report.authorRole}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  {report.pdfUrl ? (
-                    <a
-                      href={report.pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full py-3 text-xs font-bold uppercase tracking-wider transition-colors"
-                      style={{ backgroundColor: "#D4A017", color: "#071B2A" }}
-                    >
-                      <i className="fa-regular fa-file-pdf" />
-                      Download PDF
-                    </a>
-                  ) : (
-                    <Link
-                      href="/contact"
-                      className="flex items-center justify-center gap-2 w-full py-3 text-xs font-bold uppercase tracking-wider transition-colors"
-                      style={{ backgroundColor: "#D4A017", color: "#071B2A" }}
-                    >
-                      <i className="fa-solid fa-lock text-xs" />
-                      Request Access
-                    </Link>
-                  )}
-                  <Link
-                    href="/contact"
-                    className="flex items-center justify-center w-full py-2.5 text-xs uppercase tracking-wider border border-slate-200 hover:border-slate-400 transition-colors"
-                    style={{ color: "#64748b" }}
-                  >
-                    Partner With APRN →
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </header>
-
-        {/* ── Featured Image ──────────────────────────────────────── */}
-        {report.coverImageUrl && (
-          <div className="w-full h-130 relative overflow-hidden">
-            <img
-              src={report.coverImageUrl}
-              alt={report.title}
-              className="w-full h-full object-cover"
-            />
+          {/* Gradient overlays */}
+          <div className={`absolute inset-0 bg-linear-to-t from-navy-900 ${report.coverImageUrl ? "via-navy-900/70 to-navy-900/30" : "via-navy-900 to-navy-900"}`} />
+          <div className="absolute inset-0 bg-linear-to-r from-navy-900 via-navy-900/60 to-transparent" />
+          {/* Grid texture when no image */}
+          {!report.coverImageUrl && (
             <div
-              className="absolute inset-0"
+              className="absolute inset-0 pointer-events-none opacity-[0.03]"
               style={{
-                background: "linear-gradient(to bottom, transparent 40%, rgba(7,27,42,0.35) 100%)",
+                backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.5) 39px, rgba(255,255,255,0.5) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.5) 39px, rgba(255,255,255,0.5) 40px)",
               }}
             />
+          )}
+
+          <div className="relative z-10 w-full max-w-360 mx-auto">
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-2 text-xs uppercase tracking-widest mb-10">
+              <Link href="/" className="text-slate-400 hover:text-gold-500 transition-colors">Home</Link>
+              <i className="fa-solid fa-chevron-right text-[8px] text-slate-600" />
+              <Link href="/research" className="text-slate-400 hover:text-gold-500 transition-colors">Research</Link>
+              <i className="fa-solid fa-chevron-right text-[8px] text-slate-600" />
+              <span className="text-slate-300 truncate max-w-50">{report.title}</span>
+            </nav>
+
+            <div className="grid lg:grid-cols-12 gap-10 items-end">
+              {/* Left: title block */}
+              <div className="lg:col-span-8">
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                  <span
+                    className="px-3 py-1 text-xs font-bold uppercase tracking-widest border rounded-full"
+                    style={{ backgroundColor: "rgba(212,160,23,0.12)", borderColor: "rgba(212,160,23,0.4)", color: "#D4A017" }}
+                  >
+                    {typeLabel}
+                  </span>
+                  <span className="text-slate-400 text-xs uppercase tracking-wider">
+                    {formatDate(report.publishDate)}
+                  </span>
+                </div>
+
+                <h1
+                  className="text-4xl lg:text-6xl font-bold leading-tight mb-6 text-white"
+                  style={{ fontFamily: "var(--font-playfair), serif" }}
+                >
+                  {report.title}
+                </h1>
+
+                {report.executiveSummary && (
+                  <p className="text-lg leading-relaxed max-w-2xl text-slate-300 font-light"
+                    style={{ fontFamily: "var(--font-playfair), serif", fontStyle: "italic" }}
+                  >
+                    {report.executiveSummary.slice(0, 240)}{report.executiveSummary.length > 240 ? "…" : ""}
+                  </p>
+                )}
+              </div>
+
+              {/* Right: author + download card — floats over hero on desktop */}
+              <div className="lg:col-span-4">
+                <div className="bg-white/95 backdrop-blur-sm border border-slate-200 p-6 rounded-sm shadow-lg">
+                  <div className="text-[10px] font-semibold uppercase tracking-widest mb-4 text-slate-400">
+                    Lead Author
+                  </div>
+                  <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "#071B2A" }}>
+                      <i className="fa-solid fa-user text-gold-500 text-sm" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold" style={{ color: "#071B2A" }}>{report.authorName}</div>
+                      <div className="text-xs mt-0.5 text-slate-400">{report.authorRole}</div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {report.pdfUrl ? (
+                      <a
+                        href={report.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full py-3 text-xs font-bold uppercase tracking-wider transition-colors"
+                        style={{ backgroundColor: "#D4A017", color: "#071B2A" }}
+                      >
+                        <i className="fa-regular fa-file-pdf" />
+                        Download PDF
+                      </a>
+                    ) : (
+                      <Link
+                        href="/contact"
+                        className="flex items-center justify-center gap-2 w-full py-3 text-xs font-bold uppercase tracking-wider"
+                        style={{ backgroundColor: "#D4A017", color: "#071B2A" }}
+                      >
+                        <i className="fa-solid fa-lock text-xs" />
+                        Request Access
+                      </Link>
+                    )}
+                    <Link
+                      href="/contact"
+                      className="flex items-center justify-center w-full py-2.5 text-xs uppercase tracking-wider border border-slate-200 hover:border-slate-400 transition-colors"
+                      style={{ color: "#64748b" }}
+                    >
+                      Partner With APRN →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </header>
 
         {/* ── Content: Executive summary + body + sticky metrics ── */}
         <section className="py-20 px-6 lg:px-12" style={{ backgroundColor: "#F5F7FA" }}>
