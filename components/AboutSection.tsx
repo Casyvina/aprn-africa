@@ -22,8 +22,13 @@ const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
 const leadership = [
   {
+    name: "Pieter-Bas Nederveen",
+    title: "Advisory Committee Member, Senior Energy Advisor",
+    photo: "/images/pieter-bas-nederveen.png",
+  },
+  {
     name: "Lucy Okeke",
-    title: "Founder & President",
+    title: "Founder",
     photo: "/images/lucy-okeke.jpg",
   },
   {
@@ -52,7 +57,7 @@ export default function AboutSection() {
             </motion.h2>
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-6">
               The African Pipeline Resource Network (APRN) is the premier continental think-tank and
-              training ecosystem dedicated to the engineering, policy, and operational excellence of
+              capacity building dedicated to the engineering, policy, and operational excellence of
               Africa&apos;s midstream infrastructure.
             </motion.p>
 

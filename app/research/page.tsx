@@ -386,7 +386,7 @@ export default async function ResearchPage() {
                 </div>
                 <div className="text-slate-500 text-sm italic"
                   style={{ fontFamily: "var(--font-playfair), serif" }}>
-                  Founder &amp; President, APRN
+                  Founder, APRN
                 </div>
               </div>
             </div>

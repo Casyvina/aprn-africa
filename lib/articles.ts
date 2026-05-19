@@ -112,7 +112,7 @@ export const articles: Article[] = [
     date: "28 April 2026",
     readTime: "18 min read",
     author: "Lucy Okeke",
-    authorRole: "Founder & President, APRN",
+    authorRole: "Founder, APRN",
     excerpt:
       "Africa's pipeline infrastructure investment is accelerating. The engineering workforce is not. This report examines the structural drivers, continental scope, and institutional pathways to resolving the most consequential human capital gap in African energy development.",
     heroImage: "/images/engineers-group.png",
@@ -164,7 +164,7 @@ export const articles: Article[] = [
     date: "15 March 2026",
     readTime: "10 min read",
     author: "Lucy Okeke",
-    authorRole: "Founder & President, APRN",
+    authorRole: "Founder, APRN",
     excerpt:
       "When a nation cannot independently operate, inspect, or extend its own pipeline infrastructure, it has not achieved energy independence — regardless of what its policy documents say.",
     heroImage: "/images/female-engineer-site.jpg",

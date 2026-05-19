@@ -37,8 +37,19 @@ const pillars = [
 
 const leadership = [
   {
+    name: "Pieter-Bas Nederveen",
+    title: "Advisory Committee Member, Senior Energy Advisor",
+    photo: "/images/pieter-bas-nederveen.png",
+    quote: "Africa's energy transition requires experienced international expertise combined with deep local knowledge — that is the combination APRN uniquely delivers.",
+    stats: [
+      { value: "Senior", label: "Energy Advisor" },
+      { value: "Advisory", label: "Committee Member" },
+    ],
+    bio: "Pieter-Bas Nederveen is a Senior Energy Advisor and member of APRN's Advisory Committee, bringing international expertise in energy sector development, infrastructure strategy, and institutional advisory to the network.",
+  },
+  {
     name: "Lucy Okeke",
-    title: "Founder & President",
+    title: "Founder",
     photo: "/images/lucy-okeke.jpg",
     quote: "The next decade of African development relies entirely on the integrity of our physical infrastructure. We are not merely building pipelines — we are constructing the arteries of continental economic sovereignty.",
     stats: [

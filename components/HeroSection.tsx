@@ -59,9 +59,9 @@ export default function HeroSection({ stats }: { stats?: HeroMetric[] }) {
             variants={fadeUp}
             className="font-display text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white"
           >
-            Building Africa&apos;s <br />
-            <span className="text-gradient">Pipeline Knowledge</span> <br />
-            &amp; Training Infrastructure
+            Anchoring Pipeline <br />
+            <span className="text-gradient">Technology</span> <br />
+            in Africa
           </motion.h1>
 
           <motion.p

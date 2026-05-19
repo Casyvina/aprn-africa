@@ -63,15 +63,21 @@ const stats = [
 
 const leadership = [
   {
+    name: "Pieter-Bas Nederveen",
+    title: "Advisory Committee Member, Senior Energy Advisor",
+    photo: "/images/pieter-bas-nederveen.png",
+    bio: "Pieter-Bas Nederveen is a Senior Energy Advisor and member of APRN's Advisory Committee, bringing international expertise in energy sector development, infrastructure strategy, and institutional advisory to the network.",
+  },
+  {
     name: "Lucy Okeke",
-    title: "Founder & President",
-    photo: "",
+    title: "Founder",
+    photo: "/images/lucy-okeke.jpg",
     bio: "Lucy Okeke is the founding force behind APRN, bringing two decades of experience in oil and gas regulations, energy policy, sustainability, stakeholder engagement, and institutional development across West Africa. She leads APRN's strategic vision and continental partnerships.",
   },
   {
     name: "Joseph Agwuh",
     title: "Director, Applied Engineering & Innovation",
-    photo: "",
+    photo: "/images/joseph-agwuh.png",
     bio: "Joseph Agwuh is a Civil Engineer and the digital architect behind APRN's operational infrastructure. He leads APRN's applied research programmes, technical documentation, digital platforms, and industry database development — bringing hands-on experience in digital strategy, web infrastructure, AI-powered research tools, and pipeline sector intelligence across Africa.",
   },
 ];
