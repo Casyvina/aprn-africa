@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -49,7 +50,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
         <Script
           src="https://cdn.plot.ly/plotly-2.24.1.min.js"
           strategy="afterInteractive"

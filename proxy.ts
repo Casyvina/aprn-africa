@@ -7,7 +7,7 @@ const PROTECTED_PREFIXES = ["/dashboard", "/profile", "/courses/enroll"];
 // Routes only accessible when NOT logged in
 const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
