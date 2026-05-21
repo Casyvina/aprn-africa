@@ -59,6 +59,17 @@ const leadership = [
     bio: "Lucy Okeke is the founding force behind APRN, bringing two decades of experience in oil and gas regulations, energy policy, sustainability, and institutional development across West Africa. She leads APRN's strategic vision and continental partnerships.",
   },
   {
+    name: "Kosie Stephanie Onuora",
+    title: "Board Secretary, APRN Africa",
+    photo: "/images/kosie-onuora.png",
+    quote: "Reimagining energy policy through law, governance, and inclusion — because the frameworks we build today determine whose future gets protected tomorrow.",
+    stats: [
+      { value: "Energy Law", label: "Specialisation" },
+      { value: "WEOG", label: "Lagos Secretary" },
+    ],
+    bio: "Kosie Stephanie Onuora is a Legal and Corporate Governance professional specialising in Energy and Petroleum Law. As Board Secretary of APRN Africa, she ensures institutional integrity, regulatory compliance, and sound governance across the network's operations. She serves as Lagos Secretary of the Women Entrepreneurs of Oil and Gas (WEOG), championing gender inclusion and policy reform in Africa's energy sector.",
+  },
+  {
     name: "Joseph Agwuh",
     title: "Head, Technology and Innovation",
     photo: "/images/joseph-agwuh.png",
