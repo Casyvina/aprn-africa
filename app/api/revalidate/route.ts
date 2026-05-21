@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
   const tags = TYPE_TO_TAGS[docType] ?? ["site"];
 
   // Revalidate all matching tags in parallel
-  // Next.js 16: revalidateTag requires (tag, profile) — pass {} to purge immediately
-  await Promise.all(tags.map((tag) => revalidateTag(tag, {})));
+  // expire: 0 = immediate expiration, required for external webhook callers
+  await Promise.all(tags.map((tag) => revalidateTag(tag, { expire: 0 })));
 
   return NextResponse.json({
     revalidated: true,
