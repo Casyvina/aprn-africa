@@ -172,7 +172,6 @@ export default function LeadershipPage() {
                 ))}
               </div>
             </div>
-          </div>
           </motion.div>
         </section>
 

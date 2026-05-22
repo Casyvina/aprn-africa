@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -78,12 +79,12 @@ export default async function DashboardPage() {
             Latest Research
           </h2>
           <p className="text-xs text-slate-500 mb-6">From the APRN knowledge base</p>
-          <a
+          <Link
             href="/research"
             className="inline-flex items-center gap-2 text-xs text-gold-500 hover:text-gold-400 transition-colors"
           >
             Browse research archive <i className="fa-solid fa-arrow-right text-[10px]" />
-          </a>
+          </Link>
         </div>
 
         <div className="bg-navy-800 border border-white/5 p-8">

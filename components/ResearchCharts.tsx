@@ -2,14 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-type PlotlyWindow = typeof window & {
-  Plotly?: {
-    newPlot: (el: HTMLDivElement, data: object[], layout: object, config: object) => void;
-    purge: (el: HTMLDivElement) => void;
-  };
-};
-
-
 const commonLayout = {
   plot_bgcolor: "transparent",
   paper_bgcolor: "transparent",

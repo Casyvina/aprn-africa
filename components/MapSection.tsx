@@ -17,10 +17,11 @@ function PipelineMap() {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const el = mapRef.current;
     let mounted = true;
 
     const render = () => {
-      if (!mounted || !mapRef.current || !window.Plotly) return;
+      if (!mounted || !el || !window.Plotly) return;
 
       const pipelines = [
         {
@@ -111,7 +112,7 @@ function PipelineMap() {
         showlegend: true,
       };
 
-      window.Plotly.newPlot(mapRef.current, [...lineTraces, terminalTrace], layout, {
+      window.Plotly.newPlot(el, [...lineTraces, terminalTrace], layout, {
         responsive: true,
         displayModeBar: false,
       });
@@ -131,7 +132,6 @@ function PipelineMap() {
 
     return () => {
       mounted = false;
-      const el = mapRef.current;
       if (el && window.Plotly) {
         window.Plotly.purge(el);
       }
