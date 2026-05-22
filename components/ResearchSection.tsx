@@ -6,7 +6,7 @@ import {
   type HomepageResearchCard,
 } from '@/lib/queries/research'
 
-// ── Config ────────────────────────────────────────────────────────────────────
+// -- Config --------------------------------------------------------------------
 
 const TYPE_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
   flagship:      { label: 'Flagship Report',   color: 'text-gold-500 border-gold-500/30 bg-gold-500/5',        icon: 'fa-file-chart-column' },
@@ -27,7 +27,7 @@ function formatMonth(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 }
 
-// ── Fallback data ─────────────────────────────────────────────────────────────
+// -- Fallback data -------------------------------------------------------------
 
 const FALLBACK_FEATURED: HomepageResearchCard = {
   _id: 'fallback-1',
@@ -61,7 +61,7 @@ const FALLBACK_PUBS: HomepageResearchCard[] = [
   },
 ]
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// -- Component -----------------------------------------------------------------
 
 export default async function ResearchSection() {
   let featured: HomepageResearchCard | null = FALLBACK_FEATURED

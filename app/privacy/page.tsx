@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         className="bg-navy-900 text-white"
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
-        {/* ── Hero ────────────────────────────────────────────── */}
+        {/* -- Hero ---------------------------------------------- */}
         <section className="pt-32 pb-20 px-6 lg:px-12 max-w-360 mx-auto">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-gold-500/10 text-gold-500 text-xs font-semibold tracking-widest uppercase mb-8">
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
           </div>
         </section>
 
-        {/* ── Overview Cards ──────────────────────────────────── */}
+        {/* -- Overview Cards ------------------------------------ */}
         <section className="py-16 px-6 lg:px-12 max-w-360 mx-auto border-t border-navy-700/50 bg-linear-to-b from-navy-900 to-navy-800">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
           </div>
         </section>
 
-        {/* ── Main Policy Content ─────────────────────────────── */}
+        {/* -- Main Policy Content ------------------------------- */}
         <section className="py-24 px-6 lg:px-12 max-w-360 mx-auto bg-navy-800">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
 
@@ -384,7 +384,7 @@ export default function PrivacyPage() {
           </div>
         </section>
 
-        {/* ── Security Visual ─────────────────────────────────── */}
+        {/* -- Security Visual ----------------------------------- */}
         <section className="py-32 relative border-y border-navy-700 bg-navy-900 overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none opacity-30"
@@ -444,7 +444,7 @@ export default function PrivacyPage() {
           </div>
         </section>
 
-        {/* ── Contact Module ──────────────────────────────────── */}
+        {/* -- Contact Module ------------------------------------ */}
         <section className="py-24 px-6 lg:px-12 max-w-360 mx-auto bg-navy-800">
           <div className="max-w-4xl mx-auto bg-navy-900 border border-navy-700 p-12 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/5 rounded-bl-[100px]" />

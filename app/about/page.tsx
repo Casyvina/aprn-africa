@@ -102,7 +102,7 @@ export default function AboutPage() {
         className="pt-20 bg-navy-900 text-slate-100"
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
-        {/* ── HERO ────────────────────────────────────────────── */}
+        {/* -- HERO ---------------------------------------------- */}
         <section className="relative min-h-[90vh] flex flex-col justify-between border-b border-white/10 px-6 pb-12 pt-24 max-w-360 mx-auto">
           {/* Grid overlay */}
           <div
@@ -203,7 +203,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── THE CHALLENGE ───────────────────────────────────── */}
+        {/* -- THE CHALLENGE ------------------------------------- */}
         <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
           <motion.div
             className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
@@ -248,7 +248,7 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
-        {/* ── WHAT APRN BUILDS ────────────────────────────────── */}
+        {/* -- WHAT APRN BUILDS ---------------------------------- */}
         <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto bg-navy-800/30">
           <motion.div
             className="text-center mb-20"
@@ -286,7 +286,7 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
-        {/* ── NUMBERS ─────────────────────────────────────────── */}
+        {/* -- NUMBERS ------------------------------------------- */}
         <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
           <motion.div
             className="grid grid-cols-2 lg:grid-cols-4 border-l border-t border-white/10"
@@ -308,7 +308,7 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
-        {/* ── LEADERSHIP ──────────────────────────────────────── */}
+        {/* -- LEADERSHIP ---------------------------------------- */}
         <section id="leadership" className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
           <motion.div
             className="mb-16"
@@ -374,7 +374,7 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
-        {/* ── MISSION STATEMENT ───────────────────────────────── */}
+        {/* -- MISSION STATEMENT --------------------------------- */}
         <section className="py-32 px-6 max-w-360 mx-auto text-center relative">
           <div
             className="absolute inset-0 opacity-20 pointer-events-none"

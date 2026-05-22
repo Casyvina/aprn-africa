@@ -13,7 +13,7 @@ import {
   type InsightCategory,
 } from "@/lib/queries/insights";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -42,14 +42,14 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
   },
 };
 
-// ── Static params ─────────────────────────────────────────────────────────────
+// -- Static params -------------------------------------------------------------
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   const slugs = await sanityFetch<Array<{ slug: string }>>(INSIGHT_SLUGS_QUERY);
   return slugs.filter((s) => Boolean(s.slug));
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// -- Page ----------------------------------------------------------------------
 
 export default async function ArticlePage({
   params,
@@ -80,7 +80,7 @@ export default async function ArticlePage({
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── HERO ─────────────────────────────────────────────────── */}
+        {/* -- HERO --------------------------------------------------- */}
         <header
           className="relative pt-28 pb-16 lg:pb-24 px-6 lg:px-12 min-h-[60vh] flex items-end overflow-hidden"
           style={
@@ -166,7 +166,7 @@ export default async function ArticlePage({
           </div>
         </header>
 
-        {/* ── KEY INSIGHTS ─────────────────────────────────────────── */}
+        {/* -- KEY INSIGHTS ------------------------------------------- */}
         {article.keyInsights && article.keyInsights.length > 0 && (
           <section className="border-b border-navy-800 bg-navy-800/50">
             <div className="max-w-360 mx-auto px-6 lg:px-12 py-10">
@@ -199,11 +199,11 @@ export default async function ArticlePage({
           </section>
         )}
 
-        {/* ── BODY + SIDEBAR ────────────────────────────────────────── */}
+        {/* -- BODY + SIDEBAR ------------------------------------------ */}
         <div className="max-w-360 mx-auto px-6 lg:px-12 py-12 lg:py-20">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
 
-            {/* ── Article body ─────────────────────────────────────── */}
+            {/* -- Article body --------------------------------------- */}
             <article className="w-full lg:flex-1 min-w-0">
 
               {/* Excerpt / executive summary if no body */}
@@ -240,13 +240,13 @@ export default async function ArticlePage({
                 </div>
               )}
 
-              {/* ── Author card (mobile — below body) ── */}
+              {/* -- Author card (mobile — below body) -- */}
               <div className="lg:hidden mt-12 pt-8 border-t border-navy-800">
                 <AuthorCard authorName={article.authorName} authorRole={article.authorRole} publishDate={article.publishDate} category={meta.label} estimatedReadTime={article.estimatedReadTime} />
               </div>
             </article>
 
-            {/* ── Sticky sidebar (desktop only) ─────────────────────── */}
+            {/* -- Sticky sidebar (desktop only) ----------------------- */}
             <aside className="hidden lg:block w-80 shrink-0">
               <div className="sticky top-28 space-y-5">
 
@@ -286,7 +286,7 @@ export default async function ArticlePage({
           </div>
         </div>
 
-        {/* ── PULL QUOTE BANNER ─────────────────────────────────────── */}
+        {/* -- PULL QUOTE BANNER --------------------------------------- */}
         {article.pullQuote && article.body && article.body.length > 0 && (
           <section className="py-20 px-6 lg:px-12 bg-navy-800 border-y border-navy-700 relative overflow-hidden">
             <div
@@ -308,7 +308,7 @@ export default async function ArticlePage({
           </section>
         )}
 
-        {/* ── MOBILE CTA ───────────────────────────────────────────── */}
+        {/* -- MOBILE CTA --------------------------------------------- */}
         <section className="lg:hidden py-12 px-6 bg-navy-800 border-t border-navy-700">
           <div className="text-center">
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-3">
@@ -334,7 +334,7 @@ export default async function ArticlePage({
           </div>
         </section>
 
-        {/* ── RELATED RESEARCH ─────────────────────────────────────── */}
+        {/* -- RELATED RESEARCH --------------------------------------- */}
         {related.length > 0 && (
           <section className="py-16 lg:py-20 px-6 lg:px-12 border-t border-navy-800">
             <div className="max-w-360 mx-auto">
@@ -402,7 +402,7 @@ export default async function ArticlePage({
           </section>
         )}
 
-        {/* ── BOTTOM CTA ───────────────────────────────────────────── */}
+        {/* -- BOTTOM CTA --------------------------------------------- */}
         <section className="py-24 px-6 border-t border-navy-800 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"
@@ -443,7 +443,7 @@ export default async function ArticlePage({
   );
 }
 
-// ── Author card component (shared between mobile + desktop) ───────────────────
+// -- Author card component (shared between mobile + desktop) -------------------
 
 function AuthorCard({
   authorName,

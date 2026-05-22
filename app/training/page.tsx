@@ -70,7 +70,7 @@ export default async function TrainingPage() {
       <Navigation />
       <main className="bg-navy-900 text-white">
 
-        {/* ── Hero ─────────────────────────────────────────────── */}
+        {/* -- Hero ----------------------------------------------- */}
         <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 min-h-[90vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
@@ -169,7 +169,7 @@ export default async function TrainingPage() {
           </div>
         </section>
 
-        {/* ── Why Training Matters ─────────────────────────────── */}
+        {/* -- Why Training Matters ------------------------------- */}
         <section className="py-24 bg-navy-900 border-t border-navy-800">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -212,7 +212,7 @@ export default async function TrainingPage() {
           </div>
         </section>
 
-        {/* ── Training Tracks ──────────────────────────────────── */}
+        {/* -- Training Tracks ------------------------------------ */}
         <section id="tracks" className="py-24 bg-navy-800 border-t border-navy-700">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -249,7 +249,7 @@ export default async function TrainingPage() {
           </div>
         </section>
 
-        {/* ── Active Programs ──────────────────────────────────── */}
+        {/* -- Active Programs ------------------------------------ */}
         {programs.length > 0 && (
           <section className="py-24 bg-navy-900 border-t border-navy-800">
             <div className="max-w-360 mx-auto px-6 lg:px-12">
@@ -291,7 +291,7 @@ export default async function TrainingPage() {
           </section>
         )}
 
-        {/* ── CTA ──────────────────────────────────────────────── */}
+        {/* -- CTA ------------------------------------------------ */}
         <section className="py-24 bg-navy-900 border-t border-navy-800 relative overflow-hidden">
           <div className="absolute inset-0">
             <div

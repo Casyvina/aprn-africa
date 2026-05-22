@@ -84,7 +84,7 @@ export default async function ResearchPage() {
       <Navigation />
       <main className="bg-navy-900 text-slate-100">
 
-        {/* ── HERO ──────────────────────────────────────────── */}
+        {/* -- HERO -------------------------------------------- */}
         <section className="relative min-h-screen flex items-center pt-24 overflow-hidden bg-navy-900">
           <div className="absolute inset-0 z-0">
             <Image
@@ -156,7 +156,7 @@ export default async function ResearchPage() {
           </div>
         </section>
 
-        {/* ── FEATURED INTELLIGENCE ─────────────────────────── */}
+        {/* -- FEATURED INTELLIGENCE --------------------------- */}
         <section id="featured-reports" className="py-32 bg-navy-900 relative">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-gold-500/20 pb-8">
@@ -256,7 +256,7 @@ export default async function ResearchPage() {
           </div>
         </section>
 
-        {/* ── CONTINENTAL CORRIDORS + MAP ───────────────────── */}
+        {/* -- CONTINENTAL CORRIDORS + MAP --------------------- */}
         <section id="data-map" className="py-24 bg-navy-800 relative border-y border-gold-500/10">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -339,7 +339,7 @@ export default async function ResearchPage() {
           </div>
         </section>
 
-        {/* ── MACRO ANALYTICS (Plotly charts) ──────────────── */}
+        {/* -- MACRO ANALYTICS (Plotly charts) ---------------- */}
         <section id="industry-data" className="py-32 bg-navy-900">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center mb-20">
@@ -358,7 +358,7 @@ export default async function ResearchPage() {
           </div>
         </section>
 
-        {/* ── STRATEGIC QUOTE ───────────────────────────────── */}
+        {/* -- STRATEGIC QUOTE --------------------------------- */}
         <section className="py-32 bg-navy-800 border-y border-gold-500/10 relative overflow-hidden">
           <div
             className="absolute right-0 top-0 leading-none opacity-10 pointer-events-none select-none text-slate-100"
@@ -393,7 +393,7 @@ export default async function ResearchPage() {
           </div>
         </section>
 
-        {/* ── FOOTER CTA ────────────────────────────────────── */}
+        {/* -- FOOTER CTA -------------------------------------- */}
         <section className="bg-navy-900 pt-32 pb-24 border-t border-gold-500/20">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 items-center">

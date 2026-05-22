@@ -5,7 +5,7 @@ import InsightGrid from "@/components/InsightGrid";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import { ALL_INSIGHTS_QUERY, PAGE_SIZE, type InsightCard, type InsightCategory } from "@/lib/queries/insights";
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// -- Helpers ------------------------------------------------------------------
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -35,7 +35,7 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
   },
 };
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// -- Page ---------------------------------------------------------------------
 
 export default async function InsightsPage() {
   const allInsights = await sanityFetch<InsightCard[]>(
@@ -67,7 +67,7 @@ export default async function InsightsPage() {
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Hero ──────────────────────────────────────────────── */}
+        {/* -- Hero ------------------------------------------------ */}
         <section className="pt-32 pb-16 px-6 lg:px-12 border-b border-navy-800">
           <div className="max-w-360 mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-gold-500/30 rounded-full bg-gold-500/10">
@@ -99,7 +99,7 @@ export default async function InsightsPage() {
           </div>
         </section>
 
-        {/* ── Featured Article ───────────────────────────────────── */}
+        {/* -- Featured Article ------------------------------------- */}
         <section className="py-16 px-6 lg:px-12 border-b border-navy-800">
           <div className="max-w-360 mx-auto">
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Featured</p>
@@ -146,7 +146,7 @@ export default async function InsightsPage() {
           </div>
         </section>
 
-        {/* ── Article Grid ───────────────────────────────────────── */}
+        {/* -- Article Grid ----------------------------------------- */}
         <section className="py-16 px-6 lg:px-12">
           <div className="max-w-360 mx-auto">
             <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-10">All Publications</p>
@@ -158,7 +158,7 @@ export default async function InsightsPage() {
           </div>
         </section>
 
-        {/* ── CTA ──────────────────────────────────────────────────── */}
+        {/* -- CTA ---------------------------------------------------- */}
         <section className="py-24 px-6 border-t border-navy-800 bg-navy-800 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"

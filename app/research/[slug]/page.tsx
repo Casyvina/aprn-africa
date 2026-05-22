@@ -13,7 +13,7 @@ import {
   type RelatedResearchCard,
 } from "@/lib/queries/research";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -34,7 +34,7 @@ function reportTypeLabel(type?: string): string {
   return REPORT_TYPE_LABELS[type] ?? type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-// ── Light-themed PortableText components ─────────────────────────────────────
+// -- Light-themed PortableText components -------------------------------------
 
 const lightComponents: PortableTextComponents = {
   block: {
@@ -140,14 +140,14 @@ const lightComponents: PortableTextComponents = {
   },
 };
 
-// ── Static params ─────────────────────────────────────────────────────────────
+// -- Static params -------------------------------------------------------------
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   const slugs = await sanityFetch<Array<{ slug: string }>>(RESEARCH_SLUGS_QUERY);
   return slugs.filter((s) => Boolean(s.slug));
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// -- Page ----------------------------------------------------------------------
 
 export default async function ResearchReportPage({
   params,
@@ -173,7 +173,7 @@ export default async function ResearchReportPage({
       <Navigation />
       <main style={{ backgroundColor: "#F5F7FA", fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Cinematic Hero ──────────────────────────────────────── */}
+        {/* -- Cinematic Hero ---------------------------------------- */}
         <header
           className="relative pt-28 pb-16 lg:pb-24 px-6 lg:px-12 min-h-[65vh] flex items-end overflow-hidden"
           style={
@@ -287,11 +287,11 @@ export default async function ResearchReportPage({
           </div>
         </header>
 
-        {/* ── Content: Executive summary + body + sticky metrics ── */}
+        {/* -- Content: Executive summary + body + sticky metrics -- */}
         <section className="py-20 px-6 lg:px-12" style={{ backgroundColor: "#F5F7FA" }}>
           <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-16">
 
-            {/* ── Left: article body (8 cols) ── */}
+            {/* -- Left: article body (8 cols) -- */}
             <article className="lg:col-span-8">
 
               {/* Executive summary block */}
@@ -340,7 +340,7 @@ export default async function ResearchReportPage({
 
             </article>
 
-            {/* ── Right: sticky sidebar (4 cols) ── */}
+            {/* -- Right: sticky sidebar (4 cols) -- */}
             <aside className="lg:col-span-4">
               <div className="sticky top-28 space-y-6">
 
@@ -453,7 +453,7 @@ export default async function ResearchReportPage({
           </div>
         </section>
 
-        {/* ── Pull Quote banner ───────────────────────────────────── */}
+        {/* -- Pull Quote banner ------------------------------------- */}
         {report.pullQuote && (
           <section
             className="py-20 px-6 lg:px-12"
@@ -477,7 +477,7 @@ export default async function ResearchReportPage({
           </section>
         )}
 
-        {/* ── Related Research ────────────────────────────────────── */}
+        {/* -- Related Research -------------------------------------- */}
         {related.length > 0 && (
           <section className="py-20 px-6 lg:px-12 border-t border-slate-200 bg-white">
             <div className="max-w-360 mx-auto">
@@ -522,7 +522,7 @@ export default async function ResearchReportPage({
           </section>
         )}
 
-        {/* ── Bottom CTA ──────────────────────────────────────────── */}
+        {/* -- Bottom CTA -------------------------------------------- */}
         <section
           className="py-24 px-6 lg:px-12 border-t border-slate-200"
           style={{ backgroundColor: "#F5F7FA" }}

@@ -16,7 +16,7 @@ export default function TermsPage() {
         className="bg-navy-900 text-white"
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
-        {/* ── Hero ────────────────────────────────────────────── */}
+        {/* -- Hero ---------------------------------------------- */}
         <header className="pt-40 pb-24 px-6 lg:px-12 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none opacity-30"
@@ -55,7 +55,7 @@ export default function TermsPage() {
           </div>
         </header>
 
-        {/* ── Quick Policy Summary ────────────────────────────── */}
+        {/* -- Quick Policy Summary ------------------------------ */}
         <section className="py-16 px-6 lg:px-12 bg-navy-800 border-y border-navy-700">
           <div className="max-w-360 mx-auto">
             <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-10 text-center">
@@ -109,7 +109,7 @@ export default function TermsPage() {
           </div>
         </section>
 
-        {/* ── Main Content + Sidebar ──────────────────────────── */}
+        {/* -- Main Content + Sidebar ---------------------------- */}
         <section className="py-24 px-6 lg:px-12">
           <div className="max-w-360 mx-auto flex flex-col lg:flex-row gap-16">
 
@@ -425,7 +425,7 @@ export default function TermsPage() {
           </div>
         </section>
 
-        {/* ── Footer banner ───────────────────────────────────── */}
+        {/* -- Footer banner ------------------------------------- */}
         <section className="py-20 px-6 lg:px-12 bg-navy-800 border-t border-navy-700">
           <div className="max-w-360 mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
             <div>

@@ -102,7 +102,7 @@ export default function LeadershipPage() {
         className="bg-navy-900 text-white"
         style={{ fontFamily: "var(--font-inter), sans-serif" }}
       >
-        {/* ── Hero ─────────────────────────────────────────────── */}
+        {/* -- Hero ------------------------------------------------ */}
         <section className="pt-40 pb-32 px-6 lg:px-12 min-h-[90vh] flex flex-col justify-center relative overflow-hidden max-w-360 mx-auto">
           {/* Decorative glow */}
           <div className="absolute top-1/4 left-10 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -176,7 +176,7 @@ export default function LeadershipPage() {
           </motion.div>
         </section>
 
-        {/* ── Leadership Profiles ───────────────────────────────── */}
+        {/* -- Leadership Profiles --------------------------------- */}
         {leadership.map((person, i) => (
           <motion.section
             key={person.name}
@@ -249,7 +249,7 @@ export default function LeadershipPage() {
           </motion.section>
         ))}
 
-        {/* ── Advisory Pillars ──────────────────────────────────── */}
+        {/* -- Advisory Pillars ------------------------------------ */}
         <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-800/30">
           <div className="max-w-360 mx-auto">
             <motion.div
@@ -297,7 +297,7 @@ export default function LeadershipPage() {
           </div>
         </section>
 
-        {/* ── Youth Ambassador ─────────────────────────────────── */}
+        {/* -- Youth Ambassador ------------------------------------ */}
         <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-900">
           <div className="max-w-360 mx-auto">
             <motion.div
@@ -387,7 +387,7 @@ export default function LeadershipPage() {
           </div>
         </section>
 
-        {/* ── CTA ──────────────────────────────────────────────── */}
+        {/* -- CTA ------------------------------------------------- */}
         <section className="py-32 px-6 border-t border-white/10 bg-navy-900 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none" style={{
             backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.06) 0%, transparent 70%)",

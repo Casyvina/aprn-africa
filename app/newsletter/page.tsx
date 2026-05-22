@@ -10,7 +10,7 @@ import {
   type NewsletterCard,
 } from "@/lib/queries/newsletter";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -18,7 +18,7 @@ function formatDate(iso: string) {
   });
 }
 
-// ── Static fallback stories (shown when no Sanity content is published yet) ───
+// -- Static fallback stories (shown when no Sanity content is published yet) ---
 
 const FALLBACK_STORIES = [
   { tag: "EACOP",    headline: "East Africa Crude Oil Pipeline: Construction Reaches 40% Completion", summary: "The 1,443 km EACOP corridor connecting Uganda's Albertine Graben to Tanzania's Tanga port marks a critical threshold as TotalEnergies and CNOOC report cross-border pipe-laying milestones." },
@@ -38,7 +38,7 @@ const pillars = [
   { icon: "fa-graduation-cap", title: "Training Alerts",      description: "Early access to APRN certification programmes, cohort openings, and professional development events." },
 ];
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// -- Page ----------------------------------------------------------------------
 
 export default async function NewsletterPage() {
   const [latest, archive] = await Promise.all([
@@ -58,7 +58,7 @@ export default async function NewsletterPage() {
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Masthead Hero ────────────────────────────────────────── */}
+        {/* -- Masthead Hero ------------------------------------------ */}
         <section className="pt-32 pb-0 px-6 lg:px-12 border-b border-navy-800 relative overflow-hidden">
           {/* Pipeline image backdrop */}
           <div
@@ -113,7 +113,7 @@ export default async function NewsletterPage() {
           </div>
         </section>
 
-        {/* ── Ticker bar ───────────────────────────────────────────── */}
+        {/* -- Ticker bar --------------------------------------------- */}
         <div className="bg-gold-500 py-2.5 px-6">
           <div className="max-w-360 mx-auto flex items-center gap-6">
             <span
@@ -133,7 +133,7 @@ export default async function NewsletterPage() {
           </div>
         </div>
 
-        {/* ── What you get ─────────────────────────────────────────── */}
+        {/* -- What you get ------------------------------------------- */}
         <section className="py-20 px-6 lg:px-12 border-b border-navy-800">
           <div className="max-w-360 mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -172,7 +172,7 @@ export default async function NewsletterPage() {
           </div>
         </section>
 
-        {/* ── Latest Issue Preview ─────────────────────────────────── */}
+        {/* -- Latest Issue Preview ----------------------------------- */}
         <section className="py-20 px-6 lg:px-12 border-b border-navy-800 bg-navy-800">
           <div className="max-w-360 mx-auto">
 
@@ -226,7 +226,7 @@ export default async function NewsletterPage() {
           </div>
         </section>
 
-        {/* ── Archive ───────────────────────────────────────────────── */}
+        {/* -- Archive ------------------------------------------------- */}
         {archive.length > 1 && (
           <section className="py-16 px-6 lg:px-12 border-b border-navy-800">
             <div className="max-w-360 mx-auto">
@@ -261,7 +261,7 @@ export default async function NewsletterPage() {
           </section>
         )}
 
-        {/* ── Subscribe form ───────────────────────────────────────── */}
+        {/* -- Subscribe form ----------------------------------------- */}
         <section className="py-24 px-6 lg:px-12 border-b border-navy-800 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"
@@ -287,7 +287,7 @@ export default async function NewsletterPage() {
           </div>
         </section>
 
-        {/* ── Social proof ─────────────────────────────────────────── */}
+        {/* -- Social proof ------------------------------------------- */}
         <section className="py-16 px-6 lg:px-12 border-b border-navy-800">
           <div className="max-w-360 mx-auto">
             <div className="grid md:grid-cols-3 gap-8 text-center">
@@ -310,7 +310,7 @@ export default async function NewsletterPage() {
           </div>
         </section>
 
-        {/* ── CTA ──────────────────────────────────────────────────── */}
+        {/* -- CTA ---------------------------------------------------- */}
         <section className="py-24 px-6 border-t border-white/5 bg-navy-900 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"

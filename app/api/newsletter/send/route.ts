@@ -5,7 +5,7 @@ import type { NewsletterIssue } from "@/lib/queries/newsletter";
 import { NEWSLETTER_APPROVED_QUERY } from "@/lib/queries/newsletter";
 import { groq } from "next-sanity";
 
-// ── Sanity write client ───────────────────────────────────────────────────────
+// -- Sanity write client -------------------------------------------------------
 
 function getSanityClient() {
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
@@ -15,7 +15,7 @@ function getSanityClient() {
   return createClient({ projectId, dataset, apiVersion: "2025-05-01", useCdn: false, token });
 }
 
-// ── Subscriber list from Sanity ───────────────────────────────────────────────
+// -- Subscriber list from Sanity -----------------------------------------------
 
 const ACTIVE_SUBSCRIBERS_QUERY = groq`
   *[_type == "subscriber" && active == true]{ email }
@@ -27,7 +27,7 @@ async function fetchSubscribers(sanity: ReturnType<typeof getSanityClient>): Pro
   return rows.map((r) => r.email).filter(Boolean);
 }
 
-// ── HTML email builder ────────────────────────────────────────────────────────
+// -- HTML email builder --------------------------------------------------------
 
 function buildEmailHtml(issue: NewsletterIssue, siteUrl: string): string {
   const issueLabel = `Vol. ${issue.volume}, Issue ${String(issue.issueNumber).padStart(3, "0")}`;
@@ -119,7 +119,7 @@ function buildEmailHtml(issue: NewsletterIssue, siteUrl: string): string {
 </html>`;
 }
 
-// ── Route handler ─────────────────────────────────────────────────────────────
+// -- Route handler -------------------------------------------------------------
 
 export async function POST(req: NextRequest) {
   // Protect with a shared secret

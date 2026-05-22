@@ -10,7 +10,7 @@ import {
   type NewsletterIssue,
 } from "@/lib/queries/newsletter";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -18,14 +18,14 @@ function formatDate(iso: string) {
   });
 }
 
-// ── Static params ─────────────────────────────────────────────────────────────
+// -- Static params -------------------------------------------------------------
 
 export async function generateStaticParams(): Promise<Array<{ issue: string }>> {
   const slugs = await sanityFetch<Array<{ slug: string }>>(NEWSLETTER_SLUGS_QUERY);
   return slugs.filter((s) => Boolean(s.slug)).map((s) => ({ issue: s.slug }));
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
+// -- Page ----------------------------------------------------------------------
 
 export default async function NewsletterIssuePage({
   params,
@@ -49,7 +49,7 @@ export default async function NewsletterIssuePage({
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Cinematic Issue Header ──────────────────────────────── */}
+        {/* -- Cinematic Issue Header -------------------------------- */}
         <header className="relative pt-28 pb-16 lg:pb-24 px-6 lg:px-12 min-h-[55vh] flex items-end overflow-hidden border-b border-navy-800">
           {/* Pipeline image backdrop */}
           <div
@@ -116,7 +116,7 @@ export default async function NewsletterIssuePage({
           </div>
         </header>
 
-        {/* ── Stories ──────────────────────────────────────────────── */}
+        {/* -- Stories ------------------------------------------------ */}
         <section className="py-20 px-6 lg:px-12">
           <div className="max-w-360 mx-auto">
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-10">
@@ -154,7 +154,7 @@ export default async function NewsletterIssuePage({
           </div>
         </section>
 
-        {/* ── Editor's Analysis ────────────────────────────────────── */}
+        {/* -- Editor's Analysis -------------------------------------- */}
         {(data.pullQuote || data.editorAnalysis) && (
           <section className="py-24 px-6 lg:px-12 bg-navy-800 border-t border-navy-700">
             <div className="max-w-4xl mx-auto">
@@ -194,7 +194,7 @@ export default async function NewsletterIssuePage({
           </section>
         )}
 
-        {/* ── Subscribe CTA ────────────────────────────────────────── */}
+        {/* -- Subscribe CTA ------------------------------------------ */}
         <section className="py-20 px-6 lg:px-12 border-t border-navy-800">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">
@@ -215,7 +215,7 @@ export default async function NewsletterIssuePage({
           </div>
         </section>
 
-        {/* ── Bottom nav ───────────────────────────────────────────── */}
+        {/* -- Bottom nav --------------------------------------------- */}
         <section className="py-12 px-6 lg:px-12 border-t border-navy-800">
           <div className="max-w-360 mx-auto flex flex-wrap justify-between items-center gap-4">
             <Link

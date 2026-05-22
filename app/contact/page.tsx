@@ -62,7 +62,7 @@ export default function ContactPage() {
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
-        {/* ── Hero ─────────────────────────────────────────────── */}
+        {/* -- Hero ----------------------------------------------- */}
         <section className="relative pt-32 pb-24 px-6 lg:px-12 min-h-[60vh] flex items-center border-b border-navy-800 overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
@@ -106,7 +106,7 @@ export default function ContactPage() {
           </motion.div>
         </section>
 
-        {/* ── Contact Overview & Channels ───────────────────────── */}
+        {/* -- Contact Overview & Channels ------------------------- */}
         <section className="py-24 px-6 lg:px-12 bg-navy-900">
           <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-16">
 
@@ -164,7 +164,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ── Form + Engagement Protocol ────────────────────────── */}
+        {/* -- Form + Engagement Protocol -------------------------- */}
         <section className="py-24 px-6 lg:px-12 bg-navy-800 relative">
           <div
             className="absolute inset-0 pointer-events-none"
@@ -209,7 +209,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ── CTA ──────────────────────────────────────────────── */}
+        {/* -- CTA ------------------------------------------------ */}
         <section className="py-32 px-6 border-t border-white/10 bg-navy-900 relative overflow-hidden">
           <div
             className="absolute inset-0 pointer-events-none"

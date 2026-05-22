@@ -62,7 +62,7 @@ export default async function NotFound() {
         {/* Main layout — fills between nav and footer */}
         <main className="flex-1 flex flex-col lg:flex-row max-w-360 w-full mx-auto pt-20">
 
-          {/* ── Left: Error content ────────────────────────────────── */}
+          {/* -- Left: Error content ---------------------------------- */}
           <div className="flex-1 flex flex-col justify-center px-6 lg:px-20 py-20 lg:py-0 border-r border-navy-800 relative overflow-hidden">
 
             {/* Ghost 404 */}
@@ -121,7 +121,7 @@ export default async function NotFound() {
             </div>
           </div>
 
-          {/* ── Right: Sidebar ─────────────────────────────────────── */}
+          {/* -- Right: Sidebar --------------------------------------- */}
           <aside className="w-full lg:w-100 shrink-0 border-t lg:border-t-0 border-navy-800 bg-navy-800/40 p-8 lg:p-12 flex flex-col justify-center">
 
             <div className="mb-8">

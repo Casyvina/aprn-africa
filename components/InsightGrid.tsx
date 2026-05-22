@@ -6,7 +6,7 @@ import type { InsightCard, InsightCategory } from "@/lib/queries/insights";
 import { PAGE_SIZE } from "@/lib/queries/insights";
 import { fetchMoreInsights } from "@/app/actions/insights";
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+// -- Helpers ----------------------------------------------------------------
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -32,7 +32,7 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
   },
 };
 
-// ── Card ───────────────────────────────────────────────────────────────────
+// -- Card -------------------------------------------------------------------
 
 function InsightCard({ article }: { article: InsightCard }) {
   const meta = categoryMeta[article.category];
@@ -75,7 +75,7 @@ function InsightCard({ article }: { article: InsightCard }) {
   );
 }
 
-// ── Grid ───────────────────────────────────────────────────────────────────
+// -- Grid -------------------------------------------------------------------
 
 interface Props {
   initial: InsightCard[];

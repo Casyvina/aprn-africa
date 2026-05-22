@@ -25,7 +25,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       className="h-screen w-full overflow-hidden flex bg-navy-900"
       style={{ fontFamily: "var(--font-inter), sans-serif" }}
     >
-      {/* ── Left Panel ─────────────────────────────────────── */}
+      {/* -- Left Panel --------------------------------------- */}
       <motion.div
         className="hidden lg:flex lg:w-1/2 relative h-full bg-navy-900 overflow-hidden flex-col justify-between p-12"
         initial={{ opacity: 0, x: -40 }}
@@ -112,7 +112,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </motion.div>
       </motion.div>
 
-      {/* ── Right Panel ────────────────────────────────────── */}
+      {/* -- Right Panel -------------------------------------- */}
       <div className="w-full lg:w-1/2 h-full flex flex-col justify-center items-center bg-navy-900 p-8 relative overflow-y-auto">
         {children}
 

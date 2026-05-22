@@ -87,7 +87,7 @@ export default async function PartnershipsPage() {
       <Navigation />
       <main className="bg-navy-900 text-white">
 
-        {/* ── Hero ─────────────────────────────────────────────── */}
+        {/* -- Hero ----------------------------------------------- */}
         <section className="relative pt-24 min-h-[90vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
@@ -172,7 +172,7 @@ export default async function PartnershipsPage() {
           </div>
         </section>
 
-        {/* ── Ecosystem Node Map ────────────────────────────────── */}
+        {/* -- Ecosystem Node Map ---------------------------------- */}
         <section id="ecosystem" className="py-24 bg-navy-800 border-t border-navy-700">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center mb-16 max-w-3xl mx-auto">
@@ -280,7 +280,7 @@ export default async function PartnershipsPage() {
           </div>
         </section>
 
-        {/* ── Partner Categories ────────────────────────────────── */}
+        {/* -- Partner Categories ---------------------------------- */}
         <section className="py-24 bg-navy-900 border-t border-navy-800">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -320,7 +320,7 @@ export default async function PartnershipsPage() {
           </div>
         </section>
 
-        {/* ── Why Partner ───────────────────────────────────────── */}
+        {/* -- Why Partner ----------------------------------------- */}
         <section className="py-24 bg-navy-800 border-t border-navy-700">
           <div className="max-w-360 mx-auto px-6 lg:px-12">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -353,7 +353,7 @@ export default async function PartnershipsPage() {
           </div>
         </section>
 
-        {/* ── Featured Partners (from Sanity) ───────────────────── */}
+        {/* -- Featured Partners (from Sanity) --------------------- */}
         {partners.length > 0 && (
           <section className="py-24 bg-navy-900 border-t border-navy-700">
             <div className="max-w-360 mx-auto px-6 lg:px-12">
@@ -402,7 +402,7 @@ export default async function PartnershipsPage() {
           </section>
         )}
 
-        {/* ── CTA ──────────────────────────────────────────────── */}
+        {/* -- CTA ------------------------------------------------ */}
         <section className="py-32 bg-navy-900 border-t border-navy-800 relative overflow-hidden">
           <div className="absolute inset-0">
             <div
