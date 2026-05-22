@@ -131,8 +131,9 @@ function PipelineMap() {
 
     return () => {
       mounted = false;
-      if (mapRef.current && window.Plotly) {
-        window.Plotly.purge(mapRef.current);
+      const el = mapRef.current;
+      if (el && window.Plotly) {
+        window.Plotly.purge(el);
       }
     };
   }, []);

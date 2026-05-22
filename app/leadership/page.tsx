@@ -1,6 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+};
 
 const pillars = [
   {
@@ -96,28 +108,37 @@ export default function LeadershipPage() {
           <div className="absolute top-1/4 left-10 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-gold-500/3 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-navy-800/50 mb-8">
+          <motion.div
+            className="max-w-4xl mx-auto text-center relative z-10"
+            initial="hidden" animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
+          >
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-navy-800/50 mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
               <span className="text-xs font-medium tracking-widest text-gold-500 uppercase">Institutional Leadership</span>
-            </div>
+            </motion.div>
 
-            <h1
+            <motion.h1
+              variants={fadeUp}
               className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.1] mb-8 text-white"
               style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               Leadership &amp; <br />
               <span className="italic text-gold-500">Strategic</span> Advisory
-            </h1>
+            </motion.h1>
 
-            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
+            <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">
               Guiding Africa&apos;s pipeline engineering and infrastructure future through collaboration,
               research, and technical leadership.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Mandate card */}
-          <div className="mt-24 max-w-5xl mx-auto w-full">
+          <motion.div
+            className="mt-24 max-w-5xl mx-auto w-full"
+            initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+          >
             <div className="glass-panel p-8 rounded-sm border border-gold-500/20 flex flex-col md:flex-row items-center gap-8">
               <div className="flex-1">
                 <h3
@@ -152,13 +173,18 @@ export default function LeadershipPage() {
               </div>
             </div>
           </div>
+          </motion.div>
         </section>
 
         {/* ── Leadership Profiles ───────────────────────────────── */}
         {leadership.map((person, i) => (
-          <section
+          <motion.section
             key={person.name}
             className="py-32 px-6 lg:px-12 border-t border-white/10 relative"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.65, ease: "easeOut" }}
           >
             <div className="max-w-360 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
               {/* Portrait — alternate sides */}
@@ -220,13 +246,16 @@ export default function LeadershipPage() {
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
         ))}
 
         {/* ── Advisory Pillars ──────────────────────────────────── */}
         <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-800/30">
           <div className="max-w-360 mx-auto">
-            <div className="text-center mb-20">
+            <motion.div
+              className="text-center mb-20"
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+            >
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 Governance Structure
               </span>
@@ -241,13 +270,17 @@ export default function LeadershipPage() {
                 Comprehensive governance structure designed to address every facet of continental
                 infrastructure development and engineering excellence.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+            >
               {pillars.map((p) => (
-                <div
+                <motion.div
                   key={p.title}
-                  className="glass-panel rounded-sm p-8 border border-navy-700 hover:border-gold-500/30 transition-all group relative overflow-hidden"
+                  variants={fadeUp}
+                  className="glass-panel rounded-sm p-8 border border-navy-700 hover:border-gold-500/30 transition-all group relative overflow-hidden cursor-pointer"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/5 rounded-full blur-2xl group-hover:bg-gold-500/10 transition-all" />
                   <i className={`fa-solid ${p.icon} text-gold-500 text-2xl mb-6 block`} />
@@ -258,16 +291,19 @@ export default function LeadershipPage() {
                     {p.title}
                   </h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{p.body}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ── Youth Ambassador ─────────────────────────────────── */}
         <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-900">
           <div className="max-w-360 mx-auto">
-            <div className="text-center mb-20">
+            <motion.div
+              className="text-center mb-20"
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+            >
               <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
                 Next Generation
               </span>
@@ -280,9 +316,14 @@ export default function LeadershipPage() {
               <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed">
                 Representing the emerging generation of African pipeline engineers on the global stage.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="glass-panel rounded-sm border border-gold-500/20 overflow-hidden max-w-5xl mx-auto">
+            <motion.div
+              className="glass-panel rounded-sm border border-gold-500/20 overflow-hidden max-w-5xl mx-auto"
+              initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.65, ease: "easeOut" }}
+            >
               <div className="grid grid-cols-1 lg:grid-cols-12">
                 {/* Photo */}
                 <div className="lg:col-span-4 relative">
@@ -342,7 +383,7 @@ export default function LeadershipPage() {
                   </blockquote>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -351,7 +392,10 @@ export default function LeadershipPage() {
           <div className="absolute inset-0 pointer-events-none" style={{
             backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.06) 0%, transparent 70%)",
           }} />
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+          <motion.div
+            className="max-w-4xl mx-auto text-center relative z-10"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+          >
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-8 uppercase">Work With APRN</p>
             <blockquote
               className="text-3xl md:text-5xl font-bold leading-tight max-w-4xl mx-auto mb-12 text-white"
@@ -374,7 +418,7 @@ export default function LeadershipPage() {
                 Partner With APRN <i className="fa-solid fa-arrow-right" />
               </a>
             </div>
-          </div>
+          </motion.div>
         </section>
       </main>
       <Footer />

@@ -1,6 +1,19 @@
+"use client";
+
+import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+};
 
 const channels = [
   {
@@ -52,9 +65,13 @@ export default function ContactPage() {
         {/* ── Hero ─────────────────────────────────────────────── */}
         <section className="relative pt-32 pb-24 px-6 lg:px-12 min-h-[60vh] flex items-center border-b border-navy-800 overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <div
-              className="w-full h-full bg-cover bg-center opacity-30 mix-blend-luminosity"
-              style={{ backgroundImage: "url('/images/hero-pipeline.jpg')" }}
+            <Image
+              src="/images/hero-pipeline.jpg"
+              alt="Pipeline infrastructure"
+              fill
+              sizes="100vw"
+              className="object-cover opacity-30 mix-blend-luminosity"
+              priority
             />
             <div className="absolute inset-0 bg-navy-900/80" />
             <div
@@ -67,21 +84,26 @@ export default function ContactPage() {
             />
           </div>
 
-          <div className="relative z-10 max-w-5xl mx-auto w-full">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-gold-500/30 rounded-full bg-gold-500/10">
+          <motion.div
+            className="relative z-10 max-w-5xl mx-auto w-full"
+            initial="hidden" animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
+          >
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-gold-500/30 rounded-full bg-gold-500/10">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
               <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">Institutional Access</span>
-            </div>
-            <h1
+            </motion.div>
+            <motion.h1
+              variants={fadeUp}
               className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
             >
               Connect With <span className="text-gold-500">APRN</span>
-            </h1>
-            <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-xl text-slate-400 max-w-2xl leading-relaxed">
               A strategic engineering platform and globally credible collaboration network for Africa&apos;s infrastructure future.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
         </section>
 
         {/* ── Contact Overview & Channels ───────────────────────── */}
@@ -120,20 +142,24 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-8 grid md:grid-cols-2 gap-6">
+            <motion.div
+              className="lg:col-span-8 grid md:grid-cols-2 gap-6"
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+            >
               {channels.map((c) => (
-                <div
+                <motion.div
                   key={c.title}
-                  className="glass-panel p-8 rounded-sm border border-navy-700 hover:border-gold-500/50 transition-colors group"
+                  variants={fadeUp}
+                  className="glass-panel p-8 rounded-sm border border-navy-700 hover:border-gold-500/50 transition-colors group cursor-pointer"
                 >
                   <i className={`fa-solid ${c.icon} text-gold-500 text-2xl mb-6 block`} />
                   <h3 className="text-lg font-semibold mb-3 group-hover:text-gold-500 transition-colors">
                     {c.title}
                   </h3>
                   <p className="text-slate-400 text-sm leading-relaxed">{c.desc}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
           </div>
         </section>
@@ -152,27 +178,33 @@ export default function ContactPage() {
 
             <ContactForm />
 
-            <div className="lg:pl-12 pt-8 lg:pt-0">
-              <h3
+            <motion.div
+              className="lg:pl-12 pt-8 lg:pt-0"
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }}
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } }}
+            >
+              <motion.h3
+                variants={fadeUp}
                 className="text-3xl font-bold mb-10 text-white"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
               >
                 Engagement <span className="italic text-gold-500">Protocol</span>
-              </h3>
+              </motion.h3>
               <div className="space-y-8">
                 {protocols.map((p, i) => (
-                  <div
+                  <motion.div
                     key={p.title}
+                    variants={fadeUp}
                     className={`border-l-2 pl-6 transition-colors hover:border-gold-500 ${
                       i === 0 ? "border-gold-500" : "border-navy-700"
                     }`}
                   >
                     <h4 className="text-lg font-semibold mb-2">{p.title}</h4>
                     <p className="text-slate-400 text-sm leading-relaxed">{p.desc}</p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </section>
@@ -185,7 +217,10 @@ export default function ContactPage() {
               backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.06) 0%, transparent 70%)",
             }}
           />
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+          <motion.div
+            className="max-w-4xl mx-auto text-center relative z-10"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+          >
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-8 uppercase">Join the Network</p>
             <blockquote
               className="text-3xl md:text-5xl font-bold leading-tight max-w-4xl mx-auto mb-12 text-white"
@@ -208,7 +243,7 @@ export default function ContactPage() {
                 Partner With APRN <i className="fa-solid fa-arrow-right" />
               </a>
             </div>
-          </div>
+          </motion.div>
         </section>
 
       </main>

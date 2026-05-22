@@ -13,9 +13,6 @@ import {
   EnvelopeIcon,
 } from '@sanity/icons'
 
-// Singletons: documents that should only have one instance
-const SINGLETONS = ['siteSettings', 'homepageConfig']
-
 export const structure = (S: StructureBuilder) =>
   S.list()
     .title('APRN Africa')

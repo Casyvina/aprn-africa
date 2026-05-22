@@ -1,7 +1,19 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+};
 
 const challenges = [
   {
@@ -102,7 +114,12 @@ export default function AboutPage() {
             }}
           />
 
-          <div className="z-10 w-full">
+          <motion.div
+            className="z-10 w-full"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
             <h1
               className="font-bold tracking-tighter mb-12 w-full wrap-break-word uppercase leading-[0.85]"
               style={{
@@ -112,7 +129,7 @@ export default function AboutPage() {
             >
               African Pipeline<br />Resource Network
             </h1>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 z-10 w-full items-end">
             {/* Main image */}
@@ -188,7 +205,10 @@ export default function AboutPage() {
 
         {/* ── THE CHALLENGE ───────────────────────────────────── */}
         <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <motion.div
+            className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+          >
             <h2
               className="text-4xl md:text-5xl font-bold uppercase"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
@@ -199,13 +219,17 @@ export default function AboutPage() {
               Addressing the critical gaps in Africa&apos;s energy transit ecosystem to ensure
               sustainable development.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border-t border-l border-white/10">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border-t border-l border-white/10"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          >
             {challenges.map((c) => (
-              <div
+              <motion.div
                 key={c.title}
-                className="border-r border-b border-white/10 p-8 flex flex-col justify-between hover:bg-navy-800 transition-colors group"
+                variants={fadeUp}
+                className="border-r border-b border-white/10 p-8 flex flex-col justify-between hover:bg-navy-800 transition-colors group cursor-pointer"
               >
                 <div className="text-gold-500 text-4xl mb-6">
                   <i className={`fa-solid ${c.icon}`} />
@@ -219,14 +243,17 @@ export default function AboutPage() {
                   </h3>
                   <p className="text-xs text-slate-500 leading-relaxed">{c.body}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* ── WHAT APRN BUILDS ────────────────────────────────── */}
         <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto bg-navy-800/30">
-          <div className="text-center mb-20">
+          <motion.div
+            className="text-center mb-20"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+          >
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-4 uppercase">Our Ecosystem</p>
             <h3
               className="text-5xl md:text-6xl font-bold uppercase"
@@ -234,13 +261,17 @@ export default function AboutPage() {
             >
               What APRN Builds
             </h3>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          >
             {pillars.map((p) => (
-              <div
+              <motion.div
                 key={p.num}
-                className="bg-navy-900 border border-white/10 p-8 hover:border-gold-500/50 transition-colors"
+                variants={fadeUp}
+                className="bg-navy-900 border border-white/10 p-8 hover:border-gold-500/50 transition-colors cursor-pointer"
               >
                 <div className="text-2xl mb-6 text-white/40">{p.num}</div>
                 <h4
@@ -250,16 +281,19 @@ export default function AboutPage() {
                   {p.title}
                 </h4>
                 <p className="text-xs text-slate-500">{p.body}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* ── NUMBERS ─────────────────────────────────────────── */}
         <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 border-l border-t border-white/10">
+          <motion.div
+            className="grid grid-cols-2 lg:grid-cols-4 border-l border-t border-white/10"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          >
             {stats.map((s) => (
-              <div key={s.label} className="border-r border-b border-white/10 p-10">
+              <motion.div key={s.label} variants={fadeUp} className="border-r border-b border-white/10 p-10">
                 <div
                   className="text-5xl md:text-6xl font-bold text-gold-500 mb-3"
                   style={{ fontFamily: "var(--font-oswald), sans-serif" }}
@@ -269,14 +303,17 @@ export default function AboutPage() {
                 <p className="text-xs text-slate-500 leading-relaxed uppercase tracking-wider">
                   {s.label}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* ── LEADERSHIP ──────────────────────────────────────── */}
         <section id="leadership" className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
-          <div className="mb-16">
+          <motion.div
+            className="mb-16"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+          >
             <p className="text-xs tracking-[0.3em] text-gold-500 mb-4 uppercase">The People</p>
             <h2
               className="text-4xl md:text-5xl font-bold uppercase"
@@ -284,12 +321,16 @@ export default function AboutPage() {
             >
               Leadership
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-l border-t border-white/10">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 gap-0 border-l border-t border-white/10"
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          >
             {leadership.map((person) => (
-              <div
+              <motion.div
                 key={person.name}
+                variants={fadeUp}
                 className="border-r border-b border-white/10 group overflow-hidden"
               >
                 {/* Photo / Avatar */}
@@ -328,9 +369,9 @@ export default function AboutPage() {
                   <p className="text-gold-500 text-sm tracking-widest uppercase mb-4">{person.title}</p>
                   <p className="text-xs text-slate-500 leading-relaxed max-w-lg">{person.bio}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
 
         {/* ── MISSION STATEMENT ───────────────────────────────── */}
@@ -342,6 +383,9 @@ export default function AboutPage() {
                 "radial-gradient(ellipse at 50% 50%, rgba(212,160,23,0.15) 0%, transparent 70%)",
             }}
           />
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+          >
           <p className="text-xs tracking-[0.3em] text-gold-500 mb-8 uppercase">Our Purpose</p>
           <blockquote
             className="text-3xl md:text-5xl font-bold uppercase leading-tight max-w-4xl mx-auto mb-12"
@@ -364,6 +408,7 @@ export default function AboutPage() {
               Back to Home <i className="fa-solid fa-arrow-right" />
             </Link>
           </div>
+          </motion.div>
         </section>
       </main>
       <Footer />
