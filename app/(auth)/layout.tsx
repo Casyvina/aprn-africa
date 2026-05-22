@@ -22,7 +22,7 @@ const containerVariants = {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="h-screen w-full overflow-hidden flex bg-navy-900"
+      className="h-dvh w-full overflow-hidden flex bg-navy-900"
       style={{ fontFamily: "var(--font-inter), sans-serif" }}
     >
       {/* -- Left Panel --------------------------------------- */}
@@ -113,7 +113,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </motion.div>
 
       {/* -- Right Panel -------------------------------------- */}
-      <div className="w-full lg:w-1/2 h-full flex flex-col justify-center items-center bg-navy-900 p-8 relative overflow-y-auto">
+      <div className="w-full lg:w-1/2 h-full flex flex-col justify-start lg:justify-center items-center bg-navy-900 px-5 py-10 sm:p-8 relative overflow-y-auto">
         {children}
 
         {/* Network status footer */}

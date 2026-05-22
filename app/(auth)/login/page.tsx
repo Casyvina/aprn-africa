@@ -52,7 +52,7 @@ function LoginForm() {
 
   return (
     <motion.div
-      className="w-full max-w-[440px] bg-navy-800 border border-white/5"
+      className="w-full max-w-md bg-navy-800 border border-white/5"
       style={{
         borderRadius: "24px",
         boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
@@ -65,7 +65,7 @@ function LoginForm() {
       <motion.div variants={cardVariants} initial="hidden" animate="show">
 
         {/* Mobile logo */}
-        <motion.div variants={rowVariants} className="flex lg:hidden items-center justify-center mb-10">
+        <motion.div variants={rowVariants} className="flex lg:hidden items-center justify-center mb-6 sm:mb-10">
           <Image
             src="/images/logo.png"
             alt="African Pipeline Resource Network"
@@ -77,7 +77,7 @@ function LoginForm() {
         </motion.div>
 
         {/* Title */}
-        <motion.div variants={rowVariants} className="text-center mb-10">
+        <motion.div variants={rowVariants} className="text-center mb-6 sm:mb-10">
           <h2 className="text-2xl font-semibold text-white mb-2">Institutional Login</h2>
           <p className="text-slate-400 text-sm">Authenticate to access intelligence systems</p>
         </motion.div>
@@ -133,7 +133,7 @@ function LoginForm() {
             </div>
           </motion.div>
 
-          <motion.div variants={rowVariants} className="flex items-center justify-between pt-2">
+          <motion.div variants={rowVariants} className="flex items-center justify-between flex-wrap gap-y-2 pt-2">
             <label className="flex items-center gap-2 cursor-pointer group">
               <div className="w-4 h-4 rounded border border-slate-500 group-hover:border-gold-500 flex items-center justify-center transition-colors">
                 <i className="fa-solid fa-check text-[10px] text-transparent group-hover:text-gold-500" />

@@ -49,7 +49,7 @@ export default function RegisterPage() {
 
   return (
     <motion.div
-      className="w-full max-w-[440px] bg-navy-800 border border-white/5"
+      className="w-full max-w-md bg-navy-800 border border-white/5"
       style={{
         borderRadius: "24px",
         boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
@@ -62,7 +62,7 @@ export default function RegisterPage() {
       <motion.div variants={cardVariants} initial="hidden" animate="show">
 
         {/* Mobile logo */}
-        <motion.div variants={rowVariants} className="flex lg:hidden items-center justify-center mb-10">
+        <motion.div variants={rowVariants} className="flex lg:hidden items-center justify-center mb-6 sm:mb-10">
           <Image
             src="/images/logo.png"
             alt="African Pipeline Resource Network"
@@ -74,7 +74,7 @@ export default function RegisterPage() {
         </motion.div>
 
         {/* Title */}
-        <motion.div variants={rowVariants} className="text-center mb-10">
+        <motion.div variants={rowVariants} className="text-center mb-6 sm:mb-10">
           <h2 className="text-2xl font-semibold text-white mb-2">Request Access</h2>
           <p className="text-slate-400 text-sm">Create your APRN professional account</p>
         </motion.div>
