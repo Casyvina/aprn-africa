@@ -1,95 +1,133 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-
-const navItems = [
-  { href: "/dashboard", icon: "fa-house", label: "Overview" },
-  { href: "/dashboard/research", icon: "fa-book-open", label: "Research" },
-  { href: "/dashboard/courses", icon: "fa-graduation-cap", label: "Courses" },
-  { href: "/dashboard/profile", icon: "fa-circle-user", label: "Profile" },
-  { href: "/dashboard/membership", icon: "fa-id-card", label: "Membership" },
-];
+import DashboardNav from "@/components/DashboardNav";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
   if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, membership_tier, role")
+    .select("full_name, membership_tier")
     .eq("id", user.id)
     .single();
 
+  const displayName = profile?.full_name ?? user.email ?? "Member";
+  const tier = profile?.membership_tier ?? "free";
+  const initials = displayName
+    .split(" ")
+    .map((n: string) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+  const firstName = displayName.split(" ")[0];
+
   return (
-    <div className="min-h-screen bg-navy-900 flex" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-      {/* Sidebar */}
-      <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-navy-800 border-r border-white/5">
+    <div
+      className="flex h-screen bg-navy-900 overflow-hidden"
+      style={{ fontFamily: "var(--font-inter), sans-serif" }}
+    >
+      {/* ── Sidebar ──────────────────────────────────────────── */}
+      <aside className="hidden md:flex w-[260px] shrink-0 flex-col bg-navy-900 border-r border-white/5 h-screen overflow-y-auto">
         {/* Logo */}
-        <div className="px-6 py-6 border-b border-white/5">
-          <Link href="/" className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo.png" alt="APRN" className="h-8 w-auto" />
+        <div className="px-8 py-6 border-b border-white/5 shrink-0">
+          <Link href="/">
+            <Image
+              src="/images/logo.png"
+              alt="APRN"
+              width={999}
+              height={453}
+              className="h-8 w-auto"
+              priority
+            />
           </Link>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 px-3 py-6 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-white/5 rounded-sm transition-all group"
-            >
-              <i className={`fa-solid ${item.icon} text-xs w-4 text-slate-500 group-hover:text-gold-500 transition-colors`} />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        {/* Nav items (client — needs usePathname for active state) */}
+        <DashboardNav />
 
-        {/* User card */}
-        <div className="px-4 py-4 border-t border-white/5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center shrink-0">
-              <i className="fa-solid fa-user text-gold-500 text-xs" />
+        {/* User + sign out */}
+        <div className="px-8 py-6 border-t border-white/5 shrink-0">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-9 h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center shrink-0">
+              <span className="text-xs font-bold text-gold-500">{initials}</span>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-white truncate">
-                {profile?.full_name ?? user.email}
+              <p className="text-xs font-semibold text-white truncate">
+                {displayName.split(" ").slice(0, 2).join(" ")}
               </p>
               <p className="text-[10px] text-slate-500 uppercase tracking-wider capitalize">
-                {profile?.membership_tier ?? "free"}
+                {tier} member
               </p>
             </div>
           </div>
-          <form action="/auth/signout" method="post">
+          <form action="/api/auth/signout" method="post">
             <button
               formAction="/api/auth/signout"
-              className="w-full text-left text-xs text-slate-500 hover:text-red-400 transition-colors px-1 py-1"
+              className="text-xs text-slate-500 hover:text-red-400 transition-colors flex items-center gap-2"
             >
-              <i className="fa-solid fa-arrow-right-from-bracket mr-2" />
+              <i className="fa-solid fa-arrow-right-from-bracket w-4 text-center" />
               Sign out
             </button>
           </form>
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 overflow-auto">
-        {/* Top bar — mobile */}
-        <div className="lg:hidden flex items-center justify-between px-6 py-4 border-b border-white/5 bg-navy-800">
-          <Link href="/">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo.png" alt="APRN" className="h-7 w-auto" />
-          </Link>
-          <span className="text-xs text-slate-400">{profile?.full_name ?? user.email}</span>
-        </div>
+      {/* ── Main area ─────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
-        <div className="px-6 py-10 lg:px-10 lg:py-12 max-w-7xl mx-auto">
+        {/* Top header */}
+        <header className="shrink-0 border-b border-white/5 bg-navy-900/95 backdrop-blur-md z-40">
+          <div className="px-6 md:px-8 h-20 flex items-center justify-between gap-6">
+
+            {/* Mobile logo */}
+            <Link href="/" className="md:hidden shrink-0">
+              <Image src="/images/logo.png" alt="APRN" width={999} height={453} className="h-7 w-auto" />
+            </Link>
+
+            {/* Search */}
+            <div className="flex-1 max-w-xl hidden md:block">
+              <div className="relative">
+                <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search intelligence, reports, members..."
+                  className="w-full bg-navy-800 border border-white/5 py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Right: bell + user */}
+            <div className="flex items-center gap-5 shrink-0 ml-auto">
+              <button className="relative text-slate-400 hover:text-gold-500 transition-colors">
+                <i className="fa-solid fa-bell text-base" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-gold-500 rounded-full" />
+              </button>
+
+              <div className="flex items-center gap-3 pl-5 border-l border-white/5">
+                <div className="relative">
+                  <div className="w-9 h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center">
+                    <span className="text-xs font-bold text-gold-500">{initials}</span>
+                  </div>
+                  <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-navy-900 rounded-full" />
+                </div>
+                <div className="hidden lg:block">
+                  <p className="text-sm font-semibold text-white">{firstName}</p>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest capitalize">{tier}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Scrollable content */}
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
           {children}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
