@@ -92,18 +92,13 @@ export default function Navigation() {
 
         {/* Desktop CTAs + mobile hamburger */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* Member Portal — disabled */}
-          <div className="hidden md:inline-flex relative">
-            <button
-              disabled
-              className="px-4 py-2 text-sm font-medium text-slate-500 border border-navy-700/70 cursor-not-allowed rounded-sm opacity-50"
-            >
-              Member Portal
-            </button>
-            <span className="absolute -top-2.5 -right-1.5 text-[8px] font-bold bg-navy-800 border border-gold-500/25 text-gold-500 px-1.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
-              Soon
-            </span>
-          </div>
+          {/* Member Portal */}
+          <Link
+            href="/login"
+            className="hidden md:inline-flex px-4 py-2 text-sm font-medium text-slate-300 border border-navy-700/70 hover:border-gold-500/40 hover:text-gold-500 transition-all rounded-sm"
+          >
+            Member Portal
+          </Link>
 
           {/* Join Network CTA */}
           <a
@@ -205,17 +200,13 @@ export default function Navigation() {
                   closed: { opacity: 0, y: 8 },
                 }}
               >
-                <div className="relative">
-                  <button
-                    disabled
-                    className="w-full px-5 py-3 text-sm font-medium text-slate-500 border border-navy-700 cursor-not-allowed rounded-sm opacity-50"
-                  >
-                    Member Portal
-                  </button>
-                  <span className="absolute -top-2.5 right-3 text-[8px] font-bold bg-navy-800 border border-gold-500/25 text-gold-500 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                    Coming Soon
-                  </span>
-                </div>
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="w-full px-5 py-3 text-sm font-medium text-slate-300 border border-navy-700 hover:border-gold-500/40 hover:text-gold-500 transition-all rounded-sm text-center"
+                >
+                  Member Portal
+                </Link>
                 <a
                   href="/contact"
                   className="flex items-center justify-center gap-2 w-full px-5 py-3.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm shadow-[0_0_16px_rgba(212,160,23,0.3)]"
