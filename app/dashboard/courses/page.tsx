@@ -7,6 +7,7 @@ const categories = ["All", "Pipeline Integrity", "Policy & Regulation", "Renewab
 const courses = [
   {
     code: "APC-101",
+    slug: "apc-101",
     title: "Pipeline Integrity Management Fundamentals",
     category: "Pipeline Integrity",
     duration: "6 weeks",
@@ -18,6 +19,7 @@ const courses = [
   },
   {
     code: "APC-210",
+    slug: "apc-210",
     title: "Regulatory Frameworks for Transnational Pipelines",
     category: "Policy & Regulation",
     duration: "4 weeks",
@@ -29,6 +31,7 @@ const courses = [
   },
   {
     code: "APC-305",
+    slug: "apc-305",
     title: "Hydrogen Blending in Legacy Gas Infrastructure",
     category: "Renewable Integration",
     duration: "5 weeks",
@@ -40,6 +43,7 @@ const courses = [
   },
   {
     code: "APC-150",
+    slug: "apc-150",
     title: "HSE Management in Pipeline Construction",
     category: "Safety & HSE",
     duration: "3 weeks",
@@ -51,6 +55,7 @@ const courses = [
   },
   {
     code: "APC-280",
+    slug: "apc-280",
     title: "Project Finance for Energy Infrastructure",
     category: "Project Management",
     duration: "6 weeks",
@@ -62,6 +67,7 @@ const courses = [
   },
   {
     code: "APC-320",
+    slug: "apc-320",
     title: "Corrosion Science in Tropical Marine Environments",
     category: "Pipeline Integrity",
     duration: "4 weeks",
@@ -181,10 +187,10 @@ export default function CoursesPage() {
 
             {/* CTA */}
             <Link
-              href="/dashboard/membership"
+              href={`/dashboard/courses/${course.slug}`}
               className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/30 hover:bg-gold-500/10 transition-colors"
             >
-              Enrol — Upgrade Required
+              View Course →
             </Link>
           </div>
         ))}
