@@ -375,9 +375,11 @@ export default async function PartnershipsPage() {
                     className="glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors p-6 flex flex-col items-center gap-4 group"
                   >
                     {partner.logoUrl ? (
-                      <img
+                      <Image
                         src={partner.logoUrl}
                         alt={partner.name}
+                        width={120}
+                        height={48}
                         className="h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity filter grayscale group-hover:grayscale-0"
                       />
                     ) : (

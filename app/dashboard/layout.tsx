@@ -28,11 +28,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div
-      className="flex h-screen bg-navy-900 overflow-hidden"
+      className="flex h-dvh bg-navy-900 overflow-hidden"
       style={{ fontFamily: "var(--font-inter), sans-serif" }}
     >
-      {/* ── Sidebar ──────────────────────────────────────────── */}
-      <aside className="hidden md:flex w-[260px] shrink-0 flex-col bg-navy-900 border-r border-white/5 h-screen overflow-y-auto">
+      {/* -- Sidebar ------------------------------------------------ */}
+      <aside className="hidden md:flex w-[260px] shrink-0 flex-col bg-navy-900 border-r border-white/5 h-dvh overflow-y-auto">
         {/* Logo */}
         <div className="px-8 py-6 border-b border-white/5 shrink-0">
           <Link href="/">
@@ -60,7 +60,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <p className="text-xs font-semibold text-white truncate">
                 {displayName.split(" ").slice(0, 2).join(" ")}
               </p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider capitalize">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">
                 {tier} member
               </p>
             </div>
@@ -77,7 +77,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
       </aside>
 
-      {/* ── Main area ─────────────────────────────────────────── */}
+      {/* -- Main area ---------------------------------------------- */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Top header */}

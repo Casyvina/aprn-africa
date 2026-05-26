@@ -1,6 +1,7 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = { title: "My Research | APRN" };
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 const filters = ["All", "Pipeline Integrity", "Policy & Regulation", "Renewable Integration", "Project Management", "Safety & HSE"];
 
@@ -79,13 +80,25 @@ const papers = [
   },
 ];
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
 export default function ResearchPage() {
   return (
-    <div className="flex flex-col gap-8 max-w-[1100px]">
+    <div className="flex flex-col gap-8 max-w-275">
 
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/5 pb-6">
-        <div>
+      {/* Header */}
+      <motion.div
+        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/5 pb-6"
+        initial="hidden" animate="visible" variants={stagger}
+      >
+        <motion.div variants={fadeUp}>
           <h2
             className="text-3xl font-bold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -95,13 +108,13 @@ export default function ResearchPage() {
           <p className="text-sm text-slate-400 mt-1">
             Your personalised intelligence feed — latest papers, briefs, and technical reports.
           </p>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
+        </motion.div>
+        <motion.div variants={fadeUp} className="flex items-center gap-3 shrink-0">
           <div className="relative">
             <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none" />
             <input
               type="text"
-              placeholder="Search research…"
+              placeholder="Search research..."
               className="bg-navy-800 border border-white/10 pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors w-52"
             />
           </div>
@@ -109,38 +122,44 @@ export default function ResearchPage() {
             <i className="fa-solid fa-sliders text-[10px]" />
             Filter
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* ── Stats strip ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {/* Stats strip */}
+      <motion.div
+        className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+        initial="hidden" animate="visible" variants={stagger}
+      >
         {[
           { label: "Papers Available", value: "400+", icon: "fa-file-lines" },
-          { label: "New This Month", value: "14", icon: "fa-sparkles" },
-          { label: "Saved by You", value: "3", icon: "fa-bookmark" },
-          { label: "Topics Tracked", value: "2", icon: "fa-tags" },
+          { label: "New This Month",   value: "14",   icon: "fa-sparkles" },
+          { label: "Saved by You",     value: "3",    icon: "fa-bookmark" },
+          { label: "Topics Tracked",   value: "2",    icon: "fa-tags" },
         ].map((s) => (
-          <div key={s.label} className="bg-navy-800 border border-white/5 p-4 flex items-center gap-3">
+          <motion.div
+            key={s.label}
+            variants={fadeUp}
+            className="bg-navy-800 border border-white/5 p-4 flex items-center gap-3"
+          >
             <div className="w-8 h-8 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
               <i className={`fa-solid ${s.icon} text-gold-500 text-xs`} />
             </div>
             <div>
-              <p
-                className="text-xl font-bold text-white leading-none"
-                style={{ fontFamily: "var(--font-playfair), serif" }}
-              >
+              <p className="text-xl font-bold text-white leading-none" style={{ fontFamily: "var(--font-playfair), serif" }}>
                 {s.value}
               </p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5 leading-tight">
-                {s.label}
-              </p>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5 leading-tight">{s.label}</p>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* ── Membership gate ──────────────────────────────────────── */}
-      <div className="bg-gold-500/5 border border-gold-500/20 p-5 flex items-start gap-4">
+      {/* Membership gate */}
+      <motion.div
+        className="bg-gold-500/5 border border-gold-500/20 p-5 flex items-start gap-4"
+        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.25, ease: "easeOut" }}
+      >
         <i className="fa-solid fa-lock text-gold-500 text-sm mt-0.5 shrink-0" />
         <div className="flex-1">
           <p className="text-sm font-semibold text-white mb-1">Full archive requires Professional membership</p>
@@ -151,10 +170,14 @@ export default function ResearchPage() {
             </Link>
           </p>
         </div>
-      </div>
+      </motion.div>
 
-      {/* ── Filter tabs ──────────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-2">
+      {/* Filter tabs */}
+      <motion.div
+        className="flex flex-wrap gap-2"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 0.35, delay: 0.3 }}
+      >
         {filters.map((f, i) => (
           <button
             key={f}
@@ -167,9 +190,9 @@ export default function ResearchPage() {
             {f}
           </button>
         ))}
-      </div>
+      </motion.div>
 
-      {/* ── Sort row ─────────────────────────────────────────────── */}
+      {/* Sort row */}
       <div className="flex items-center justify-between">
         <p className="text-xs text-slate-500">
           Showing <span className="text-white">{papers.length}</span> results
@@ -191,19 +214,20 @@ export default function ResearchPage() {
         </div>
       </div>
 
-      {/* ── Research list ────────────────────────────────────────── */}
-      <div className="flex flex-col gap-3">
+      {/* Research list */}
+      <motion.div
+        className="flex flex-col gap-3"
+        initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.35 } } }}
+      >
         {papers.map((paper) => (
-          <div
+          <motion.div
             key={paper.title}
-            className="bg-navy-800 border border-white/5 p-6 flex gap-5 hover:border-gold-500/20 transition-colors group"
+            variants={fadeUp}
+            className="bg-navy-800 border border-white/5 p-6 flex gap-5 hover:border-gold-500/20 transition-colors group cursor-pointer"
           >
-            {/* Icon */}
             <div className="w-10 h-10 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0 mt-0.5">
               <i className="fa-solid fa-file-lines text-slate-500 group-hover:text-gold-500 transition-colors text-sm" />
             </div>
-
-            {/* Content */}
             <div className="flex-1 min-w-0 flex flex-col gap-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className={`px-2 py-0.5 bg-navy-900 border border-white/5 text-[9px] font-bold tracking-widest uppercase ${paper.tagColor}`}>
@@ -216,11 +240,9 @@ export default function ResearchPage() {
                   </span>
                 )}
               </div>
-
               <h4 className="text-sm font-semibold text-white group-hover:text-gold-400 transition-colors leading-snug">
                 {paper.title}
               </h4>
-
               <div className="flex items-center gap-4 text-xs text-slate-500 flex-wrap">
                 <span className="flex items-center gap-1.5">
                   <i className="fa-solid fa-user-pen text-[10px]" />
@@ -234,8 +256,6 @@ export default function ResearchPage() {
                 <span>{paper.readTime} read</span>
               </div>
             </div>
-
-            {/* Actions */}
             <div className="flex flex-col gap-2 shrink-0">
               <Link
                 href="/dashboard/membership"
@@ -255,18 +275,15 @@ export default function ResearchPage() {
                 <i className={`text-[10px] ${paper.saved ? "fa-solid fa-bookmark" : "fa-regular fa-bookmark"}`} />
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* ── Pagination ───────────────────────────────────────────── */}
+      {/* Pagination */}
       <div className="flex items-center justify-between py-4 border-t border-white/5">
         <p className="text-xs text-slate-500">Page 1 of 28</p>
         <div className="flex gap-2">
-          <button
-            disabled
-            className="w-8 h-8 bg-navy-800 border border-white/5 flex items-center justify-center text-slate-600 cursor-not-allowed"
-          >
+          <button disabled className="w-8 h-8 bg-navy-800 border border-white/5 flex items-center justify-center text-slate-600 cursor-not-allowed">
             <i className="fa-solid fa-chevron-left text-[10px]" />
           </button>
           {[1, 2, 3].map((n) => (

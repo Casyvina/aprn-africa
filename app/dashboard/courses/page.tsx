@@ -1,13 +1,13 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = { title: "Training & Courses | APRN" };
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 const categories = ["All", "Pipeline Integrity", "Policy & Regulation", "Renewable Integration", "Project Management", "Safety & HSE"];
 
 const courses = [
   {
     code: "APC-101",
-    slug: "apc-101",
     title: "Pipeline Integrity Management Fundamentals",
     category: "Pipeline Integrity",
     duration: "6 weeks",
@@ -19,7 +19,6 @@ const courses = [
   },
   {
     code: "APC-210",
-    slug: "apc-210",
     title: "Regulatory Frameworks for Transnational Pipelines",
     category: "Policy & Regulation",
     duration: "4 weeks",
@@ -31,7 +30,6 @@ const courses = [
   },
   {
     code: "APC-305",
-    slug: "apc-305",
     title: "Hydrogen Blending in Legacy Gas Infrastructure",
     category: "Renewable Integration",
     duration: "5 weeks",
@@ -43,7 +41,6 @@ const courses = [
   },
   {
     code: "APC-150",
-    slug: "apc-150",
     title: "HSE Management in Pipeline Construction",
     category: "Safety & HSE",
     duration: "3 weeks",
@@ -55,7 +52,6 @@ const courses = [
   },
   {
     code: "APC-280",
-    slug: "apc-280",
     title: "Project Finance for Energy Infrastructure",
     category: "Project Management",
     duration: "6 weeks",
@@ -67,7 +63,6 @@ const courses = [
   },
   {
     code: "APC-320",
-    slug: "apc-320",
     title: "Corrosion Science in Tropical Marine Environments",
     category: "Pipeline Integrity",
     duration: "4 weeks",
@@ -79,13 +74,22 @@ const courses = [
   },
 ];
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
+};
+
 export default function CoursesPage() {
   return (
-    <div className="flex flex-col gap-8 max-w-[1100px]">
+    <div className="flex flex-col gap-8 max-w-275">
 
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/5 pb-6">
-        <div>
+      {/* Header */}
+      <motion.div
+        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/5 pb-6"
+        initial="hidden" animate="visible"
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }}
+      >
+        <motion.div variants={fadeUp}>
           <h2
             className="text-3xl font-bold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -95,21 +99,25 @@ export default function CoursesPage() {
           <p className="text-sm text-slate-400 mt-1">
             Professionally accredited programmes for pipeline engineers across Africa.
           </p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
+        </motion.div>
+        <motion.div variants={fadeUp} className="flex items-center gap-2 shrink-0">
           <div className="relative">
             <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none" />
             <input
               type="text"
-              placeholder="Search courses…"
+              placeholder="Search courses..."
               className="bg-navy-800 border border-white/10 pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors w-52"
             />
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* ── Enrolled banner (empty state) ───────────────────────── */}
-      <div className="bg-navy-800 border border-white/5 border-dashed p-8 flex flex-col sm:flex-row items-center gap-6">
+      {/* Empty enrolment state */}
+      <motion.div
+        className="bg-navy-800 border border-white/5 border-dashed p-8 flex flex-col sm:flex-row items-center gap-6"
+        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
+      >
         <div className="w-12 h-12 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
           <i className="fa-solid fa-graduation-cap text-slate-600 text-lg" />
         </div>
@@ -119,10 +127,14 @@ export default function CoursesPage() {
             Enrol in any programme below to track your progress from this dashboard.
           </p>
         </div>
-      </div>
+      </motion.div>
 
-      {/* ── Category filter ─────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-2">
+      {/* Category filter */}
+      <motion.div
+        className="flex flex-wrap gap-2"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 0.35, delay: 0.25 }}
+      >
         {categories.map((cat, i) => (
           <button
             key={cat}
@@ -135,16 +147,20 @@ export default function CoursesPage() {
             {cat}
           </button>
         ))}
-      </div>
+      </motion.div>
 
-      {/* ── Course grid ─────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* Course grid */}
+      <motion.div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+        initial="hidden" animate="visible"
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.3 } } }}
+      >
         {courses.map((course) => (
-          <div
+          <motion.div
             key={course.code}
-            className="bg-navy-800 border border-white/5 p-6 flex flex-col gap-4 hover:border-gold-500/20 transition-colors group"
+            variants={fadeUp}
+            className="bg-navy-800 border border-white/5 p-6 flex flex-col gap-4 hover:border-gold-500/20 transition-colors group cursor-pointer"
           >
-            {/* Course header */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -160,14 +176,8 @@ export default function CoursesPage() {
                 </h4>
               </div>
             </div>
-
-            {/* Description */}
-            <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
-              {course.description}
-            </p>
-
-            {/* Meta row */}
-            <div className="flex items-center gap-5 text-xs text-slate-500 border-t border-white/5 pt-3">
+            <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">{course.description}</p>
+            <div className="flex items-center gap-5 text-xs text-slate-500 border-t border-white/5 pt-3 flex-wrap">
               <span className="flex items-center gap-1.5">
                 <i className="fa-solid fa-clock text-[10px]" />
                 {course.duration}
@@ -184,19 +194,17 @@ export default function CoursesPage() {
                 {course.category}
               </span>
             </div>
-
-            {/* CTA */}
             <Link
-              href={`/dashboard/courses/${course.slug}`}
+              href="/dashboard/membership"
               className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/30 hover:bg-gold-500/10 transition-colors"
             >
-              View Course →
+              Enrol — Upgrade Required
             </Link>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* ── Footer CTA ──────────────────────────────────────────── */}
+      {/* Footer CTA */}
       <div className="text-center py-6 border-t border-white/5">
         <p className="text-xs text-slate-500 mb-3">
           Full catalogue access requires a Professional or Institutional membership.

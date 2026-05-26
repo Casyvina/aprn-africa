@@ -1,4 +1,5 @@
 import { PortableText, type PortableTextComponents } from 'next-sanity'
+import Image from 'next/image'
 
 type CalloutValue = { _type: 'callout'; title?: string; text: string }
 type ImageValue  = { _type: 'image'; asset?: { url?: string }; alt?: string; caption?: string }
@@ -84,10 +85,12 @@ const components: PortableTextComponents = {
     image: ({ value }: { value: ImageValue }) =>
       value.asset?.url ? (
         <figure className="my-10">
-          <img
+          <Image
             src={value.asset.url}
             alt={value.alt ?? ''}
-            className="w-full rounded-sm"
+            width={1200}
+            height={675}
+            className="w-full h-auto rounded-sm"
           />
           {value.caption && (
             <figcaption className="text-center text-xs text-slate-500 mt-3 uppercase tracking-wider">

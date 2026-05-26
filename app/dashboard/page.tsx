@@ -18,7 +18,7 @@ export default async function DashboardPage() {
   const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
 
   return (
-    <div className="flex flex-col gap-10 max-w-[1280px]">
+    <div className="flex flex-col gap-10 max-w-320">
 
       {/* ── Welcome Banner + Stats ────────────────────────────── */}
       <section className="flex flex-col gap-5">

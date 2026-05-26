@@ -25,8 +25,12 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close drawer on route change
-  useEffect(() => { setOpen(false); }, [pathname]);
+  // Close drawer on route change (state-during-render, avoids cascading useEffect)
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setOpen(false);
+  }
 
   // Lock body scroll when open
   useEffect(() => {
@@ -114,7 +118,7 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
               <p className="text-xs font-semibold text-white truncate">
                 {displayName.split(" ").slice(0, 2).join(" ")}
               </p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider capitalize">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider">
                 {tier} member
               </p>
             </div>

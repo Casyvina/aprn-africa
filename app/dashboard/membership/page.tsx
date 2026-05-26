@@ -85,7 +85,7 @@ export default async function MembershipPage() {
   const tierLabel = currentTier.charAt(0).toUpperCase() + currentTier.slice(1);
 
   return (
-    <div className="flex flex-col gap-10 max-w-[1100px]">
+    <div className="flex flex-col gap-10 max-w-275">
 
       {/* ── Current plan banner ─────────────────────────────────── */}
       <div className="bg-navy-800 border border-white/5 border-l-4 border-l-gold-500 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

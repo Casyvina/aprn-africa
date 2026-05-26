@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { PortableText, type PortableTextComponents } from "next-sanity";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -129,7 +130,7 @@ const lightComponents: PortableTextComponents = {
     image: ({ value }: { value: { asset?: { url?: string }; alt?: string; caption?: string } }) =>
       value.asset?.url ? (
         <figure className="my-10">
-          <img src={value.asset.url} alt={value.alt ?? ""} className="w-full rounded-sm" />
+          <Image src={value.asset.url} alt={value.alt ?? ""} width={1200} height={675} className="w-full h-auto rounded-sm" />
           {value.caption && (
             <figcaption className="text-center text-xs text-slate-400 mt-3 uppercase tracking-wider">
               {value.caption}

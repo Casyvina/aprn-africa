@@ -1,6 +1,5 @@
 import { buildLegacyTheme } from 'sanity'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const aprnTheme = buildLegacyTheme({
   '--black':      '#071B2A',
   '--white':      '#ffffff',
