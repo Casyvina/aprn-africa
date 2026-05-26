@@ -3,6 +3,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardNav from "@/components/DashboardNav";
+import DashboardMobileNav from "@/components/DashboardMobileNav";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -83,10 +84,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <header className="shrink-0 border-b border-white/5 bg-navy-900/95 backdrop-blur-md z-40">
           <div className="px-6 md:px-8 h-20 flex items-center justify-between gap-6">
 
-            {/* Mobile logo */}
-            <Link href="/" className="md:hidden shrink-0">
-              <Image src="/images/logo.png" alt="APRN" width={999} height={453} className="h-7 w-auto" />
-            </Link>
+            {/* Mobile: hamburger drawer trigger */}
+            <DashboardMobileNav initials={initials} tier={tier} displayName={displayName} />
 
             {/* Search */}
             <div className="flex-1 max-w-xl hidden md:block">
