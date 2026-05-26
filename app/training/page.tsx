@@ -291,6 +291,22 @@ export default async function TrainingPage() {
           </section>
         )}
 
+        {/* -- Member access callout ----------------------------- */}
+        <section className="py-6 bg-navy-900 border-t border-navy-800">
+          <div className="max-w-360 mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-slate-500">
+              <i className="fa-solid fa-lock-open text-gold-500 mr-1.5" />
+              Already an APRN member? Structured online courses with progress tracking are available in your dashboard.
+            </p>
+            <Link
+              href="/dashboard/courses"
+              className="shrink-0 text-xs font-bold tracking-widest uppercase text-gold-500 hover:text-gold-400 transition-colors flex items-center gap-1.5"
+            >
+              Open Training Dashboard <i className="fa-solid fa-arrow-right text-[10px]" />
+            </Link>
+          </div>
+        </section>
+
         {/* -- CTA ------------------------------------------------ */}
         <section className="py-24 bg-navy-900 border-t border-navy-800 relative overflow-hidden">
           <div className="absolute inset-0">

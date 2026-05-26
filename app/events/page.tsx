@@ -10,25 +10,25 @@ export const metadata = {
 
 const events = [
   {
-    slug: "apc-2025",
-    title: "African Pipeline Conference 2025",
-    subtitle: "The continent's premier gathering for pipeline professionals",
-    dates: "October 15–18, 2025",
-    location: "Eko Hotels & Suites, Lagos, Nigeria",
-    type: "Conference",
+    slug: "apls-morocco-2026",
+    title: "Africa Pipeline Leaders Summit — Morocco 2026",
+    subtitle: "The continent's premier gathering for pipeline engineers, policymakers, and investors",
+    dates: "October 2026",
+    location: "Marrakech, Morocco",
+    type: "Summit",
     typeColor: "text-gold-500 border-gold-500/30",
-    status: "Registration Open",
-    statusColor: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
-    attendees: "500+",
+    status: "Registration Opening Soon",
+    statusColor: "text-gold-500 bg-gold-500/10 border-gold-500/20",
+    attendees: "600+",
     image: "/images/hero-pipeline.jpg",
-    tags: ["Pipeline Integrity", "Policy", "Renewable Energy", "Training"],
+    tags: ["Pipeline Integrity", "Policy", "Renewable Energy", "Finance", "Training"],
     featured: true,
   },
   {
     slug: null,
     title: "West Africa Pipeline Integrity Workshop",
     subtitle: "Hands-on masterclass for integrity engineers",
-    dates: "January 22–23, 2026",
+    dates: "Q3 2026",
     location: "Accra, Ghana",
     type: "Workshop",
     typeColor: "text-emerald-400 border-emerald-400/30",
@@ -43,7 +43,7 @@ const events = [
     slug: null,
     title: "APRN Annual Policy Dialogue",
     subtitle: "Regulators, ministers, and industry leaders at one table",
-    dates: "March 2026",
+    dates: "Q4 2026",
     location: "Nairobi, Kenya",
     type: "Policy Forum",
     typeColor: "text-blue-400 border-blue-400/30",
@@ -148,7 +148,7 @@ export default function EventsPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 border text-[9px] font-bold tracking-widest uppercase mb-3 ${event.statusColor}`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
                         {event.status}
                       </span>
                       <h3
@@ -207,13 +207,13 @@ export default function EventsPage() {
                       href={`/events/${event.slug}`}
                       className="px-6 py-3 bg-gold-500 text-navy-900 text-xs font-bold tracking-widest uppercase hover:bg-gold-400 transition-colors"
                     >
-                      View Conference
+                      View Summit
                     </Link>
                     <Link
                       href={`/events/${event.slug}#register`}
                       className="px-6 py-3 border border-gold-500/30 text-gold-500 text-xs font-bold tracking-widest uppercase hover:bg-gold-500/10 transition-colors"
                     >
-                      Register Now
+                      Express Interest
                     </Link>
                   </div>
                 </div>

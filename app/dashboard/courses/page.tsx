@@ -195,26 +195,34 @@ export default function CoursesPage() {
               </span>
             </div>
             <Link
-              href="/dashboard/membership"
+              href={`/dashboard/courses/${course.code.toLowerCase()}`}
               className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/30 hover:bg-gold-500/10 transition-colors"
             >
-              Enrol — Upgrade Required
+              View Course →
             </Link>
           </motion.div>
         ))}
       </motion.div>
 
       {/* Footer CTA */}
-      <div className="text-center py-6 border-t border-white/5">
-        <p className="text-xs text-slate-500 mb-3">
+      <div className="text-center py-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-xs text-slate-500">
           Full catalogue access requires a Professional or Institutional membership.
         </p>
-        <Link
-          href="/dashboard/membership"
-          className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gold-500 hover:text-gold-400 transition-colors"
-        >
-          View Membership Plans <i className="fa-solid fa-arrow-right" />
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link
+            href="/training"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            <i className="fa-solid fa-arrow-left text-[10px]" /> Public training programmes
+          </Link>
+          <Link
+            href="/dashboard/membership"
+            className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gold-500 hover:text-gold-400 transition-colors"
+          >
+            View Membership Plans <i className="fa-solid fa-arrow-right" />
+          </Link>
+        </div>
       </div>
     </div>
   );

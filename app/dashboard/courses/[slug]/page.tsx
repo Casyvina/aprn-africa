@@ -278,7 +278,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   const relatedCourses = course.related.map((s) => courses[s]).filter(Boolean);
 
   return (
-    <div className="flex flex-col gap-8 max-w-[1100px]">
+    <div className="flex flex-col gap-8 max-w-275">
 
       {/* ── Breadcrumb ───────────────────────────────────────────── */}
       <div className="flex items-center gap-2 text-xs text-slate-500">

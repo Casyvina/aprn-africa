@@ -1,6 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import PaystackButton from "@/components/PaystackButton";
+
+// Amounts in kobo (1 NGN = 100 kobo)
+const TIER_KOBO: Record<string, number> = {
+  student:      1_000_000,
+  graduate:     2_500_000,
+  professional: 5_000_000,
+  associate:    3_500_000,
+  corporate:   50_000_000,
+};
 
 export const metadata = { title: "Membership | APRN" };
 
@@ -137,7 +147,11 @@ const comparison = [
   { benefit: "Featured in Publications", student: "—", individual: "—",      corporate: "—",      founding: "✓" },
 ];
 
-export default async function MembershipPage() {
+export default async function MembershipPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ upgraded?: string }>;
+}) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -149,9 +163,26 @@ export default async function MembershipPage() {
     .single();
 
   const currentTier = profile?.membership_tier ?? "free";
+  const email = user.email ?? "";
+  const { upgraded } = await searchParams;
 
   return (
-    <div className="flex flex-col gap-10 max-w-[1100px]">
+    <div className="flex flex-col gap-10 max-w-275">
+
+      {/* ── Upgrade success banner ────────────────────────────────── */}
+      {upgraded === "true" && (
+        <div className="bg-emerald-400/10 border border-emerald-400/30 border-l-4 border-l-emerald-400 p-5 flex items-center gap-4">
+          <div className="w-9 h-9 bg-emerald-400/20 border border-emerald-400/30 flex items-center justify-center shrink-0">
+            <i className="fa-solid fa-check text-emerald-400 text-sm" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white mb-0.5">Payment confirmed — welcome to APRN!</p>
+            <p className="text-xs text-slate-400">
+              Your membership is now active. Full platform access has been unlocked.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── Status banner ─────────────────────────────────────────── */}
       <div className="bg-navy-800 border border-white/5 border-l-4 border-l-gold-500 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -263,12 +294,19 @@ export default async function MembershipPage() {
               </ul>
 
               {plan.paystack ? (
-                <button
-                  disabled
-                  className="w-full py-2.5 text-[10px] font-bold tracking-widest uppercase bg-navy-900 border border-white/10 text-slate-500 cursor-not-allowed"
-                >
-                  Pay via Paystack — Coming Soon
-                </button>
+                currentTier === plan.key ? (
+                  <div className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-white/10">
+                    Current Plan
+                  </div>
+                ) : (
+                  <PaystackButton
+                    planKey={plan.key}
+                    planName={plan.name}
+                    amountKobo={TIER_KOBO[plan.key] ?? 0}
+                    email={email}
+                    featured={plan.featured}
+                  />
+                )
               ) : (
                 <a
                   href="mailto:info@aprn-africa.org?subject=International Membership Enquiry"
