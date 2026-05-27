@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import type { LeadershipPerson } from "@/lib/queries/homepage";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -20,25 +21,49 @@ const fadeRight = {
 
 const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
-const leadership = [
-  {
-    name: "Pieter-Bas Nederveen",
-    title: "Advisory Committee Member, Senior Energy Advisor",
-    photo: "/images/pieter-bas-nederveen.png",
-  },
-  {
-    name: "Lucy Okeke",
-    title: "Founder",
-    photo: "/images/lucy-okeke.jpg",
-  },
-  {
-    name: "Joseph Agwuh",
-    title: "Head, Technology and Innovation",
-    photo: "/images/joseph-agwuh.png",
-  },
+const DEFAULT_LEADERSHIP: (LeadershipPerson & { photo: string })[] = [
+  { name: "Pieter-Bas Nederveen", title: "Advisory Committee Member, Senior Energy Advisor", photo: "/images/pieter-bas-nederveen.png" },
+  { name: "Lucy Okeke",           title: "Founder",                                          photo: "/images/lucy-okeke.jpg" },
+  { name: "Joseph Agwuh",         title: "Head, Technology and Innovation",                   photo: "/images/joseph-agwuh.png" },
 ];
 
-export default function AboutSection() {
+interface AboutProps {
+  heading?: string
+  description?: string
+  partnerName?: string
+  stat1Value?: string
+  stat1Label?: string
+  stat2Value?: string
+  stat2Label?: string
+  leadership?: LeadershipPerson[]
+  imageUrl?: string
+}
+
+export default function AboutSection({
+  heading,
+  description,
+  partnerName,
+  stat1Value,
+  stat1Label,
+  stat2Value,
+  stat2Label,
+  leadership,
+  imageUrl,
+}: AboutProps) {
+  const sectionHeading  = heading      ?? "The Institutional Foundation for African Energy";
+  const sectionDesc     = description  ?? "The African Pipeline Resource Network (APRN) is the premier continental think-tank and capacity building network dedicated to the engineering, policy, and operational excellence of Africa\u2019s midstream infrastructure.";
+  const partner         = partnerName  ?? "EITEP";
+  const s1Value         = stat1Value   ?? "15";
+  const s1Label         = stat1Label   ?? "Partner Nations";
+  const s2Value         = stat2Value   ?? "50";
+  const s2Label         = stat2Label   ?? "Km of Pipeline Tracked";
+  const sectionImage    = imageUrl     ?? null;
+
+  // Merge CMS leadership with local photo fallbacks
+  const leadershipData = leadership && leadership.length > 0
+    ? leadership.map((p) => ({ ...p, photo: p.photoUrl ?? DEFAULT_LEADERSHIP.find((d) => d.name === p.name)?.photo ?? "/images/female-engineer.jpg" }))
+    : DEFAULT_LEADERSHIP.map((p) => ({ name: p.name, title: p.title, photoUrl: undefined, photo: p.photo }));
+
   return (
     <section id="about" className="py-24 bg-navy-900 relative border-t border-navy-800">
       <div className="max-w-360 mx-auto px-6 md:px-12">
@@ -52,20 +77,24 @@ export default function AboutSection() {
             variants={{ ...stagger, ...fadeLeft }}
           >
             <motion.h2 variants={fadeUp} className="font-display text-3xl md:text-5xl font-bold mb-6 text-white">
-              The Institutional Foundation for{" "}
-              <span className="text-gold-500">African Energy</span>
+              {sectionHeading.includes("African Energy") ? (
+                <>
+                  {sectionHeading.split("African Energy")[0]}
+                  <span className="text-gold-500">African Energy</span>
+                </>
+              ) : (
+                sectionHeading
+              )}
             </motion.h2>
             <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-6">
-              The African Pipeline Resource Network (APRN) is the premier continental think-tank and
-              capacity building network dedicated to the engineering, policy, and operational excellence of
-              Africa&apos;s midstream infrastructure.
+              {sectionDesc}
             </motion.p>
 
-            {/* EITEP strategic partner */}
+            {/* Strategic partner badge */}
             <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border border-gold-500/30 bg-gold-500/5 mb-8">
               <i className="fa-solid fa-handshake text-gold-500 text-xs" />
               <span className="text-xs text-slate-300 tracking-wide">
-                Strategic Partner: <span className="text-gold-500 font-semibold">EITEP</span>
+                Strategic Partner: <span className="text-gold-500 font-semibold">{partner}</span>
               </span>
             </motion.div>
 
@@ -73,15 +102,15 @@ export default function AboutSection() {
             <motion.div variants={fadeUp} className="grid grid-cols-2 gap-8 border-t border-navy-700 pt-8 mb-10">
               <div>
                 <div className="text-4xl font-display font-bold text-white mb-2">
-                  15<span className="text-gold-500">+</span>
+                  {s1Value}<span className="text-gold-500">+</span>
                 </div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider">Partner Nations</div>
+                <div className="text-sm text-slate-400 uppercase tracking-wider">{s1Label}</div>
               </div>
               <div>
                 <div className="text-4xl font-display font-bold text-white mb-2">
-                  50<span className="text-gold-500">k</span>
+                  {s2Value}<span className="text-gold-500">k</span>
                 </div>
-                <div className="text-sm text-slate-400 uppercase tracking-wider">Km of Pipeline Tracked</div>
+                <div className="text-sm text-slate-400 uppercase tracking-wider">{s2Label}</div>
               </div>
             </motion.div>
 
@@ -91,7 +120,7 @@ export default function AboutSection() {
                 Leadership
               </span>
               <div className="flex flex-col sm:flex-row gap-4">
-                {leadership.map((person) => (
+                {leadershipData.map((person) => (
                   <div
                     key={person.name}
                     className="flex items-center gap-3 glass-panel px-4 py-3 rounded-sm border-l-2 border-gold-500/50"
@@ -129,7 +158,7 @@ export default function AboutSection() {
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-top"
-                src="/images/female-engineer.png"
+                src={sectionImage ?? "/images/female-engineer.png"}
                 alt="African engineers in hard hats and safety vests inspecting pipeline infrastructure"
               />
               <div className="absolute bottom-6 left-6 z-20 glass-panel px-4 py-3 border-l-4 border-gold-500">

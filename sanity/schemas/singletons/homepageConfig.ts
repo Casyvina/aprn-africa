@@ -7,26 +7,40 @@ export const homepageConfig = defineType({
   type: 'document',
   icon: HomeIcon,
   groups: [
-    { name: 'hero',      title: 'Hero',      default: true },
-    { name: 'metrics',   title: 'Metrics' },
-    { name: 'featured',  title: 'Featured Content' },
-    { name: 'cta',       title: 'CTA' },
+    { name: 'hero',     title: 'Hero',            default: true },
+    { name: 'metrics',  title: 'Network Metrics' },
+    { name: 'about',    title: 'About Section' },
+    { name: 'whyNow',   title: 'Why Now Section' },
+    { name: 'pillars',  title: 'Pillars Section' },
+    { name: 'featured', title: 'Featured Content' },
+    { name: 'roadmap',  title: 'Roadmap Section' },
+    { name: 'cta',      title: 'CTA Section' },
   ],
   fields: [
-    // ── Hero ─────────────────────────────────────────────────────────
+
+    // ── Hero ──────────────────────────────────────────────────────────────
     defineField({
-      name: 'heroHeadline',
-      title: 'Hero Headline Override',
+      name: 'heroBadgeLabel',
+      title: 'Badge Label',
       type: 'string',
       group: 'hero',
-      description: 'Leave blank to use the default headline from the component.',
+      description: 'Text in the small badge above the headline. e.g. Institutional Infrastructure',
+      initialValue: 'Institutional Infrastructure',
+    }),
+    defineField({
+      name: 'heroHeadline',
+      title: 'Headline',
+      type: 'string',
+      group: 'hero',
+      description: 'Main headline. Leave blank to use the default multi-line formatted version.',
     }),
     defineField({
       name: 'heroSubtext',
-      title: 'Hero Subtext Override',
+      title: 'Subtext',
       type: 'text',
       group: 'hero',
       rows: 3,
+      initialValue: 'Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure the continent\'s energy future.',
     }),
     defineField({
       name: 'heroImage',
@@ -34,26 +48,44 @@ export const homepageConfig = defineType({
       type: 'image',
       group: 'hero',
       options: { hotspot: true },
+      description: 'Overrides the default pipeline background image.',
+    }),
+    defineField({
+      name: 'heroPrimaryButtonLabel',
+      title: 'Primary Button Label',
+      type: 'string',
+      group: 'hero',
+      initialValue: 'Explore APRN',
+    }),
+    defineField({
+      name: 'heroSecondaryButtonLabel',
+      title: 'Secondary Button Label',
+      type: 'string',
+      group: 'hero',
+      initialValue: 'Strategic Partnerships',
     }),
 
-    // ── Platform Metrics ──────────────────────────────────────────────
+    // ── Network Metrics ───────────────────────────────────────────────────
     defineField({
       name: 'activeProjectsCount',
       title: 'Active Projects Count',
       type: 'number',
       group: 'metrics',
+      initialValue: 42,
     }),
     defineField({
       name: 'engineeringTraineesCount',
       title: 'Engineering Trainees Count',
       type: 'number',
       group: 'metrics',
+      initialValue: 1250,
     }),
     defineField({
       name: 'policyFrameworksCount',
       title: 'Policy Frameworks Count',
       type: 'number',
       group: 'metrics',
+      initialValue: 18,
     }),
     defineField({
       name: 'kmUnderConstruction',
@@ -80,14 +112,158 @@ export const homepageConfig = defineType({
       group: 'metrics',
     }),
 
-    // ── Featured Content ──────────────────────────────────────────────
+    // ── About Section ─────────────────────────────────────────────────────
+    defineField({
+      name: 'aboutHeading',
+      title: 'Section Heading',
+      type: 'string',
+      group: 'about',
+      initialValue: 'The Institutional Foundation for African Energy',
+    }),
+    defineField({
+      name: 'aboutDescription',
+      title: 'Description',
+      type: 'text',
+      rows: 4,
+      group: 'about',
+      initialValue: 'The African Pipeline Resource Network (APRN) is the premier continental think-tank and capacity building network dedicated to the engineering, policy, and operational excellence of Africa\'s midstream infrastructure.',
+    }),
+    defineField({
+      name: 'aboutPartnerName',
+      title: 'Strategic Partner Name',
+      type: 'string',
+      group: 'about',
+      description: 'Shown in the partnership badge. e.g. EITEP',
+      initialValue: 'EITEP',
+    }),
+    defineField({
+      name: 'aboutStat1Value',
+      title: 'Stat 1 — Value',
+      type: 'string',
+      group: 'about',
+      description: 'e.g. 15+',
+      initialValue: '15+',
+    }),
+    defineField({
+      name: 'aboutStat1Label',
+      title: 'Stat 1 — Label',
+      type: 'string',
+      group: 'about',
+      initialValue: 'Partner Nations',
+    }),
+    defineField({
+      name: 'aboutStat2Value',
+      title: 'Stat 2 — Value',
+      type: 'string',
+      group: 'about',
+      description: 'e.g. 50k',
+      initialValue: '50k',
+    }),
+    defineField({
+      name: 'aboutStat2Label',
+      title: 'Stat 2 — Label',
+      type: 'string',
+      group: 'about',
+      initialValue: 'Km of Pipeline Tracked',
+    }),
+    defineField({
+      name: 'aboutLeadership',
+      title: 'Leadership',
+      type: 'array',
+      group: 'about',
+      of: [{ type: 'reference', to: [{ type: 'person' }] }],
+      description: 'Pick up to 5 people to show in the leadership row.',
+      validation: (r) => r.max(5),
+    }),
+    defineField({
+      name: 'aboutImage',
+      title: 'Section Image',
+      type: 'image',
+      group: 'about',
+      options: { hotspot: true },
+      description: 'Overrides the default female engineer image.',
+    }),
+
+    // ── Why Now Section ───────────────────────────────────────────────────
+    defineField({
+      name: 'whyNowBadge',
+      title: 'Section Badge',
+      type: 'string',
+      group: 'whyNow',
+      initialValue: 'The Urgency',
+    }),
+    defineField({
+      name: 'whyNowHeading',
+      title: 'Section Heading',
+      type: 'string',
+      group: 'whyNow',
+      initialValue: 'Why Africa Needs APRN Now',
+    }),
+    defineField({
+      name: 'whyNowIntro1',
+      title: 'First Paragraph',
+      type: 'text',
+      rows: 4,
+      group: 'whyNow',
+      initialValue: 'Africa is entering its most consequential energy decade. Billions in infrastructure capital are flowing — yet the continent risks repeating the colonial-era pattern of building assets without building the people to own, operate, and govern them.',
+    }),
+    defineField({
+      name: 'whyNowIntro2',
+      title: 'Second Paragraph',
+      type: 'text',
+      rows: 4,
+      group: 'whyNow',
+      initialValue: 'APRN exists to close that gap permanently: through world-class engineering certification, policy frameworks grounded in African realities, and a living intelligence network that keeps practitioners, regulators, and investors aligned.',
+    }),
+    defineField({
+      name: 'whyNowQuote',
+      title: 'Pull Quote',
+      type: 'string',
+      group: 'whyNow',
+      initialValue: 'Local content requirements without local capacity is policy fiction.',
+    }),
+    defineField({
+      name: 'whyNowStats',
+      title: 'Stat Cards',
+      type: 'array',
+      group: 'whyNow',
+      of: [{ type: 'insightStat' }],
+      description: 'Up to 4 stat cards shown on the right. Uses the Insight Stat object (value, label, icon).',
+      validation: (r) => r.max(4),
+    }),
+
+    // ── Pillars Section ───────────────────────────────────────────────────
+    defineField({
+      name: 'pillarsSectionTag',
+      title: 'Section Tag',
+      type: 'string',
+      group: 'pillars',
+      initialValue: 'Strategic Focus',
+    }),
+    defineField({
+      name: 'pillarsSectionHeading',
+      title: 'Section Heading',
+      type: 'string',
+      group: 'pillars',
+      initialValue: 'Our Core Pillars',
+    }),
+    defineField({
+      name: 'pillars',
+      title: 'Pillars',
+      type: 'array',
+      group: 'pillars',
+      of: [{ type: 'pillar' }],
+      description: 'Each pillar needs an FA icon class (e.g. fa-microscope), title, and description.',
+    }),
+
+    // ── Featured Content ──────────────────────────────────────────────────
     defineField({
       name: 'featuredReport',
       title: 'Featured Report',
       type: 'reference',
       group: 'featured',
       to: [{ type: 'researchReport' }],
-      description: 'The main featured report shown in the hero intelligence block.',
+      description: 'Main featured report shown in the intelligence block.',
     }),
     defineField({
       name: 'secondaryReports',
@@ -103,7 +279,6 @@ export const homepageConfig = defineType({
       type: 'array',
       group: 'featured',
       of: [{ type: 'reference', to: [{ type: 'pipelineCorridor' }] }],
-      description: 'Corridors to highlight in the map or corridors section.',
     }),
     defineField({
       name: 'featuredPartners',
@@ -111,28 +286,60 @@ export const homepageConfig = defineType({
       type: 'array',
       group: 'featured',
       of: [{ type: 'reference', to: [{ type: 'organizationPartner' }] }],
-      description: 'Override the auto-selection of featured partners.',
     }),
 
-    // ── CTA ───────────────────────────────────────────────────────────
+    // ── Roadmap Section ───────────────────────────────────────────────────
+    defineField({
+      name: 'roadmapHeading',
+      title: 'Section Heading',
+      type: 'string',
+      group: 'roadmap',
+      initialValue: 'Development Roadmap 2026–2030',
+    }),
+    defineField({
+      name: 'roadmapMilestones',
+      title: 'Milestones',
+      type: 'array',
+      group: 'roadmap',
+      of: [{ type: 'roadmapMilestone' }],
+    }),
+
+    // ── CTA Section ───────────────────────────────────────────────────────
     defineField({
       name: 'ctaHeadline',
-      title: 'CTA Headline',
+      title: 'Headline',
       type: 'string',
       group: 'cta',
+      initialValue: 'Africa\'s infrastructure future requires African engineering capacity',
     }),
     defineField({
       name: 'ctaSubtext',
-      title: 'CTA Subtext',
+      title: 'Subtext',
       type: 'text',
       group: 'cta',
       rows: 3,
     }),
     defineField({
       name: 'ctaButtonLabel',
-      title: 'CTA Button Label',
+      title: 'Primary Button Label',
       type: 'string',
       group: 'cta',
+      initialValue: 'Partner With Us',
+    }),
+    defineField({
+      name: 'ctaSecondaryButtonLabel',
+      title: 'Secondary Button Label',
+      type: 'string',
+      group: 'cta',
+      initialValue: 'Access Research Portal',
+    }),
+    defineField({
+      name: 'ctaBackgroundImage',
+      title: 'CTA Background Image',
+      type: 'image',
+      group: 'cta',
+      options: { hotspot: true },
+      description: 'Overrides the default aerial pipeline background.',
     }),
   ],
   preview: {

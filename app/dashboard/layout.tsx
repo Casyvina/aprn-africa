@@ -16,6 +16,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq("id", user.id)
     .single();
 
+  // First-time login — send to onboarding
+  if (!profile?.full_name) redirect("/onboarding");
+
   const displayName = profile?.full_name ?? user.email ?? "Member";
   const tier = profile?.membership_tier ?? "free";
   const initials = displayName
@@ -32,7 +35,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       style={{ fontFamily: "var(--font-inter), sans-serif" }}
     >
       {/* -- Sidebar ------------------------------------------------ */}
-      <aside className="hidden md:flex w-[260px] shrink-0 flex-col bg-navy-900 border-r border-white/5 h-dvh overflow-y-auto">
+      <aside className="hidden md:flex w-65 shrink-0 flex-col bg-navy-900 border-r border-white/5 h-dvh overflow-y-auto">
         {/* Logo */}
         <div className="px-8 py-6 border-b border-white/5 shrink-0">
           <Link href="/">
@@ -82,12 +85,24 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         {/* Top header */}
         <header className="shrink-0 border-b border-white/5 bg-navy-900/95 backdrop-blur-md z-40">
-          <div className="px-6 md:px-8 h-20 flex items-center justify-between gap-6">
+          <div className="relative px-4 md:px-8 h-16 md:h-20 flex items-center gap-3 md:gap-6">
 
-            {/* Mobile: hamburger drawer trigger */}
+            {/* Mobile: hamburger — renders nothing on md+ */}
             <DashboardMobileNav initials={initials} tier={tier} displayName={displayName} />
 
-            {/* Search */}
+            {/* Mobile: logo — absolutely centred so it never squishes other items */}
+            <Link href="/dashboard" className="md:hidden absolute left-1/2 -translate-x-1/2 shrink-0">
+              <Image
+                src="/images/logo.png"
+                alt="APRN"
+                width={999}
+                height={453}
+                className="h-6 w-auto"
+                priority
+              />
+            </Link>
+
+            {/* Desktop: search bar */}
             <div className="flex-1 max-w-xl hidden md:block">
               <div className="relative">
                 <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none" />
@@ -99,26 +114,27 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </div>
             </div>
 
-            {/* Right: bell + user */}
-            <div className="flex items-center gap-5 shrink-0 ml-auto">
-              <button className="relative text-slate-400 hover:text-gold-500 transition-colors">
+            {/* Right: bell + user — pushed to far right */}
+            <div className="flex items-center gap-4 shrink-0 ml-auto">
+              <button className="relative text-slate-400 hover:text-gold-500 transition-colors p-1">
                 <i className="fa-solid fa-bell text-base" />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-gold-500 rounded-full" />
+                <span className="absolute top-0 right-0 w-2 h-2 bg-gold-500 rounded-full" />
               </button>
 
-              <div className="flex items-center gap-3 pl-5 border-l border-white/5">
-                <div className="relative">
-                  <div className="w-9 h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center">
+              <div className="flex items-center gap-2.5 pl-4 border-l border-white/5">
+                <div className="relative shrink-0">
+                  <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center">
                     <span className="text-xs font-bold text-gold-500">{initials}</span>
                   </div>
-                  <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-navy-900 rounded-full" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-400 border-2 border-navy-900 rounded-full" />
                 </div>
                 <div className="hidden lg:block">
                   <p className="text-sm font-semibold text-white">{firstName}</p>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest capitalize">{tier}</p>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest">{tier}</p>
                 </div>
               </div>
             </div>
+
           </div>
         </header>
 

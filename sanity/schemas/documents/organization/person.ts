@@ -52,6 +52,30 @@ export const person = defineType({
       rows: 5,
     }),
     defineField({
+      name: 'quote',
+      title: 'Strategic Quote',
+      type: 'text',
+      rows: 3,
+      description: 'Inspirational quote shown on the leadership page.',
+    }),
+    defineField({
+      name: 'highlights',
+      title: 'Profile Highlights',
+      type: 'array',
+      description: 'Up to 2 headline stats shown beside the profile (e.g. "20+ Years" / "Industry Experience").',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'value', title: 'Value', type: 'string' }),
+            defineField({ name: 'label', title: 'Label', type: 'string' }),
+          ],
+          preview: { select: { title: 'value', subtitle: 'label' } },
+        },
+      ],
+      validation: (r) => r.max(2),
+    }),
+    defineField({
       name: 'expertise',
       title: 'Areas of Expertise',
       type: 'array',

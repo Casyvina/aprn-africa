@@ -7,16 +7,36 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
-const DEFAULT_METRICS = [
-  { label: "Active Projects", value: "42", width: "75%" },
-  { label: "Engineering Trainees", value: "1,250+", width: "60%" },
-  { label: "Policy Frameworks", value: "18", width: "45%" },
-];
-
 interface HeroMetric { label: string; value: string; width: string }
 
-export default function HeroSection({ stats }: { stats?: HeroMetric[] }) {
-  const metrics = stats ?? DEFAULT_METRICS;
+interface HeroProps {
+  stats?: HeroMetric[]
+  badgeLabel?: string
+  headline?: string
+  subtext?: string
+  primaryButtonLabel?: string
+  secondaryButtonLabel?: string
+}
+
+export default function HeroSection({
+  stats,
+  badgeLabel,
+  headline,
+  subtext,
+  primaryButtonLabel,
+  secondaryButtonLabel,
+}: HeroProps) {
+  const metrics = stats ?? [
+    { label: "Active Projects",       value: "42",     width: "75%" },
+    { label: "Engineering Trainees",  value: "1,250+", width: "60%" },
+    { label: "Policy Frameworks",     value: "18",     width: "45%" },
+  ];
+
+  const badge   = badgeLabel          ?? "Live";
+  const subtext_ = subtext            ?? "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure the continent\u2019s energy future.";
+  const btn1    = primaryButtonLabel  ?? "Explore APRN";
+  const btn2    = secondaryButtonLabel ?? "Strategic Partnerships";
+
   return (
     <section id="hero" className="relative pt-32 pb-20 min-h-[90vh] flex items-center overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -51,7 +71,7 @@ export default function HeroSection({ stats }: { stats?: HeroMetric[] }) {
           >
             <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
             <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">
-              Institutional Infrastructure
+              {badge}
             </span>
           </motion.div>
 
@@ -59,25 +79,30 @@ export default function HeroSection({ stats }: { stats?: HeroMetric[] }) {
             variants={fadeUp}
             className="font-display text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white"
           >
-            Anchoring Pipeline <br />
-            <span className="text-gradient">Technology</span> <br />
-            in Africa
+            {headline ? (
+              headline
+            ) : (
+              <>
+                Anchoring Pipeline <br />
+                <span className="text-gradient">Technology</span> <br />
+                in Africa
+              </>
+            )}
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
             className="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed font-light border-l-2 border-gold-500/50 pl-6"
           >
-            Research, engineering development, policy collaboration, and internationally aligned pipeline
-            training to secure the continent&apos;s energy future.
+            {subtext_}
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4">
             <button className="px-8 py-4 bg-gold-500 hover:bg-gold-400 active:scale-95 text-navy-900 font-bold tracking-wide transition-all rounded-sm shadow-[0_0_20px_rgba(212,160,23,0.2)] flex items-center justify-center gap-3 cursor-pointer">
-              Explore APRN <i className="fa-solid fa-arrow-right" />
+              {btn1} <i className="fa-solid fa-arrow-right" />
             </button>
             <button className="px-8 py-4 glass-panel hover:bg-navy-800 active:scale-95 text-white font-semibold tracking-wide transition-all rounded-sm flex items-center justify-center gap-3 group cursor-pointer">
-              Strategic Partnerships{" "}
+              {btn2}{" "}
               <i className="fa-solid fa-handshake text-gold-500 group-hover:scale-110 transition-transform" />
             </button>
           </motion.div>

@@ -43,7 +43,7 @@ const saved = [
 
 export default function SavedPage() {
   return (
-    <div className="flex flex-col gap-8 max-w-[900px]">
+    <div className="flex flex-col gap-8 max-w-225">
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/5 pb-6">

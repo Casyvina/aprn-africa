@@ -1,52 +1,56 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { Pillar } from "@/lib/queries/homepage";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
 };
 
-const pillars = [
+const DEFAULT_PILLARS: Pillar[] = [
   {
     icon: "fa-microscope",
     title: "Pipeline Research",
-    description:
-      "Advanced studies on material science, flow dynamics, and corrosion prevention tailored to African environments.",
+    description: "Advanced studies on material science, flow dynamics, and corrosion prevention tailored to African environments.",
   },
   {
     icon: "fa-hard-hat",
     title: "Engineering Training",
-    description:
-      "Internationally aligned certification programs building local capacity in design, construction, and maintenance.",
+    description: "Internationally aligned certification programs building local capacity in design, construction, and maintenance.",
   },
-  // {
-  //   icon: "fa-users-gear",
-  //   title: "Women in Pipeline",
-  //   description:
-  //     "Dedicated initiatives to increase female representation in technical and leadership roles across the midstream sector.",
-  // },
   {
     icon: "fa-database",
     title: "African Pipeline Database",
-    description:
-      "The continent's most comprehensive GIS mapping and technical repository of existing and planned infrastructure.",
+    description: "The continent's most comprehensive GIS mapping and technical repository of existing and planned infrastructure.",
   },
   {
     icon: "fa-scale-balanced",
     title: "Policy & Regulation",
-    description:
-      "Advising governments and regulatory bodies on harmonized cross-border pipeline frameworks and tariffs.",
+    description: "Advising governments and regulatory bodies on harmonized cross-border pipeline frameworks and tariffs.",
   },
   {
     icon: "fa-earth-africa",
     title: "Continental Collaboration",
-    description:
-      "Facilitating joint ventures and knowledge transfer between African NOCs and international operators.",
+    description: "Facilitating joint ventures and knowledge transfer between African NOCs and international operators.",
   },
 ];
 
-export default function PillarsSection() {
+interface PillarsSectionProps {
+  sectionTag?: string
+  sectionHeading?: string
+  pillars?: Pillar[]
+}
+
+export default function PillarsSection({
+  sectionTag,
+  sectionHeading,
+  pillars,
+}: PillarsSectionProps) {
+  const tag      = sectionTag     ?? "Strategic Focus";
+  const heading  = sectionHeading ?? "Our Core Pillars";
+  const items    = pillars && pillars.length > 0 ? pillars : DEFAULT_PILLARS;
+
   return (
     <section id="pillars" className="py-24 bg-navy-800 relative">
       <div
@@ -66,9 +70,9 @@ export default function PillarsSection() {
           transition={{ duration: 0.6, ease: "easeOut" as const }}
         >
           <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">
-            Strategic Focus
+            {tag}
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-white">Our Core Pillars</h2>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-white">{heading}</h2>
         </motion.div>
 
         {/* Cards stagger in from bottom */}
@@ -79,7 +83,7 @@ export default function PillarsSection() {
           viewport={{ once: true, amount: 0.1 }}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
         >
-          {pillars.map((pillar) => (
+          {items.map((pillar) => (
             <motion.div
               key={pillar.title}
               variants={fadeUp}

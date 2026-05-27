@@ -6,14 +6,14 @@ import { motion } from "framer-motion";
 const disciplines = ["All", "Pipeline Integrity", "Project Engineering", "Policy & Regulation", "Renewable Energy", "HSE", "Research"];
 
 const members = [
-  { initials: "AO", name: "Adaeze Okonkwo",  title: "Senior Pipeline Engineer",          org: "NNPC Ltd",                              country: "Nigeria",      discipline: "Pipeline Integrity",   connections: 34, online: true  },
-  { initials: "KM", name: "Kwabena Mensah",   title: "Energy Policy Analyst",             org: "Ghana National Gas Company",            country: "Ghana",        discipline: "Policy & Regulation",  connections: 21, online: false },
-  { initials: "FD", name: "Fatima Diallo",    title: "Project Manager — Upstream",        org: "Société Nationale de Pétrole",          country: "Senegal",      discipline: "Project Engineering",  connections: 47, online: true  },
-  { initials: "TO", name: "Taiwo Ogunbiyi",   title: "HSE Lead",                          org: "Seplat Energy",                         country: "Nigeria",      discipline: "HSE",                  connections: 18, online: false },
-  { initials: "ME", name: "Miriam Essien",    title: "Research Fellow — Corrosion Science", org: "University of Lagos",                 country: "Nigeria",      discipline: "Research",             connections: 56, online: true  },
-  { initials: "BN", name: "Bongani Nkosi",    title: "Renewable Integration Engineer",    org: "Eskom Holdings",                        country: "South Africa", discipline: "Renewable Energy",     connections: 29, online: false },
-  { initials: "EK", name: "Emmanuel Kofi",    title: "Pipeline Design Engineer",          org: "Tullow Oil Ghana",                      country: "Ghana",        discipline: "Pipeline Integrity",   connections: 38, online: true  },
-  { initials: "RA", name: "Rukayat Adeyemi",  title: "Regulatory Affairs Specialist",     org: "Nigerian Midstream & Downstream Authority", country: "Nigeria", discipline: "Policy & Regulation",  connections: 12, online: false },
+  { id: "adaeze-okonkwo",  initials: "AO", name: "Adaeze Okonkwo",  title: "Senior Pipeline Engineer",            org: "NNPC Ltd",                                  country: "Nigeria",      discipline: "Pipeline Integrity",  connections: 34, online: true  },
+  { id: "kwabena-mensah",  initials: "KM", name: "Kwabena Mensah",   title: "Energy Policy Analyst",               org: "Ghana National Gas Company",                country: "Ghana",        discipline: "Policy & Regulation", connections: 21, online: false },
+  { id: "fatima-diallo",   initials: "FD", name: "Fatima Diallo",    title: "Project Manager — Upstream",          org: "Société Nationale de Pétrole",              country: "Senegal",      discipline: "Project Engineering", connections: 47, online: true  },
+  { id: "taiwo-ogunbiyi",  initials: "TO", name: "Taiwo Ogunbiyi",   title: "HSE Lead",                            org: "Seplat Energy",                             country: "Nigeria",      discipline: "HSE",                 connections: 18, online: false },
+  { id: "miriam-essien",   initials: "ME", name: "Miriam Essien",    title: "Research Fellow — Corrosion Science", org: "University of Lagos",                       country: "Nigeria",      discipline: "Research",            connections: 56, online: true  },
+  { id: "bongani-nkosi",   initials: "BN", name: "Bongani Nkosi",    title: "Renewable Integration Engineer",      org: "Eskom Holdings",                            country: "South Africa", discipline: "Renewable Energy",    connections: 29, online: false },
+  { id: "emmanuel-kofi",   initials: "EK", name: "Emmanuel Kofi",    title: "Pipeline Design Engineer",            org: "Tullow Oil Ghana",                          country: "Ghana",        discipline: "Pipeline Integrity",  connections: 38, online: true  },
+  { id: "rukayat-adeyemi", initials: "RA", name: "Rukayat Adeyemi",  title: "Regulatory Affairs Specialist",       org: "Nigerian Midstream & Downstream Authority", country: "Nigeria",      discipline: "Policy & Regulation", connections: 12, online: false },
 ];
 
 const fadeUp = {
@@ -162,11 +162,10 @@ export default function NetworkPage() {
               </span>
             </div>
             <Link
-              href="/dashboard/membership"
+              href={`/dashboard/network/${member.id}`}
               className="w-full py-2 text-center text-[10px] font-bold tracking-widest uppercase text-slate-400 border border-white/10 hover:text-gold-500 hover:border-gold-500/30 transition-colors"
             >
-              <i className="fa-solid fa-lock text-[9px] mr-1.5" />
-              Connect
+              View Profile
             </Link>
           </motion.div>
         ))}

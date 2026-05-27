@@ -3,32 +3,45 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { useAuthStore } from "@/store/auth";
+import { passwordSchema } from "@/lib/validation";
 
 type Tab = "profile" | "security" | "notifications" | "billing";
 
 interface Props {
   user: { id: string; email: string };
-  profile: { full_name: string | null; membership_tier: string | null } | null;
+  profile: {
+    full_name:    string | null;
+    job_title:    string | null;
+    discipline:   string | null;
+    organisation: string | null;
+    country:      string | null;
+    linkedin_url: string | null;
+    bio:          string | null;
+    membership_tier: string | null;
+  } | null;
 }
 
 export default function SettingsTabs({ user, profile }: Props) {
   const [tab, setTab] = useState<Tab>("profile");
+  const updateProfile = useAuthStore((s) => s.updateProfile);
 
   // Profile form
-  const [fullName, setFullName] = useState(profile?.full_name ?? "");
-  const [jobTitle, setJobTitle] = useState("");
-  const [organisation, setOrganisation] = useState("");
-  const [country, setCountry] = useState("");
-  const [linkedIn, setLinkedIn] = useState("");
-  const [bio, setBio] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [fullName,      setFullName]      = useState(profile?.full_name    ?? "");
+  const [jobTitle,      setJobTitle]      = useState(profile?.job_title    ?? "");
+  const [organisation,  setOrganisation]  = useState(profile?.organisation ?? "");
+  const [country,       setCountry]       = useState(profile?.country      ?? "");
+  const [linkedIn,      setLinkedIn]      = useState(profile?.linkedin_url ?? "");
+  const [bio,           setBio]           = useState(profile?.bio          ?? "");
+  const [saving,  setSaving]  = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
 
   // Security form
-  const [newPw, setNewPw] = useState("");
+  const [newPw,    setNewPw]    = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
-  const [pwMsg, setPwMsg] = useState("");
+  const [pwMsg,    setPwMsg]    = useState("");
+  const [pwErrors, setPwErrors] = useState<string[]>([]);
 
   // Notification toggles
   const [notifs, setNotifs] = useState({
@@ -53,24 +66,38 @@ export default function SettingsTabs({ user, profile }: Props) {
   async function handleSaveProfile() {
     setSaving(true);
     setSaveMsg("");
+    const payload = {
+      full_name:    fullName.trim() || null,
+      job_title:    jobTitle.trim() || null,
+      organisation: organisation.trim() || null,
+      country:      country || null,
+      linkedin_url: linkedIn.trim() || null,
+      bio:          bio.trim() || null,
+    };
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName })
+      .update(payload)
       .eq("id", user.id);
     setSaving(false);
-    setSaveMsg(error ? "Error saving changes. Try again." : "Changes saved successfully.");
+    if (error) {
+      setSaveMsg("Error saving changes. Try again.");
+    } else {
+      setSaveMsg("Changes saved successfully.");
+      // Keep Zustand in sync so dashboard header updates without reload
+      updateProfile(payload);
+    }
     setTimeout(() => setSaveMsg(""), 3000);
   }
 
   async function handleChangePassword() {
-    if (newPw !== confirmPw) {
-      setPwMsg("Passwords do not match.");
+    // Zod validation
+    const result = passwordSchema.safeParse({ newPassword: newPw, confirmPassword: confirmPw });
+    if (!result.success) {
+      const msgs = result.error.issues.map((i) => i.message);
+      setPwErrors(msgs);
       return;
     }
-    if (newPw.length < 8) {
-      setPwMsg("Password must be at least 8 characters.");
-      return;
-    }
+    setPwErrors([]);
     setPwSaving(true);
     setPwMsg("");
     const { error } = await supabase.auth.updateUser({ password: newPw });
@@ -96,7 +123,7 @@ export default function SettingsTabs({ user, profile }: Props) {
   ];
 
   return (
-    <div className="flex flex-col gap-8 max-w-[960px]">
+    <div className="flex flex-col gap-8 max-w-240">
 
       {/* Header + tabs */}
       <div className="border-b border-white/10 pb-0">
@@ -294,10 +321,13 @@ export default function SettingsTabs({ user, profile }: Props) {
                 <input
                   type="password"
                   value={newPw}
-                  onChange={(e) => setNewPw(e.target.value)}
+                  onChange={(e) => { setNewPw(e.target.value); setPwErrors([]); }}
                   placeholder="Min. 8 characters"
                   className={inputClass}
                 />
+                <p className="text-[10px] text-slate-600">
+                  Must be 8+ characters with an uppercase letter, number, and special character.
+                </p>
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
@@ -311,10 +341,20 @@ export default function SettingsTabs({ user, profile }: Props) {
                 />
               </div>
 
+              {/* Zod validation errors */}
+              {pwErrors.length > 0 && (
+                <ul className="flex flex-col gap-1">
+                  {pwErrors.map((msg) => (
+                    <li key={msg} className="flex items-center gap-2 text-xs text-red-400">
+                      <i className="fa-solid fa-circle-exclamation text-[10px]" />
+                      {msg}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               {pwMsg && (
-                <span
-                  className={`text-xs ${pwMsg.includes("success") ? "text-emerald-400" : "text-red-400"}`}
-                >
+                <span className={`text-xs ${pwMsg.includes("successfully") ? "text-emerald-400" : "text-red-400"}`}>
                   {pwMsg}
                 </span>
               )}

@@ -7,13 +7,29 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
-export default function CTASection() {
+interface CTAProps {
+  headline?: string
+  primaryButtonLabel?: string
+  secondaryButtonLabel?: string
+  backgroundImageUrl?: string
+}
+
+export default function CTASection({
+  headline,
+  primaryButtonLabel,
+  secondaryButtonLabel,
+  backgroundImageUrl,
+}: CTAProps) {
+  const heading = headline            ?? "Africa\u2019s infrastructure future requires African engineering capacity";
+  const btn1    = primaryButtonLabel  ?? "Partner With Us";
+  const btn2    = secondaryButtonLabel ?? "Access Research Portal";
+
   return (
     <section className="py-24 relative overflow-hidden bg-navy-900">
       <div className="absolute inset-0">
         <div
           style={{
-            backgroundImage: "url('/images/pipeline-aerial.png')",
+            backgroundImage: `url('${backgroundImageUrl ?? '/images/pipeline-aerial.png'}')`,
           }}
           className="w-full h-full bg-cover bg-center opacity-15 mix-blend-luminosity"
         />
@@ -35,15 +51,21 @@ export default function CTASection() {
           className="fa-solid fa-globe text-4xl text-gold-500 mb-6 block"
         />
         <motion.h2 variants={fadeUp} className="font-display text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
-          Africa&apos;s infrastructure future requires{" "}
-          <span className="text-gradient">African engineering capacity</span>
+          {heading.includes("African engineering capacity") ? (
+            <>
+              {heading.split("African engineering capacity")[0]}
+              <span className="text-gradient">African engineering capacity</span>
+            </>
+          ) : (
+            heading
+          )}
         </motion.h2>
         <motion.div variants={fadeUp} className="flex flex-col sm:flex-row justify-center gap-4">
           <button className="px-8 py-4 bg-gold-500 hover:bg-gold-400 active:scale-95 text-navy-900 font-bold tracking-wide transition-all rounded-sm shadow-[0_0_20px_rgba(212,160,23,0.2)] cursor-pointer">
-            Partner With Us
+            {btn1}
           </button>
           <button className="px-8 py-4 glass-panel hover:bg-navy-800 active:scale-95 text-white font-semibold tracking-wide transition-all rounded-sm border border-gold-500/30 cursor-pointer">
-            Access Research Portal
+            {btn2}
           </button>
         </motion.div>
       </motion.div>

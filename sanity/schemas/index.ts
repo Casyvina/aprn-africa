@@ -7,6 +7,9 @@ import { richText }          from './objects/richText'
 import { geolocation }       from './objects/geolocation'
 import { insightStat }       from './objects/insightStat'
 import { newsletterStory }   from './objects/newsletterStory'
+import { pillar }            from './objects/pillar'
+import { roadmapMilestone }  from './objects/roadmapMilestone'
+import { footerLinkItem }    from './objects/footerLinkItem'
 
 // ── Reference Entities (no cross-references) ─────────────────────────
 import { country }           from './documents/infrastructure/country'
@@ -48,6 +51,9 @@ export const schemaTypes = [
   geolocation,
   insightStat,
   newsletterStory,
+  pillar,
+  roadmapMilestone,
+  footerLinkItem,
 
   // Atomic reference entities
   country,

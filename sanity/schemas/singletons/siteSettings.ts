@@ -15,6 +15,13 @@ export const siteSettings = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: 'logoImage',
+      title: 'Site Logo',
+      type: 'image',
+      description: 'Used in navigation bar, footer, and dashboard.',
+      options: { hotspot: false },
+    }),
+    defineField({
       name: 'tagline',
       title: 'Tagline',
       type: 'string',
@@ -63,6 +70,34 @@ export const siteSettings = defineType({
       title: 'Default SEO',
       type: 'seoFields',
       description: 'Fallback SEO used when a page has no specific SEO set.',
+    }),
+
+    // ── Footer ────────────────────────────────────────────────────────────
+    defineField({
+      name: 'footerDescription',
+      title: 'Footer Description',
+      type: 'text',
+      rows: 3,
+      description: 'Short tagline shown in the footer brand column.',
+      initialValue: 'Building the knowledge infrastructure for Africa\'s energy transition through rigorous research and elite training.',
+    }),
+    defineField({
+      name: 'footerInitiatives',
+      title: 'Footer — Initiatives Links',
+      type: 'array',
+      of: [{ type: 'footerLinkItem' }],
+    }),
+    defineField({
+      name: 'footerOrganisation',
+      title: 'Footer — Organisation Links',
+      type: 'array',
+      of: [{ type: 'footerLinkItem' }],
+    }),
+    defineField({
+      name: 'footerResources',
+      title: 'Footer — Resources Links',
+      type: 'array',
+      of: [{ type: 'footerLinkItem' }],
     }),
   ],
   preview: {
