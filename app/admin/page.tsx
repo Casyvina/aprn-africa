@@ -165,11 +165,12 @@ export default async function AdminOverviewPage() {
       </div>
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { href: "/admin/members",  icon: "fa-users",       label: "Manage Members",  desc: "View, search, and update member tiers" },
-          { href: "/admin/payments", icon: "fa-credit-card", label: "Payments",        desc: "Review Paystack payment history" },
-          { href: "/dashboard",      icon: "fa-arrow-left",  label: "Back to Dashboard", desc: "Return to your member dashboard" },
+          { href: "/admin/members",  icon: "fa-users",               label: "Manage Members",    desc: "View, search, and update member tiers" },
+          { href: "/admin/generate", icon: "fa-wand-magic-sparkles", label: "Generate Content",  desc: "AI-draft an editorial or research report" },
+          { href: "/admin/payments", icon: "fa-credit-card",         label: "Payments",          desc: "Review Paystack payment history" },
+          { href: "/dashboard",      icon: "fa-arrow-left",          label: "Back to Dashboard", desc: "Return to your member dashboard" },
         ].map((item) => (
           <Link
             key={item.href}

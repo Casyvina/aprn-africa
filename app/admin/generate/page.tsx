@@ -1,0 +1,223 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
+type ContentType = "editorialInsight" | "researchReport";
+
+const TYPE_OPTIONS: { value: ContentType; label: string; desc: string; icon: string }[] = [
+  {
+    value: "editorialInsight",
+    label: "Editorial Insight",
+    desc: "Thought leadership & strategic commentary",
+    icon: "fa-pen-nib",
+  },
+  {
+    value: "researchReport",
+    label: "Research Report",
+    desc: "Data-driven working paper or policy brief",
+    icon: "fa-flask",
+  },
+];
+
+export default function GenerateContentPage() {
+  const [type, setType]           = useState<ContentType>("editorialInsight");
+  const [topic, setTopic]         = useState("");
+  const [angle, setAngle]         = useState("");
+  const [keyPoints, setKeyPoints] = useState("");
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState("");
+  const [result, setResult]       = useState<{ title: string; docId: string; slug: string } | null>(null);
+
+  async function handleGenerate() {
+    if (!topic.trim()) { setError("Topic is required."); return; }
+    setLoading(true);
+    setError("");
+    setResult(null);
+
+    const res = await fetch("/api/admin/generate-content", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, topic, angle, keyPoints }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) {
+      setError(data.error ?? "Generation failed. Please try again.");
+      return;
+    }
+
+    setResult(data);
+  }
+
+  return (
+    <div className="flex flex-col gap-8 max-w-200">
+
+      {/* Header */}
+      <div className="border-b border-white/5 pb-6">
+        <div className="flex items-center gap-3 mb-1">
+          <Link href="/admin" className="text-slate-500 hover:text-gold-500 transition-colors text-xs">
+            ← Admin
+          </Link>
+          <span className="text-slate-700 text-xs">/</span>
+          <span className="text-slate-400 text-xs">Generate Content</span>
+        </div>
+        <h1
+          className="text-2xl font-bold text-white mt-3"
+          style={{ fontFamily: "var(--font-playfair), serif" }}
+        >
+          AI Content Generator
+        </h1>
+        <p className="text-sm text-slate-400 mt-1">
+          Claude writes a draft — Tokun reviews and publishes in the Studio.
+        </p>
+      </div>
+
+      {/* Success state */}
+      {result && (
+        <div className="bg-emerald-400/5 border border-emerald-400/20 p-6 flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center shrink-0">
+              <i className="fa-solid fa-check text-emerald-400 text-xs" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-emerald-400 tracking-widest uppercase">Draft Created</p>
+              <p className="text-sm font-semibold text-white mt-0.5">{result.title}</p>
+            </div>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            The draft is saved in Sanity. Open the Studio, find it in the Drafts section, add a hero image, and publish.
+          </p>
+          <div className="flex gap-3">
+            <a
+              href="/studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2.5 bg-gold-500 text-navy-900 text-xs font-bold tracking-widest uppercase hover:bg-gold-400 transition-colors"
+            >
+              <i className="fa-solid fa-arrow-up-right-from-square mr-2 text-[10px]" />
+              Open Studio
+            </a>
+            <button
+              onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); }}
+              className="px-4 py-2.5 border border-white/10 text-xs text-slate-400 hover:text-white hover:border-white/20 transition-colors"
+            >
+              Generate Another
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!result && (
+        <div className="flex flex-col gap-6">
+
+          {/* Content type */}
+          <div>
+            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-3">
+              Content Type
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {TYPE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setType(opt.value)}
+                  className={`p-4 border text-left transition-colors ${
+                    type === opt.value
+                      ? "bg-gold-500/10 border-gold-500/40"
+                      : "bg-navy-800 border-white/5 hover:border-gold-500/20"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <i className={`fa-solid ${opt.icon} text-[10px] ${type === opt.value ? "text-gold-500" : "text-slate-500"}`} />
+                    <p className={`text-xs font-bold ${type === opt.value ? "text-gold-400" : "text-white"}`}>
+                      {opt.label}
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-slate-500">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Topic */}
+          <div>
+            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
+              Topic <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="e.g. Corrosion management challenges on West African deepwater pipelines"
+              className="w-full bg-navy-800 border border-white/10 px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors"
+            />
+          </div>
+
+          {/* Angle */}
+          <div>
+            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
+              Angle / Focus
+              <span className="ml-2 text-slate-600 normal-case font-normal tracking-normal">— what perspective or argument to take</span>
+            </label>
+            <input
+              type="text"
+              value={angle}
+              onChange={(e) => setAngle(e.target.value)}
+              placeholder="e.g. Why Nigerian operators are underprepared for the 2030 integrity audit mandate"
+              className="w-full bg-navy-800 border border-white/10 px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors"
+            />
+          </div>
+
+          {/* Key points */}
+          <div>
+            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
+              Key Points to Cover
+              <span className="ml-2 text-slate-600 normal-case font-normal tracking-normal">— one per line</span>
+            </label>
+            <textarea
+              value={keyPoints}
+              onChange={(e) => setKeyPoints(e.target.value)}
+              rows={4}
+              placeholder={`e.g.\nRegulatory framework gaps at DPR/NMDPRA\nCost of cathodic protection vs risk exposure\nRegional comparison with Ghana and Senegal\nRecommendations for operators`}
+              className="w-full bg-navy-800 border border-white/10 px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors resize-none"
+            />
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 text-xs text-red-400">
+              <i className="fa-solid fa-triangle-exclamation text-[10px]" />
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="w-full py-4 bg-gold-500 text-navy-900 text-xs font-bold tracking-widest uppercase hover:bg-gold-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            {loading ? (
+              <>
+                <i className="fa-solid fa-spinner fa-spin text-[10px]" />
+                Claude is writing… this takes ~20 seconds
+              </>
+            ) : (
+              <>
+                <i className="fa-solid fa-wand-magic-sparkles text-[10px]" />
+                Generate Draft
+              </>
+            )}
+          </button>
+
+          <p className="text-[10px] text-slate-600 text-center">
+            Draft goes straight into Sanity as unpublished. Tokun reviews, adds hero image, and publishes.
+          </p>
+
+        </div>
+      )}
+
+    </div>
+  );
+}
