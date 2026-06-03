@@ -16,9 +16,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq("id", user.id)
     .single();
 
-  // First-time login — send to onboarding
-  if (!profile?.full_name) redirect("/onboarding");
-
   const displayName = profile?.full_name ?? user.email ?? "Member";
   const tier = profile?.membership_tier ?? "free";
   const initials = displayName
