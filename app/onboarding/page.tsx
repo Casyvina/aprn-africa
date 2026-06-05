@@ -119,12 +119,12 @@ export default function OnboardingPage() {
             priority
           />
         </Link>
-        <Link
-          href="/dashboard"
+        <button
+          onClick={() => router.replace("/dashboard")}
           className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
         >
           Skip for now →
-        </Link>
+        </button>
       </header>
 
       {/* Progress bar */}
