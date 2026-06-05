@@ -104,36 +104,36 @@ Guidelines:
   const today = new Date().toISOString().slice(0, 10);
   const body = toPortableText(generated.body ?? []);
 
-  const doc = isResearch
-    ? {
-        _id: docId,
-        _type: "researchReport",
-        title: generated.title,
-        slug: { _type: "slug", current: slug },
-        subtitle: generated.subtitle ?? "",
-        executiveSummary: generated.executiveSummary ?? "",
-        pullQuote: generated.pullQuote ?? "",
-        body,
-        reportType: "working-paper",
-        publishDate: today,
-        estimatedReadTime: generated.estimatedReadTime ?? 10,
-        featured: false,
-      }
-    : {
-        _id: docId,
-        _type: "editorialInsight",
-        title: generated.title,
-        slug: { _type: "slug", current: slug },
-        subtitle: generated.subtitle ?? "",
-        excerpt: generated.excerpt ?? "",
-        pullQuote: generated.pullQuote ?? "",
-        body,
-        publishDate: today,
-        estimatedReadTime: generated.estimatedReadTime ?? 8,
-        featured: false,
-      };
-
-  await writeClient.createOrReplace(doc);
+  if (isResearch) {
+    await writeClient.createOrReplace<Record<string, unknown>>({
+      _id: docId,
+      _type: "researchReport",
+      title: generated.title,
+      slug: { _type: "slug", current: slug },
+      subtitle: generated.subtitle ?? "",
+      executiveSummary: generated.executiveSummary ?? "",
+      pullQuote: generated.pullQuote ?? "",
+      body,
+      reportType: "working-paper",
+      publishDate: today,
+      estimatedReadTime: generated.estimatedReadTime ?? 10,
+      featured: false,
+    });
+  } else {
+    await writeClient.createOrReplace<Record<string, unknown>>({
+      _id: docId,
+      _type: "editorialInsight",
+      title: generated.title,
+      slug: { _type: "slug", current: slug },
+      subtitle: generated.subtitle ?? "",
+      excerpt: generated.excerpt ?? "",
+      pullQuote: generated.pullQuote ?? "",
+      body,
+      publishDate: today,
+      estimatedReadTime: generated.estimatedReadTime ?? 8,
+      featured: false,
+    });
+  }
 
   return NextResponse.json({ docId, slug, title: generated.title });
 }
