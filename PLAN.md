@@ -1,136 +1,157 @@
-# APRN Africa — Build Plan
+# APRN Africa — Build Plan & Status
 
-> African Pipeline Resource Network — Full Platform Roadmap
-> Updated: 2026-05-21
-
----
-
-## Phase 1 — Public Site (Marketing & Acquisition)
-
-> Goal: Professional public presence to build credibility and convert visitors.
-
-- [x] Project setup — Next.js 16, Tailwind v4, Sanity CMS, TypeScript
-- [x] Navigation + Footer
-- [x] Homepage — Hero, About, Why Now, Pillars, Partners, Map, Research, Roadmap, CTA
-- [x] About page
-- [x] Leadership page — Pieter-Bas, Lucy, Kosie, Joseph, Allison (Youth Ambassador)
-- [x] Research listing page — with Load More pagination
-- [x] Research detail page — cinematic hero, Table of Contents, author card
-- [x] Insights listing page
-- [x] Insights detail page
-- [x] Newsletter listing page
-- [x] Newsletter issue page — cinematic header, stories, editor analysis
-- [x] Partnerships page
-- [x] Training page
-- [x] Contact page
-- [x] SEO — metadataBase, OpenGraph, Twitter card metadata
-- [x] Sanity CMS — all content types (research, insights, newsletter, partners, training, homepage)
-- [x] Sanity CDN images — cdn.sanity.io whitelisted in next.config.ts
-- [x] Sanity webhook — instant cache revalidation on publish (expire: 0)
-- [x] Newsletter signup form — API route + subscriber handling
-- [x] Font Awesome + Plotly loaded via layout.tsx
-- [x] Deployed to Vercel — aprn-africa.org
+> Stack: Next.js 16.2.6, Supabase, Sanity, Tailwind v4, Claude API, Paystack
+> Updated: June 2026
 
 ---
 
-## Phase 2 — Auth & Membership Foundation
-
-> Goal: Gate premium content, onboard members, establish roles.
-
-- [ ] Supabase project setup — auth, database, RLS
-- [ ] Database schema
-  - [ ] `profiles` table (user metadata, role, membership tier)
-  - [ ] `user_roles` table (admin, member, student, institution)
-  - [ ] `memberships` table (tier, status, expiry)
-- [ ] Supabase Auth — email/password + magic link
-- [ ] Auth UI pages
-  - [ ] `/login` — sign in page
-  - [ ] `/register` — create account page
-  - [ ] `/forgot-password` — password reset
-- [ ] Middleware — protected route enforcement
-- [ ] Role-based access control — free vs paid vs admin
-- [ ] Zustand store — session state, user profile, UI state
-- [ ] Protect premium research behind membership check
-- [ ] Protect full training catalogue behind membership check
+## Legend
+- ✅ Done & deployed
+- 🔄 Exists but incomplete / needs template upgrade
+- ⏳ Not started — template exists in /website-templates/
+- ❌ Blocked by env var / external dependency
 
 ---
 
-## Phase 3 — Member Dashboard
+## 1. Public Marketing Site
 
-> Goal: Every member has a personalised home after login.
-
-- [ ] `/dashboard` — dashboard shell with sidebar navigation
-- [ ] Dashboard overview — recent activity, quick links
-- [ ] Profile page — edit name, bio, country, specialisation
-- [ ] Saved research — bookmark and retrieve articles
-- [ ] My courses — enrolled courses with progress
-- [ ] Membership status card — current tier, renewal date
-- [ ] Notifications panel
-
----
-
-## Phase 4 — Payments & Memberships
-
-> Goal: Monetise the platform with tiered access.
-
-- [ ] Paystack integration — primary (Nigeria / West Africa)
-- [ ] Flutterwave integration — secondary (continental)
-- [ ] Membership tiers defined
-  - [ ] Free — public content only
-  - [ ] Professional — full research archive, newsletter archive
-  - [ ] Institutional — team seats, API access, priority support
-- [ ] Checkout flow — select tier, pay, activate membership
-- [ ] Webhook — Paystack/Flutterwave payment confirmation → update Supabase membership
-- [ ] Membership management — upgrade, cancel, renewal reminders
+| Page | Route | Status | Template |
+|---|---|---|---|
+| Homepage | `/` | ✅ | `homepage.html` |
+| About | `/about` | ✅ | `about-aprn.html` |
+| Leadership | `/leadership` | ✅ | `leadership.html` |
+| Partnerships | `/partnerships` | ✅ | `partnership.html` |
+| Research Hub | `/research` | ✅ | `research-intelligence.html` |
+| Research Detail | `/research/[slug]` | ✅ | `strategic-report.html` |
+| Insights | `/insights` | ✅ | `intelligence-briefing.html` |
+| Insight Detail | `/insights/[slug]` | ✅ | `infrastructure-intelligence-briefing.html` |
+| Events Listing | `/events` | ✅ | `conference.html` |
+| Event Detail | `/events/[slug]` | 🔄 Static stubs only — needs full template (speakers, agenda, sponsors, register CTA) | `conference.html` |
+| Membership | `/membership` | ✅ | `membership.html` |
+| Training | `/training` | 🔄 Basic page — needs full template (tracks, APConnect, certification) | `training-development.html` |
+| Programs & Initiatives | `/programs` | ⏳ Not built | `programs-initiative.html` |
+| Professional Certification | `/certification` | ⏳ Not built | `professional-certification.html` |
+| Contact | `/contact` | ✅ | `contacts.html` |
+| Newsletter | `/newsletter` | ✅ | — |
+| Privacy | `/privacy` | ✅ | `privacy-policy.html` |
+| Terms | `/terms` | ✅ | `term-of-use.html` |
+| 404 | `not-found.tsx` | ✅ | `404-not-found.html` |
 
 ---
 
-## Phase 5 — Training & Course Enrollment
+## 2. Member Dashboard (requires login)
 
-> Goal: APRN's core revenue product — pipeline certification programmes.
-
-- [ ] Course catalogue page — browse all programmes
-- [ ] Course detail page — curriculum, instructor, requirements, pricing
-- [ ] Enrollment flow — select course, pay (or use membership credit), confirm
-- [ ] Course progress tracking — lessons completed, quiz scores
-- [ ] Certificate generation — on course completion
-- [ ] Instructor dashboard — manage course content, view enrollments
-
----
-
-## Phase 6 — Engineer Network
-
-> Goal: Community flywheel — connect Africa's pipeline professionals.
-
-- [ ] Engineer directory — searchable, filterable by country/specialisation
-- [ ] Public engineer profile pages
-- [ ] Connection / follow system
-- [ ] Direct messaging (basic)
-- [ ] Comments on research articles and insights
-- [ ] Discussion threads — community Q&A
+| Page | Route | Status | Notes |
+|---|---|---|---|
+| Dashboard Home | `/dashboard` | ✅ | Stats, quick links |
+| Research | `/dashboard/research` | ✅ | `dashboard-research.html` |
+| Research Detail | `/dashboard/research/[slug]` | ✅ | |
+| Intelligence Briefing | `/dashboard/intelligence` | ⏳ Not built | `dashboard-intelligence-breifing.html` — stats overview, learning grid, network activity panel |
+| Network | `/dashboard/network` | ✅ | Member cards |
+| Network Profile | `/dashboard/network/[id]` | ✅ | Bio, expertise, contributions |
+| Courses | `/dashboard/courses` | ✅ | APConnect modules |
+| Membership | `/dashboard/membership` | ✅ | Tier benefits + Paystack |
+| Saved | `/dashboard/saved` | ✅ | Bookmarked items |
+| Settings | `/dashboard/settings` | 🔄 Profile + password done — Notifications tab missing | `account-setting.html` |
+| Onboarding | `/onboarding` | ✅ | 3-step wizard |
 
 ---
 
-## Phase 7 — Admin Panel
+## 3. Admin Panel (admin emails only)
 
-> Goal: Lucy and the APRN team can manage everything without a developer.
+| Page | Route | Status | Notes |
+|---|---|---|---|
+| Overview | `/admin` | ✅ | Stats strip, tier breakdown, recent signups |
+| Members | `/admin/members` | ✅ | Search, filter, pagination, detail drawer, tier change |
+| AI Generator | `/admin/generate` | ✅ | Claude drafts editorial/research straight into Sanity |
+| Payments | `/admin/payments` | 🔄 Stub — needs Paystack live keys + API wiring | |
 
-- [ ] Admin dashboard — `/admin`
-- [ ] Content management (supplement Sanity Studio)
-- [ ] Member management — view, edit roles, suspend accounts
-- [ ] Payment history and revenue overview
-- [ ] Newsletter send management
-- [ ] Course and enrollment management
-- [ ] Analytics — traffic, signups, revenue, course completions
+**Planned admin upgrades:**
+- Generator v2: URL input (Claude reads source article), image upload, inline preview before saving to Sanity
+- Add Generate link to admin sidebar nav
 
 ---
 
-## Ongoing / Infrastructure
+## 4. Auth Flow
 
-- [ ] On-demand revalidation webhook — Sanity → Vercel (DONE — `expire: 0`)
-- [ ] Error monitoring — Sentry or similar
-- [ ] Analytics — Vercel Analytics or Plausible
-- [ ] Performance — Core Web Vitals audit
-- [ ] Accessibility audit
-- [ ] Mobile QA across devices
-- [ ] OG image — 1200×630 branded image for social sharing (logo needs dark background version)
+| Feature | Status |
+|---|---|
+| Register | ✅ |
+| Login | ✅ |
+| Forgot password | ✅ |
+| Onboarding wizard (3-step, upsert, Zod, Zustand) | ✅ |
+| "Skip for now" loop fix | ❌ Dashboard layout redirects back to `/onboarding` if `full_name` is null — skip is a dead end |
+
+---
+
+## 5. CMS — Sanity Studio (`/studio`)
+
+| Item | Status |
+|---|---|
+| Studio live | ✅ |
+| Schemas: editorialInsight, researchReport, policyFramework | ✅ |
+| Schemas: events, training, courses, person, topic | ✅ |
+| AI content generator (Claude API → Sanity draft) | ✅ |
+| Tokun invited as Editor | ❌ Must invite via sanity.io/manage → cwohq4ef |
+| Sanity plan | Free tier (Growth trial ends ~mid June 2026) — no upgrade needed |
+
+---
+
+## 6. Infrastructure & Integrations
+
+| Item | Status | Action needed |
+|---|---|---|
+| Supabase schema deployed | ✅ | — |
+| RLS policies + profile trigger | ✅ | — |
+| Zustand auth store | ✅ | — |
+| Zod validation | ✅ | — |
+| Paystack (test keys) | ✅ | — |
+| Paystack (live keys) | ❌ | Add to Vercel env vars |
+| Anthropic API | ❌ | Add `ANTHROPIC_API_KEY` to Vercel |
+| Admin access gate | ❌ | Add `ADMIN_EMAILS` to Vercel |
+| Zustand hydration on first load | ❌ | Seed store from server profile in dashboard layout |
+
+---
+
+## 7. Priority Order
+
+### Before soft launch (do now)
+1. Fix "Skip for now" onboarding loop — dashboard layout should allow null `full_name`
+2. Set Vercel env vars: `ADMIN_EMAILS`, `ANTHROPIC_API_KEY`, Paystack live keys
+3. Invite Tokun to Sanity — sanity.io/manage → Members → Invite as Editor
+4. Fix Zustand hydration — seed store from server on dashboard load
+
+### Next 2 weeks
+5. Training page — full template: tracks, APConnect, certification tiers
+6. Event detail page `/events/[slug]` — speakers, agenda, sponsors, register CTA
+7. Dashboard Intelligence Briefing — `/dashboard/intelligence`
+8. Settings: Notifications tab — email preference toggles
+9. Admin Generator v2 — URL input + inline preview before saving
+10. Admin payments — wire Paystack transaction history
+
+### Later
+11. Programs & Initiatives (`/programs`)
+12. Professional Certification (`/certification`)
+13. Admin sidebar: add Generate Content link
+
+---
+
+## 8. Credentials & Access
+
+| Service | Project/ID |
+|---|---|
+| Vercel | vercel.com → aprn-africa |
+| Supabase | supabase.com → kwjotbqnfbisppblsnpt |
+| Sanity | sanity.io/manage → cwohq4ef |
+| GitHub | github.com/Casyvina/aprn-africa |
+| Domain | aprn-africa.org |
+
+---
+
+## 9. Team
+
+| Person | Role | Email | Access |
+|---|---|---|---|
+| Lucy Okeke | Founder & Executive Director | info@aprn-africa.org | Vercel, Supabase, ADMIN_EMAILS |
+| Joseph Agwuh | Director, Applied Engineering | josephagwuh@gmail.com | ADMIN_EMAILS |
+| Tokunbo Khadijat | Content Manager | tokunbokhadijat@gmail.com | ADMIN_EMAILS, Sanity Editor |
