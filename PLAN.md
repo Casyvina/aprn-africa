@@ -1,15 +1,16 @@
 # APRN Africa — Build Plan & Status
 
-> Stack: Next.js 16.2.6, Supabase, Sanity, Tailwind v4, Claude API, Paystack
-> Updated: June 2026
+> Stack: Next.js 16.2.6 · Supabase · Sanity CMS · Tailwind v4 · Claude API · Paystack · Fal.ai (planned)
+> Last updated: June 2026
+> Visual sitemap (with data flow + team roles): /admin/sitemap
 
 ---
 
 ## Legend
-- ✅ Done & deployed
-- 🔄 Exists but incomplete / needs template upgrade
-- ⏳ Not started — template exists in /website-templates/
-- ❌ Blocked by env var / external dependency
+- ✅ Done & live on Vercel
+- 🔄 Exists but needs upgrade (template in /website-templates/)
+- ⏳ Not built yet (template exists)
+- ❌ Needs manual action (env var / external invite / config)
 
 ---
 
@@ -26,11 +27,11 @@
 | Insights | `/insights` | ✅ | `intelligence-briefing.html` |
 | Insight Detail | `/insights/[slug]` | ✅ | `infrastructure-intelligence-briefing.html` |
 | Events Listing | `/events` | ✅ | `conference.html` |
-| Event Detail | `/events/[slug]` | 🔄 Static stubs only — needs full template (speakers, agenda, sponsors, register CTA) | `conference.html` |
+| Event Detail | `/events/[slug]` | 🔄 Static stubs only — needs speakers, agenda, sponsors, register CTA | `conference.html` |
 | Membership | `/membership` | ✅ | `membership.html` |
-| Training | `/training` | 🔄 Basic page — needs full template (tracks, APConnect, certification) | `training-development.html` |
-| Programs & Initiatives | `/programs` | ⏳ Not built | `programs-initiative.html` |
-| Professional Certification | `/certification` | ⏳ Not built | `professional-certification.html` |
+| Training | `/training` | 🔄 Basic page — needs APConnect tracks, certification tiers | `training-development.html` |
+| Programs & Initiatives | `/programs` | ⏳ | `programs-initiative.html` |
+| Professional Certification | `/certification` | ⏳ | `professional-certification.html` |
 | Contact | `/contact` | ✅ | `contacts.html` |
 | Newsletter | `/newsletter` | ✅ | — |
 | Privacy | `/privacy` | ✅ | `privacy-policy.html` |
@@ -39,110 +40,110 @@
 
 ---
 
-## 2. Member Dashboard (requires login)
+## 2. Member Dashboard (login required)
 
 | Page | Route | Status | Notes |
 |---|---|---|---|
-| Dashboard Home | `/dashboard` | ✅ | Stats, quick links |
-| Research | `/dashboard/research` | ✅ | `dashboard-research.html` |
+| Dashboard Home | `/dashboard` | ✅ | Stats, quick links, Zustand hydrated from server |
+| Research Feed | `/dashboard/research` | ✅ | Sanity content |
 | Research Detail | `/dashboard/research/[slug]` | ✅ | |
-| Intelligence Briefing | `/dashboard/intelligence` | ⏳ Not built | `dashboard-intelligence-breifing.html` — stats overview, learning grid, network activity panel |
+| Intelligence Briefing | `/dashboard/intelligence` | ⏳ | `dashboard-intelligence-breifing.html` — stats grid, learning feed, network activity |
 | Network | `/dashboard/network` | ✅ | Member cards |
 | Network Profile | `/dashboard/network/[id]` | ✅ | Bio, expertise, contributions |
-| Courses | `/dashboard/courses` | ✅ | APConnect modules |
-| Membership | `/dashboard/membership` | ✅ | Tier benefits + Paystack |
-| Saved | `/dashboard/saved` | ✅ | Bookmarked items |
-| Settings | `/dashboard/settings` | 🔄 Profile + password done — Notifications tab missing | `account-setting.html` |
-| Onboarding | `/onboarding` | ✅ | 3-step wizard |
+| Courses (APConnect) | `/dashboard/courses` | ✅ | |
+| My Membership | `/dashboard/membership` | ✅ | Tier benefits + Paystack upgrade |
+| Saved Items | `/dashboard/saved` | ✅ | |
+| Settings | `/dashboard/settings` | 🔄 | Profile + password done — Notifications tab missing (`account-setting.html`) |
+| Onboarding Wizard | `/onboarding` | ✅ | 3-step, upsert, Zod validation, Zustand sync |
 
 ---
 
-## 3. Admin Panel (admin emails only)
+## 3. Admin Panel (ADMIN_EMAILS only)
 
 | Page | Route | Status | Notes |
 |---|---|---|---|
-| Overview | `/admin` | ✅ | Stats strip, tier breakdown, recent signups |
-| Members | `/admin/members` | ✅ | Search, filter, pagination, detail drawer, tier change |
-| AI Generator | `/admin/generate` | ✅ | Claude drafts editorial/research straight into Sanity |
-| Payments | `/admin/payments` | 🔄 Stub — needs Paystack live keys + API wiring | |
+| Overview | `/admin` | ✅ | Coloured stat cards, tier breakdown, recent signups |
+| Members | `/admin/members` | ✅ | Search, filter, pagination, detail drawer, inline tier change |
+| AI Generator | `/admin/generate` | ✅ | Claude → Sanity draft (editorial or research report) |
+| Payments | `/admin/payments` | 🔄 | Stub — needs Paystack live keys + transaction history API |
+| Site Map | `/admin/sitemap` | ✅ | All routes, data flow, team roles |
+| Sanity Studio | `/studio` | ✅ | CMS — Tokun manages content here |
 
-**Planned admin upgrades:**
-- Generator v2: URL input (Claude reads source article), image upload, inline preview before saving to Sanity
-- Add Generate link to admin sidebar nav
-
----
-
-## 4. Auth Flow
-
-| Feature | Status |
-|---|---|
-| Register | ✅ |
-| Login | ✅ |
-| Forgot password | ✅ |
-| Onboarding wizard (3-step, upsert, Zod, Zustand) | ✅ |
-| "Skip for now" loop fix | ❌ Dashboard layout redirects back to `/onboarding` if `full_name` is null — skip is a dead end |
+**Admin generator roadmap:**
+- v2: URL input (Claude reads source article as context)
+- v2: Fal.ai / Flux Pro hero image generation
+- v2: Inline preview panel before saving to Sanity draft
 
 ---
 
-## 5. CMS — Sanity Studio (`/studio`)
+## 4. Auth
+
+| Feature | Status | Notes |
+|---|---|---|
+| Register | ✅ | → /onboarding after email verify |
+| Login | ✅ | |
+| Forgot / Reset password | ✅ | |
+| Onboarding wizard | ✅ | upsert, Zod, Zustand sync |
+| "Skip for now" | ✅ | router.replace("/dashboard") — no loop |
+| Auth callback smart redirect | ✅ | New user → /onboarding · Returning user (has full_name) → /dashboard |
+
+---
+
+## 5. CMS — Sanity Studio
 
 | Item | Status |
 |---|---|
-| Studio live | ✅ |
+| Studio live at `/studio` | ✅ |
 | Schemas: editorialInsight, researchReport, policyFramework | ✅ |
 | Schemas: events, training, courses, person, topic | ✅ |
-| AI content generator (Claude API → Sanity draft) | ✅ |
-| Tokun invited as Editor | ❌ Must invite via sanity.io/manage → cwohq4ef |
-| Sanity plan | Free tier (Growth trial ends ~mid June 2026) — no upgrade needed |
+| AI generator (Claude API → Sanity draft) | ✅ |
+| Tokun (tokunbokhadijat@gmail.com) invited as Editor | ❌ Manual: sanity.io/manage → cwohq4ef → Members |
+| Sanity plan | Free tier — Growth trial ends ~mid June 2026, no upgrade needed |
 
 ---
 
 ## 6. Infrastructure & Integrations
 
-| Item | Status | Action needed |
+| Item | Status | Action |
 |---|---|---|
-| Supabase schema deployed | ✅ | — |
-| RLS policies + profile trigger | ✅ | — |
-| Zustand auth store | ✅ | — |
-| Zod validation | ✅ | — |
-| Paystack (test keys) | ✅ | — |
-| Paystack (live keys) | ❌ | Add to Vercel env vars |
-| Anthropic API | ❌ | Add `ANTHROPIC_API_KEY` to Vercel |
-| Admin access gate | ❌ | Add `ADMIN_EMAILS` to Vercel |
-| Zustand hydration on first load | ❌ | Seed store from server profile in dashboard layout |
+| Supabase schema + RLS + triggers | ✅ | — |
+| Zustand auth store (all profile fields) | ✅ | — |
+| Zustand hydration on dashboard load | ✅ | DashboardHydrator seeds from server profile |
+| Zod validation (onboarding, password, settings) | ✅ | — |
+| Paystack test keys | ✅ | — |
+| Paystack live keys | ❌ | Add `NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY` + `PAYSTACK_SECRET_KEY` to Vercel |
+| ANTHROPIC_API_KEY | ❌ | Add to Vercel env vars |
+| ADMIN_EMAILS | ❌ | Add `info@aprn-africa.org,josephagwuh@gmail.com,tokunbokhadijat@gmail.com` to Vercel |
+| SANITY_WRITE_TOKEN | ❌ | Confirm present on Vercel (exists in .env.local) |
+| Fal.ai image generation | ⏳ | Add `FAL_KEY` to Vercel when ready |
 
 ---
 
-## 7. Priority Order
+## 7. Remaining Work — Priority Order
 
-### Before soft launch (do now)
-1. Fix "Skip for now" onboarding loop — dashboard layout should allow null `full_name`
-2. Set Vercel env vars: `ADMIN_EMAILS`, `ANTHROPIC_API_KEY`, Paystack live keys
-3. Invite Tokun to Sanity — sanity.io/manage → Members → Invite as Editor
-4. Fix Zustand hydration — seed store from server on dashboard load
+### Immediate (manual — not code)
+1. ❌ Set Vercel env vars: `ADMIN_EMAILS`, `ANTHROPIC_API_KEY`, Paystack live keys, confirm `SANITY_WRITE_TOKEN`
+2. ❌ Invite Tokun to Sanity Studio as Editor
 
-### Next 2 weeks
-5. Training page — full template: tracks, APConnect, certification tiers
-6. Event detail page `/events/[slug]` — speakers, agenda, sponsors, register CTA
-7. Dashboard Intelligence Briefing — `/dashboard/intelligence`
-8. Settings: Notifications tab — email preference toggles
-9. Admin Generator v2 — URL input + inline preview before saving
-10. Admin payments — wire Paystack transaction history
-
-### Later
-11. Programs & Initiatives (`/programs`)
-12. Professional Certification (`/certification`)
-13. Admin sidebar: add Generate Content link
+### Next build sessions
+3. 🔄 **Training page** — full template: tracks, APConnect modules, certification tiers (`training-development.html`)
+4. 🔄 **Event detail** `/events/[slug]` — speakers, agenda, sponsors, registration CTA (`conference.html`)
+5. ⏳ **Dashboard Intelligence Briefing** `/dashboard/intelligence` — stats grid, learning feed, network activity (`dashboard-intelligence-breifing.html`)
+6. 🔄 **Settings: Notifications tab** — email preference toggles (`account-setting.html`)
+7. 🔄 **Admin Generator v2** — URL input, Fal.ai image gen, inline preview before Sanity save
+8. 🔄 **Admin Payments page** — Paystack transaction history API
+9. ⏳ **Programs & Initiatives** `/programs` (`programs-initiative.html`)
+10. ⏳ **Professional Certification** `/certification` (`professional-certification.html`)
 
 ---
 
-## 8. Credentials & Access
+## 8. Credentials
 
-| Service | Project/ID |
+| Service | ID / URL |
 |---|---|
 | Vercel | vercel.com → aprn-africa |
-| Supabase | supabase.com → kwjotbqnfbisppblsnpt |
-| Sanity | sanity.io/manage → cwohq4ef |
+| Supabase | kwjotbqnfbisppblsnpt |
+| Sanity | cwohq4ef (dataset: production) |
 | GitHub | github.com/Casyvina/aprn-africa |
 | Domain | aprn-africa.org |
 
