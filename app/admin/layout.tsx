@@ -10,9 +10,10 @@ function isAdmin(email: string | undefined): boolean {
 }
 
 const adminNav = [
-  { href: "/admin",          icon: "fa-chart-line",  label: "Overview"  },
-  { href: "/admin/members",  icon: "fa-users",       label: "Members"   },
-  { href: "/admin/payments", icon: "fa-credit-card", label: "Payments"  },
+  { href: "/admin",          icon: "fa-chart-line",          label: "Overview"  },
+  { href: "/admin/members",  icon: "fa-users",               label: "Members"   },
+  { href: "/admin/generate", icon: "fa-wand-magic-sparkles", label: "Generate"  },
+  { href: "/admin/payments", icon: "fa-credit-card",         label: "Payments"  },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardNav from "@/components/DashboardNav";
 import DashboardMobileNav from "@/components/DashboardMobileNav";
+import DashboardHydrator from "@/components/DashboardHydrator";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -12,7 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, membership_tier")
+    .select("id, full_name, job_title, discipline, organisation, country, linkedin_url, bio, avatar_url, membership_tier, topics, updated_at")
     .eq("id", user.id)
     .single();
 
@@ -137,6 +138,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         {/* Scrollable content */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8">
+          {profile && <DashboardHydrator profile={{ ...profile, topics: profile.topics ?? [] }} />}
           {children}
         </main>
       </div>
