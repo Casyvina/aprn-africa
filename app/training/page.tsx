@@ -249,6 +249,195 @@ export default async function TrainingPage() {
           </div>
         </section>
 
+        {/* -- Certification Pathway ----------------------------- */}
+        <section className="py-24 bg-navy-900 border-t border-navy-800">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
+                Your Journey
+              </span>
+              <h2 className="font-display text-3xl lg:text-5xl font-bold mb-6 text-white">
+                A Clear Path to Certification
+              </h2>
+              <p className="text-slate-400 text-lg">
+                From graduate entry to executive leadership — every stage of your career has a structured programme.
+              </p>
+            </div>
+
+            <div className="relative">
+              {/* Connector line */}
+              <div className="hidden lg:block absolute top-14 left-0 right-0 h-px bg-linear-to-r from-transparent via-gold-500/30 to-transparent" />
+
+              <div className="grid lg:grid-cols-3 gap-8">
+                {[
+                  {
+                    level: "01",
+                    title: "Entry Level",
+                    subtitle: "Fundamentals Track",
+                    icon: "fa-seedling",
+                    color: "text-emerald-400",
+                    border: "border-emerald-400/30",
+                    bg: "bg-emerald-400/5",
+                    modules: ["Pipeline Design Principles", "Material Science Basics", "Field Safety Protocols", "QHSE Fundamentals"],
+                    outcome: "APRN Entry Certificate",
+                    audience: "Recent graduates, career switchers",
+                  },
+                  {
+                    level: "02",
+                    title: "Professional",
+                    subtitle: "Certification Track",
+                    icon: "fa-certificate",
+                    color: "text-gold-500",
+                    border: "border-gold-500/30",
+                    bg: "bg-gold-500/5",
+                    modules: ["Integrity Management Systems", "Corrosion Engineering", "Risk Assessment & Modelling", "Regulatory Compliance"],
+                    outcome: "APRN Professional Certificate",
+                    audience: "Mid-career engineers (3–10 yrs)",
+                  },
+                  {
+                    level: "03",
+                    title: "Executive",
+                    subtitle: "Leadership Track",
+                    icon: "fa-crown",
+                    color: "text-copper-500",
+                    border: "border-copper-500/30",
+                    bg: "bg-copper-500/5",
+                    modules: ["Infrastructure Financing", "Cross-Border Policy Frameworks", "Project Portfolio Leadership", "Stakeholder & Board Engagement"],
+                    outcome: "APRN Executive Fellowship",
+                    audience: "Senior engineers, directors",
+                  },
+                ].map((tier) => (
+                  <div
+                    key={tier.level}
+                    className={`glass-panel rounded-sm border ${tier.border} p-8 flex flex-col gap-5 hover:border-opacity-60 transition-all`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className={`w-12 h-12 rounded-sm ${tier.bg} border ${tier.border} flex items-center justify-center shrink-0`}>
+                        <i className={`fa-solid ${tier.icon} ${tier.color} text-lg`} />
+                      </div>
+                      <span className={`text-3xl font-bold ${tier.color} opacity-20 font-display`}>{tier.level}</span>
+                    </div>
+                    <div>
+                      <p className={`text-xs font-bold uppercase tracking-widest ${tier.color} mb-1`}>{tier.subtitle}</p>
+                      <h3 className="font-display text-xl font-bold text-white">{tier.title}</h3>
+                      <p className="text-xs text-slate-500 mt-1">{tier.audience}</p>
+                    </div>
+                    <ul className="space-y-2">
+                      {tier.modules.map((m) => (
+                        <li key={m} className="flex items-start gap-2 text-sm text-slate-400">
+                          <i className="fa-solid fa-check text-[9px] mt-1 text-gold-500 shrink-0" />
+                          {m}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className={`mt-auto pt-4 border-t ${tier.border}`}>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Credential</p>
+                      <p className={`text-sm font-semibold ${tier.color}`}>{tier.outcome}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* -- APConnect Platform --------------------------------- */}
+        <section className="py-24 bg-navy-800 border-t border-navy-700">
+          <div className="max-w-360 mx-auto px-6 lg:px-12">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
+                  <span className="text-xs font-bold text-gold-500 uppercase tracking-widest">Now Live</span>
+                </div>
+                <h2 className="font-display text-3xl lg:text-4xl font-bold mb-6 text-white">
+                  APConnect™ — Africa&apos;s Pipeline Learning Platform
+                </h2>
+                <p className="text-slate-400 text-lg mb-8 leading-relaxed">
+                  Structured online courses, video modules, and assessments — all built specifically for Africa&apos;s pipeline and energy sector. Learn at your own pace, earn credentials, and track progress in your dashboard.
+                </p>
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  {[
+                    { icon: "fa-play-circle",     label: "Video modules",        value: "Self-paced" },
+                    { icon: "fa-check-circle",     label: "Structured assessments", value: "Graded" },
+                    { icon: "fa-certificate",      label: "On completion",        value: "Certificate" },
+                    { icon: "fa-mobile-screen",    label: "Access",               value: "Any device" },
+                  ].map((f) => (
+                    <div key={f.label} className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-sm bg-navy-900 border border-navy-700 flex items-center justify-center shrink-0 mt-0.5">
+                        <i className={`fa-solid ${f.icon} text-gold-500 text-xs`} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-white">{f.value}</p>
+                        <p className="text-[10px] text-slate-500">{f.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/register"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold text-sm tracking-wide transition-all rounded-sm"
+                  >
+                    Join & Start Learning <i className="fa-solid fa-arrow-right text-xs" />
+                  </Link>
+                  <Link
+                    href="/dashboard/courses"
+                    className="inline-flex items-center gap-2 px-6 py-3 glass-panel border border-white/10 hover:border-white/20 text-white font-semibold text-sm transition-all rounded-sm"
+                  >
+                    Browse Courses
+                  </Link>
+                </div>
+              </div>
+
+              {/* Platform feature card */}
+              <div className="glass-panel rounded-sm border border-navy-700 p-6 space-y-4">
+                <div className="flex items-center justify-between pb-4 border-b border-navy-700">
+                  <div>
+                    <p className="text-sm font-bold text-white">APConnect™</p>
+                    <p className="text-xs text-slate-500">Pipeline Learning Platform</p>
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest px-2 py-1 bg-emerald-400/10 border border-emerald-400/20 rounded-full">
+                    Live
+                  </span>
+                </div>
+                {[
+                  { title: "Pipeline Integrity Management", level: "Professional", pct: 68, modules: 12 },
+                  { title: "Corrosion Engineering Fundamentals", level: "Entry", pct: 45, modules: 8 },
+                  { title: "African Pipeline Policy & Regulation", level: "Professional", pct: 20, modules: 10 },
+                  { title: "Energy Transition for Engineers", level: "Executive", pct: 0, modules: 6 },
+                ].map((course) => (
+                  <div key={course.title} className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-semibold text-white truncate pr-2">{course.title}</p>
+                      <span className="text-[9px] text-slate-500 shrink-0">{course.modules} modules</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1 bg-navy-900 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-linear-to-r from-gold-500 to-copper-500 rounded-full transition-all"
+                          style={{ width: course.pct > 0 ? `${course.pct}%` : "3px" }}
+                        />
+                      </div>
+                      <span className="text-[9px] text-slate-600 w-8 text-right">
+                        {course.pct > 0 ? `${course.pct}%` : "New"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-3 border-t border-navy-700 flex items-center justify-between">
+                  <p className="text-[10px] text-slate-500">4 courses available · More coming soon</p>
+                  <Link href="/dashboard/courses" className="text-[10px] font-bold text-gold-500 hover:text-gold-400 transition-colors uppercase tracking-widest">
+                    Open →
+                  </Link>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
         {/* -- Active Programs ------------------------------------ */}
         {programs.length > 0 && (
           <section className="py-24 bg-navy-900 border-t border-navy-800">
