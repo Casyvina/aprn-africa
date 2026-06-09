@@ -32,9 +32,13 @@ export type NewsletterCard = Pick<
 
 // ── Queries ───────────────────────────────────────────────────────────────────
 
-/** All published/sent issues for the archive listing — newest first (capped at 24) */
+// A newsletter is visible if it is published in Sanity (no drafts. prefix) regardless
+// of whether the status field was explicitly set. Tokun just needs to hit Publish.
+const PUBLISHED = `_type == "newsletter"`
+
+/** All published issues for the archive listing — newest first (capped at 24) */
 export const ALL_NEWSLETTERS_QUERY = groq`
-  *[_type == "newsletter" && status in ["approved", "sent"]] | order(publishDate desc) [0...24] {
+  *[${PUBLISHED}] | order(publishDate desc) [0...24] {
     _id,
     "slug": slug.current,
     title,
@@ -49,7 +53,7 @@ export const ALL_NEWSLETTERS_QUERY = groq`
 
 /** Latest single issue for the /newsletter landing hero */
 export const LATEST_NEWSLETTER_QUERY = groq`
-  *[_type == "newsletter" && status in ["approved", "sent"]] | order(publishDate desc) [0] {
+  *[${PUBLISHED}] | order(publishDate desc) [0] {
     _id,
     "slug": slug.current,
     title,
@@ -68,7 +72,7 @@ export const LATEST_NEWSLETTER_QUERY = groq`
 
 /** Full issue detail for /newsletter/[issue] */
 export const NEWSLETTER_BY_SLUG_QUERY = groq`
-  *[_type == "newsletter" && slug.current == $slug && status in ["approved", "sent"]][0] {
+  *[${PUBLISHED} && slug.current == $slug][0] {
     _id,
     "slug": slug.current,
     title,
@@ -87,7 +91,7 @@ export const NEWSLETTER_BY_SLUG_QUERY = groq`
 
 /** Static params for generateStaticParams */
 export const NEWSLETTER_SLUGS_QUERY = groq`
-  *[_type == "newsletter" && status in ["approved", "sent"]]{ "slug": slug.current }
+  *[${PUBLISHED}]{ "slug": slug.current }
 `
 
 /** Latest approved (not-yet-sent) issue for the send API */

@@ -10,6 +10,9 @@ import {
   type NewsletterCard,
 } from "@/lib/queries/newsletter";
 
+// Revalidate every 10 minutes so new Sanity issues appear without a redeploy
+export const revalidate = 600;
+
 // -- Helpers -------------------------------------------------------------------
 
 function formatDate(iso: string) {
