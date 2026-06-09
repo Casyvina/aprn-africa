@@ -4,6 +4,9 @@ import { useState, useMemo } from "react";
 
 const TIERS = ["all", "free", "student", "graduate", "professional", "associate", "corporate"] as const;
 
+// Computed at module load — stable reference, no impure call during render
+const MONTH_AGO = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
 const TIER_BADGE: Record<string, string> = {
   free:         "bg-navy-900 text-slate-400 border-white/10",
   student:      "bg-blue-400/10 text-blue-400 border-blue-400/20",
@@ -117,8 +120,7 @@ export default function AdminMembersTable({ members }: Props) {
   // Stats
   const paid = members.filter((m) => (tierOverride[m.id] ?? m.tier) !== "free").length;
   const professional = members.filter((m) => ["professional","associate","corporate"].includes(tierOverride[m.id] ?? m.tier)).length;
-  const monthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  const newThisMonth = members.filter((m) => new Date(m.joinedAt).getTime() > monthAgo).length;
+  const newThisMonth = members.filter((m) => new Date(m.joinedAt).getTime() > MONTH_AGO).length;
 
   return (
     <div className="flex flex-col gap-6 max-w-275">
