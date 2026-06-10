@@ -124,7 +124,7 @@ export default async function ResearchSection() {
                 {featured.executiveSummary}
               </p>
               <div className="flex flex-wrap gap-2 mb-6">
-                {featured.topics.map((t) => (
+                {(featured.topics ?? []).map((t) => (
                   <span
                     key={t.name}
                     className="text-xs px-2.5 py-1 bg-navy-800 text-slate-400 rounded-sm border border-navy-700"
@@ -176,7 +176,7 @@ export default async function ResearchSection() {
                   </div>
                   <p className="text-xs text-slate-400 leading-relaxed mb-4 flex-1">{pub.executiveSummary}</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {pub.topics.map((t) => (
+                    {(pub.topics ?? []).map((t) => (
                       <span
                         key={t.name}
                         className="text-[10px] px-2 py-0.5 bg-navy-800 text-slate-400 rounded-sm border border-navy-700"
