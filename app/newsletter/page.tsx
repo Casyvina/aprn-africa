@@ -230,7 +230,7 @@ export default async function NewsletterPage() {
                 </p>
                 {"sourceUrl" in leadStory && leadStory.sourceUrl ? (
                   <a
-                    href={leadStory.sourceUrl}
+                    href={leadStory.sourceUrl as string}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-sm font-semibold text-navy-900 border-b-2 border-gold-500 pb-0.5 hover:text-gold-500 transition-colors"
