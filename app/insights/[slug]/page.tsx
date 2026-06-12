@@ -44,9 +44,15 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
 
 // -- Static params -------------------------------------------------------------
 
+export const dynamicParams = true;
+
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const slugs = await sanityFetch<Array<{ slug: string }>>(INSIGHT_SLUGS_QUERY);
-  return slugs.filter((s) => Boolean(s.slug));
+  try {
+    const slugs = await sanityFetch<Array<{ slug: string }>>(INSIGHT_SLUGS_QUERY);
+    return (slugs ?? []).filter((s) => Boolean(s.slug));
+  } catch {
+    return [];
+  }
 }
 
 // -- Page ----------------------------------------------------------------------

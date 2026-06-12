@@ -143,9 +143,15 @@ const lightComponents: PortableTextComponents = {
 
 // -- Static params -------------------------------------------------------------
 
+export const dynamicParams = true;
+
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const slugs = await sanityFetch<Array<{ slug: string }>>(RESEARCH_SLUGS_QUERY);
-  return slugs.filter((s) => Boolean(s.slug));
+  try {
+    const slugs = await sanityFetch<Array<{ slug: string }>>(RESEARCH_SLUGS_QUERY);
+    return (slugs ?? []).filter((s) => Boolean(s.slug));
+  } catch {
+    return [];
+  }
 }
 
 // -- Page ----------------------------------------------------------------------

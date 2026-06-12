@@ -7,8 +7,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const mainNav = [
-  { href: "/dashboard",            icon: "fa-chart-line",     label: "Overview" },
-  { href: "/dashboard/research",   icon: "fa-flask",          label: "My Research" },
+  { href: "/dashboard",               icon: "fa-chart-line",     label: "Overview" },
+  { href: "/dashboard/intelligence",  icon: "fa-newspaper",      label: "Intelligence" },
+  { href: "/dashboard/research",      icon: "fa-flask",          label: "My Research" },
   { href: "/dashboard/courses",    icon: "fa-graduation-cap", label: "Training & Courses" },
   { href: "/dashboard/network",    icon: "fa-network-wired",  label: "Engineer Network" },
   { href: "/dashboard/membership", icon: "fa-id-card",        label: "Membership" },

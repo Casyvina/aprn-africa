@@ -29,7 +29,7 @@
 | Events Listing | `/events` | ✅ | `conference.html` |
 | Event Detail | `/events/[slug]` | 🔄 Static stubs only — needs speakers, agenda, sponsors, register CTA | `conference.html` |
 | Membership | `/membership` | ✅ | `membership.html` |
-| Training | `/training` | 🔄 Basic page — needs APConnect tracks, certification tiers | `training-development.html` |
+| Training | `/training` | ✅ | `training-development.html` |
 | Programs & Initiatives | `/programs` | ⏳ | `programs-initiative.html` |
 | Professional Certification | `/certification` | ⏳ | `professional-certification.html` |
 | Contact | `/contact` | ✅ | `contacts.html` |
@@ -47,7 +47,7 @@
 | Dashboard Home | `/dashboard` | ✅ | Stats, quick links, Zustand hydrated from server |
 | Research Feed | `/dashboard/research` | ✅ | Sanity content |
 | Research Detail | `/dashboard/research/[slug]` | ✅ | |
-| Intelligence Briefing | `/dashboard/intelligence` | ⏳ | `dashboard-intelligence-breifing.html` — stats grid, learning feed, network activity |
+| Intelligence Briefing | `/dashboard/intelligence` | ✅ | stats, continue learning, recent intelligence, membership + network sidebar |
 | Network | `/dashboard/network` | ✅ | Member cards |
 | Network Profile | `/dashboard/network/[id]` | ✅ | Bio, expertise, contributions |
 | Courses (APConnect) | `/dashboard/courses` | ✅ | |

@@ -25,8 +25,12 @@ function formatDate(iso: string) {
 // -- Static params -------------------------------------------------------------
 
 export async function generateStaticParams(): Promise<Array<{ issue: string }>> {
-  const slugs = await sanityFetch<Array<{ slug: string }>>(NEWSLETTER_SLUGS_QUERY);
-  return slugs.filter((s) => Boolean(s.slug)).map((s) => ({ issue: s.slug }));
+  try {
+    const slugs = await sanityFetch<Array<{ slug: string }>>(NEWSLETTER_SLUGS_QUERY);
+    return (slugs ?? []).filter((s) => Boolean(s.slug)).map((s) => ({ issue: s.slug }));
+  } catch {
+    return [];
+  }
 }
 
 // -- Page ----------------------------------------------------------------------
