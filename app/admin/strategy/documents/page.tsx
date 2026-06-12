@@ -169,12 +169,12 @@ export default function DocumentLibraryPage() {
       if (!res.body) throw new Error("No stream");
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let text = "";
+      setSummaries((prev) => ({ ...prev, [doc.id]: "" }));
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        text += decoder.decode(value);
-        setSummaries((prev) => ({ ...prev, [doc.id]: text }));
+        const chunk = decoder.decode(value);
+        setSummaries((prev) => ({ ...prev, [doc.id]: (prev[doc.id] ?? "") + chunk }));
       }
     } catch {
       setSummaries((prev) => ({ ...prev, [doc.id]: "Error generating summary." }));

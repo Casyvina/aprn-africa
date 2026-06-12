@@ -88,7 +88,7 @@ export default function CommunicationStrategyPage() {
         if (done) break;
         setAiOutput((prev) => prev + decoder.decode(value));
       }
-    } catch (e) {
+    } catch {
       setAiOutput("Error generating content. Please check your ANTHROPIC_API_KEY and try again.");
     } finally {
       setLoading(false);

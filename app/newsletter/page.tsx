@@ -86,7 +86,7 @@ export default async function NewsletterPage() {
                 APRN Intelligence<br />Briefing
               </h1>
               <p className="text-lg text-slate-400 leading-relaxed mb-10 max-w-2xl">
-                Africa's definitive pipeline and energy intelligence digest — covering infrastructure developments, policy shifts, engineering insights, and market intelligence across the continent.
+                Africa&apos;s definitive pipeline and energy intelligence digest — covering infrastructure developments, policy shifts, engineering insights, and market intelligence across the continent.
               </p>
               <div className="flex flex-wrap gap-6 text-xs text-slate-500 uppercase tracking-widest mb-10">
                 {[
