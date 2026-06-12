@@ -61,6 +61,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               {item.label}
             </Link>
           ))}
+
+          <p className="px-5 mt-6 mb-2 text-[9px] font-bold tracking-widest text-slate-600 uppercase">
+            Content
+          </p>
+          <Link
+            href="/studio"
+            className="mx-3 px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
+          >
+            <i className="fa-solid fa-pen-nib w-4 text-center text-[11px] text-slate-500" />
+            Sanity Studio
+          </Link>
         </nav>
 
         <div className="px-5 py-4 border-t border-white/5 shrink-0">

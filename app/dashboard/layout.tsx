@@ -6,6 +6,12 @@ import DashboardNav from "@/components/DashboardNav";
 import DashboardMobileNav from "@/components/DashboardMobileNav";
 import DashboardHydrator from "@/components/DashboardHydrator";
 
+function isAdmin(email: string | undefined): boolean {
+  if (!email) return false;
+  const allowed = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase());
+  return allowed.includes(email.toLowerCase());
+}
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -50,6 +56,29 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         {/* Nav items (client — needs usePathname for active state) */}
         <DashboardNav />
+
+        {/* Admin quick-access — only visible to admin emails */}
+        {isAdmin(user.email) && (
+          <div className="px-5 py-4 border-t border-white/5 shrink-0">
+            <p className="text-[9px] font-bold tracking-widest text-slate-600 uppercase mb-2 px-3">
+              Admin Tools
+            </p>
+            <Link
+              href="/admin"
+              className="px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
+            >
+              <i className="fa-solid fa-shield-halved w-4 text-center text-[11px] text-gold-500" />
+              Admin Panel
+            </Link>
+            <Link
+              href="/studio"
+              className="px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
+            >
+              <i className="fa-solid fa-pen-nib w-4 text-center text-[11px] text-gold-500" />
+              Sanity Studio
+            </Link>
+          </div>
+        )}
 
         {/* User + sign out */}
         <div className="px-8 py-6 border-t border-white/5 shrink-0">
