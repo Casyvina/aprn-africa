@@ -1,7 +1,7 @@
 # APRN Africa — Build Plan & Status
 
 > Stack: Next.js 16.2.6 · Supabase · Sanity CMS · Tailwind v4 · Claude API · Paystack · Fal.ai (planned)
-> Last updated: June 2026
+> Last updated: June 2026 — Session 6
 > Visual sitemap (with data flow + team roles): /admin/sitemap
 
 ---
@@ -47,7 +47,7 @@
 | Dashboard Home | `/dashboard` | ✅ | Stats, quick links, Zustand hydrated from server |
 | Research Feed | `/dashboard/research` | ✅ | Sanity content |
 | Research Detail | `/dashboard/research/[slug]` | ✅ | |
-| Intelligence Briefing | `/dashboard/intelligence` | ✅ | stats, continue learning, recent intelligence, membership + network sidebar |
+| Intelligence Briefing | `/dashboard/intelligence` | ✅ | Stats, continue learning, recent Sanity intelligence, membership + network sidebar |
 | Network | `/dashboard/network` | ✅ | Member cards |
 | Network Profile | `/dashboard/network/[id]` | ✅ | Bio, expertise, contributions |
 | Courses (APConnect) | `/dashboard/courses` | ✅ | |
@@ -67,12 +67,12 @@
 | AI Generator | `/admin/generate` | ✅ | Claude → Sanity draft (editorial or research report) |
 | Payments | `/admin/payments` | 🔄 | Stub — needs Paystack live keys + transaction history API |
 | Site Map | `/admin/sitemap` | ✅ | All routes, data flow, team roles |
-| Sanity Studio | `/studio` | ✅ | CMS — Tokun manages content here |
-
-**Admin generator roadmap:**
-- v2: URL input (Claude reads source article as context)
-- v2: Fal.ai / Flux Pro hero image generation
-- v2: Inline preview panel before saving to Sanity draft
+| Sanity Studio | `/studio` | ✅ | CMS — Tokun + Allison manage content here |
+| **Strategy Portal** | | | |
+| Comms Strategy | `/admin/strategy/communication` | ✅ | Stakeholder tables, channel grid, approval flow, AI regen |
+| Stakeholder Map | `/admin/strategy/stakeholders` | ✅ | SVG matrix, filter tabs, table, AI engagement brief drawer |
+| Document Library | `/admin/strategy/documents` | ✅ | Grid/list toggle, Supabase Storage, AI edit + preview + save |
+| Content Studio | `/admin/content-studio` | ⏳ | Fal.ai Flux Pro image gen — see Section 10 |
 
 ---
 
@@ -122,18 +122,85 @@
 ## 7. Remaining Work — Priority Order
 
 ### Immediate (manual — not code)
-1. ❌ Set Vercel env vars: `ADMIN_EMAILS`, `ANTHROPIC_API_KEY`, Paystack live keys, confirm `SANITY_WRITE_TOKEN`
-2. ❌ Invite Tokun to Sanity Studio as Editor
+1. ❌ Set Vercel env vars: `ADMIN_EMAILS`, `ANTHROPIC_API_KEY`, `FAL_KEY`, Paystack live keys, confirm `SANITY_WRITE_TOKEN`
+2. ❌ Invite Tokun + Allison Gabriel to Sanity Studio as Editor (sanity.io/manage → cwohq4ef)
+3. ❌ Run "Sync to Cloud" on Document Library page once (migrates files to Supabase Storage)
 
-### Next build sessions
-3. 🔄 **Training page** — full template: tracks, APConnect modules, certification tiers (`training-development.html`)
-4. 🔄 **Event detail** `/events/[slug]` — speakers, agenda, sponsors, registration CTA (`conference.html`)
-5. ⏳ **Dashboard Intelligence Briefing** `/dashboard/intelligence` — stats grid, learning feed, network activity (`dashboard-intelligence-breifing.html`)
-6. 🔄 **Settings: Notifications tab** — email preference toggles (`account-setting.html`)
-7. 🔄 **Admin Generator v2** — URL input, Fal.ai image gen, inline preview before Sanity save
-8. 🔄 **Admin Payments page** — Paystack transaction history API
-9. ⏳ **Programs & Initiatives** `/programs` (`programs-initiative.html`)
-10. ⏳ **Professional Certification** `/certification` (`professional-certification.html`)
+### Strategy Portal — current sprint (see Section 10 for full detail)
+4. ⏳ **Content Studio** `/admin/content-studio` — Fal.ai image gen for social, newsletter, events, reports
+5. ⏳ **Comms Strategy: editable channels** — inline edit channel cards + WhatsApp group details
+6. ⏳ **Comms Strategy: editable calendar** — add/edit/remove items, assign owners
+7. ⏳ **Stakeholder Map: last contact + notes** — date picker + free-text per stakeholder
+8. ⏳ **Document Library: Personnel section** — move HR/legal docs out of Strategy
+
+### Public site
+9. 🔄 **Event detail** `/events/[slug]` — speakers, agenda, sponsors, registration CTA (`conference.html`)
+10. ⏳ **Programs & Initiatives** `/programs` (`programs-initiative.html`)
+11. ⏳ **Professional Certification** `/certification` (`professional-certification.html`)
+
+### Dashboard & Settings
+12. 🔄 **Settings: Notifications tab** — email preference toggles (`account-setting.html`)
+
+### Admin
+13. 🔄 **Admin Generator v2** — URL input, Fal.ai hero image, inline preview before Sanity save
+14. 🔄 **Admin Payments page** — Paystack transaction history API
+
+---
+
+## 10. Strategy Portal Roadmap
+
+### 10a. Document Library
+| Task | Status | Notes |
+|---|---|---|
+| Grid/list toggle | ✅ | Done |
+| Supabase Storage + signed URLs | ✅ | `aprn-documents` bucket, admin client |
+| AI edit → iframe preview → save | ✅ | HTML files only; streams corrected HTML |
+| Migrate existing files to cloud | ❌ Manual | Click "Sync to Cloud" button once |
+| Move HR/legal docs to Personnel section | ⏳ | Employment letters, ambassador letter out of strategy |
+| Personnel & Legal subsection `/admin/strategy/personnel` | ⏳ | Separate page for HR docs (employment, contracts, letters) |
+| Active / Archived status toggle per doc | ⏳ | Filter out archived docs from default view |
+
+### 10b. Communication Strategy — Make it editable
+| Task | Status | Notes |
+|---|---|---|
+| Static strategy page | ✅ | Done |
+| AI regenerate | ✅ | Done |
+| **Editable channel cards** | ⏳ | Inline edit: name, audience, frequency, owner, notes — saved to Supabase `strategy_channels` table |
+| **WhatsApp group detail** | ⏳ | Per-channel sub-section: group name, member count, who manages, last broadcast |
+| **Editable communication calendar** | ⏳ | Add/edit/remove weekly items, assign owner per item |
+| **Editable approval flow** | ⏳ | Change step owners without code — saved to Supabase |
+| AI draft calendar item | ⏳ | Click "Draft" on any calendar item → Claude writes the copy |
+| AI draft WhatsApp broadcast | ⏳ | Click "Draft Message" on any WhatsApp group → Claude writes it |
+
+### 10c. Stakeholder Map — Make it live
+| Task | Status | Notes |
+|---|---|---|
+| SVG matrix + filter + table + AI brief | ✅ | Done |
+| **Last contact date picker** | ⏳ | Editable per row, persisted to Supabase `strategy_stakeholders` table |
+| **Notes / engagement history** | ⏳ | Free-text per stakeholder, shown in AI brief context |
+| **Add new stakeholder** | ⏳ | Form to add to the list and matrix |
+| **Edit stakeholder details** | ⏳ | Edit name, org, influence/interest, strategy |
+
+### 10d. Content Studio — Fal.ai Image Generation (NEW)
+> Primary users: Tokunbo Khadijat, Allison Gabriel
+> Route: `/admin/content-studio`
+
+| Task | Status | Notes |
+|---|---|---|
+| New page + sidebar nav entry | ⏳ | Under "Content" section in admin layout |
+| Fal.ai Flux Pro integration | ⏳ | `@fal-ai/client`, `FAL_KEY` env var (already in `.env.local`) |
+| Format presets | ⏳ | LinkedIn post (1200×627), Newsletter header (600×200), Event banner (1920×1080), Research cover (800×1000), Social square (1080×1080) |
+| Brand prompt injection | ⏳ | Auto-prepend APRN brand context (navy/gold palette, professional pipeline sector) |
+| Generate → preview → download | ⏳ | Show image, allow download |
+| Save to Supabase Storage | ⏳ | Optional save to `aprn-content-assets` bucket |
+| Prompt history | ⏳ | Last 10 generations stored in session |
+
+### 10e. Admin Generator v2
+| Task | Status | Notes |
+|---|---|---|
+| URL input → Claude reads source article | ⏳ | Fetch + pass as context |
+| Fal.ai hero image alongside content | ⏳ | Generate cover image as part of content creation flow |
+| Inline preview before Sanity save | ⏳ | Review content + image before publishing draft |
 
 ---
 
@@ -154,5 +221,6 @@
 | Person | Role | Email | Access |
 |---|---|---|---|
 | Lucy Okeke | Founder & Executive Director | info@aprn-africa.org | Vercel, Supabase, ADMIN_EMAILS |
-| Joseph Agwuh | Director, Applied Engineering | josephagwuh@gmail.com | ADMIN_EMAILS |
-| Tokunbo Khadijat | Content Manager | tokunbokhadijat@gmail.com | ADMIN_EMAILS, Sanity Editor |
+| Joseph Agwuh | Director, Applied Engineering | josephagwuh@gmail.com | ADMIN_EMAILS, platform builder |
+| Tokunbo Khadijat | Content Manager | tokunbokhadijat@gmail.com | ADMIN_EMAILS, Sanity Editor ❌ invite pending |
+| Allison Gabriel | Youth Ambassador & Content | gabriellallison69@gmail.com | ADMIN_EMAILS, Sanity Editor ❌ invite pending |
