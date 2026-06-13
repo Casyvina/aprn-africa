@@ -146,7 +146,9 @@ export default function DocumentLibraryPage() {
         };
       });
 
-      setDocs(docList);
+      // Deduplicate by filename in case storage returns the same file twice
+      const docMap = new Map(docList.map((d) => [d.id, d]));
+      setDocs(Array.from(docMap.values()));
       setStorageUrls(urlMap);
     } catch {
       // non-fatal — show empty state
@@ -424,7 +426,12 @@ export default function DocumentLibraryPage() {
         canView: ["HTML", "PPTX", "DOCX", "XLSX"].includes(ext),
         notes: "",
       };
-      setDocs((prev) => [newDoc, ...prev]);
+      // Replace if already present (re-upload), otherwise prepend
+      setDocs((prev) =>
+        prev.some((d) => d.id === filename)
+          ? prev.map((d) => (d.id === filename ? newDoc : d))
+          : [newDoc, ...prev]
+      );
       if (signedUrl) setStorageUrls((prev) => ({ ...prev, [filename]: signedUrl }));
     } catch {
       // silent — user can retry
