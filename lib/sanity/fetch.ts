@@ -1,7 +1,7 @@
 import { client } from './client'
 
 // Content types that change frequently — short cache
-const FAST_TAGS = new Set(['newsletter', 'intelligence', 'insights', 'training', 'leadership', 'partnerships'])
+const FAST_TAGS = new Set(['newsletter', 'intelligence', 'insights', 'training', 'leadership', 'partnerships', 'events', 'event'])
 
 export async function sanityFetch<T>(
   query: string,

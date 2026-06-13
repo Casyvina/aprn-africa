@@ -5,6 +5,7 @@ export interface EventCard {
   slug: string
   title: string
   subtitle?: string
+  description?: string
   eventType: string
   status: string
   featured: boolean
@@ -22,11 +23,12 @@ export interface EventCard {
 }
 
 export const EVENTS_QUERY = groq`
-  *[_type == "event" && status in ["published", "coming_soon"]] | order(featured desc, startDate asc) {
+  *[_type == "event" && status in ["published", "coming_soon"]] | order(startDate asc) {
     _id,
     "slug": slug.current,
     title,
     subtitle,
+    "description": pt::text(description),
     eventType,
     status,
     featured,
