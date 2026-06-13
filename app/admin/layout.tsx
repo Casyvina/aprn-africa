@@ -9,6 +9,8 @@ function isAdmin(email: string | undefined): boolean {
   return allowed.includes(email.toLowerCase());
 }
 
+const PERSONNEL_EMAILS = ["info@aprn-africa.org", "josephagwuh@gmail.com"];
+
 const adminNav = [
   { href: "/admin",          icon: "fa-chart-line",          label: "Overview"  },
   { href: "/admin/members",  icon: "fa-users",               label: "Members"   },
@@ -23,6 +25,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!user) redirect("/login");
   if (!isAdmin(user.email)) redirect("/dashboard");
+
+  const isPersonnelUser = PERSONNEL_EMAILS.includes(user.email?.toLowerCase() ?? "");
 
   return (
     <div
@@ -66,9 +70,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             Strategy &amp; Docs
           </p>
           {[
-            { href: "/admin/strategy/communication", icon: "fa-satellite-dish",    label: "Comms Strategy" },
-            { href: "/admin/strategy/stakeholders",  icon: "fa-circle-nodes",      label: "Stakeholder Map" },
-            { href: "/admin/strategy/documents",     icon: "fa-folder-open",       label: "Document Library" },
+            { href: "/admin/strategy/communication", icon: "fa-satellite-dish", label: "Comms Strategy" },
+            { href: "/admin/strategy/stakeholders",  icon: "fa-circle-nodes",   label: "Stakeholder Map" },
+            { href: "/admin/strategy/documents",     icon: "fa-folder-open",    label: "Document Library" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -79,6 +83,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               {item.label}
             </Link>
           ))}
+          {isPersonnelUser && (
+            <Link
+              href="/admin/personnel"
+              className="mx-3 px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
+            >
+              <i className="fa-solid fa-lock w-4 text-center text-[11px] text-slate-500" />
+              Personnel
+            </Link>
+          )}
 
           <p className="px-5 mt-6 mb-2 text-[9px] font-bold tracking-widest text-slate-600 uppercase">
             Content

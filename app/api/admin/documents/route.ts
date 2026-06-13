@@ -75,3 +75,20 @@ export async function POST(req: NextRequest) {
   const { data: urlData } = await admin.storage.from(BUCKET).createSignedUrl(file.name, 3600);
   return Response.json({ filename: file.name, signedUrl: urlData?.signedUrl ?? null });
 }
+
+/** DELETE — remove a file from storage (?filename=xxx) */
+export async function DELETE(req: NextRequest) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !isAdmin(user.email)) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
+
+  const filename = new URL(req.url).searchParams.get("filename");
+  if (!filename) return new Response(JSON.stringify({ error: "filename required" }), { status: 400 });
+
+  const admin = createAdminClient();
+  const { error } = await admin.storage.from(BUCKET).remove([filename]);
+  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  return Response.json({ success: true });
+}

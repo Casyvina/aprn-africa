@@ -1,70 +1,294 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
-// ── Data ────────────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface WaGroup {
+  id: string;
+  name: string;
+  member_count: string;
+  manager: string;
+  last_broadcast: string;
+}
+
+interface DbChannel {
+  id: string;
+  name: string;
+  freq: string;
+  content: string;
+  audience: string;
+  owner: string;
+  notes: string;
+  whatsapp_groups: WaGroup[];
+}
+
+interface CalItem {
+  id: string;
+  week_number: number;
+  week_label: string;
+  item: string;
+  owner: string;
+  sort_order: number;
+}
+
+// ── Static data ───────────────────────────────────────────────────────────────
 
 const INTERNAL_STAKEHOLDERS = [
-  { name: "Lucy Okeke",          role: "Founder & Executive Director", channel: "WhatsApp + Email",  freq: "Daily",   content: "Decisions, updates, strategy",        owner: "Lucy" },
-  { name: "Joseph Agwuh",        role: "Director, Applied Engineering", channel: "All channels",     freq: "Daily",   content: "Platform development, tech oversight", owner: "Joseph" },
-  { name: "Allison Gabriel",     role: "Youth Ambassador",             channel: "WhatsApp + Email",  freq: "Weekly",  content: "Programs, events, campaigns",         owner: "Tokunbo" },
-  { name: "Pieter-Bas Nederveen",role: "Senior Energy Advisor",        channel: "Email",             freq: "Monthly", content: "Strategy reports, briefings",         owner: "Lucy" },
-  { name: "Kosie Onuora",        role: "Board Secretary",              channel: "Email + WhatsApp",  freq: "Weekly",  content: "Legal updates, governance",           owner: "Lucy" },
-  { name: "Tokunbo Khadijat",    role: "Content Manager",              channel: "Slack / Email",     freq: "Weekly",  content: "Content calendar, drafts, publishing", owner: "Lucy" },
+  { name: "Lucy Okeke",           role: "Founder & Executive Director", channel: "WhatsApp + Email",   freq: "Daily",   content: "Decisions, updates, strategy",         owner: "Lucy" },
+  { name: "Joseph Agwuh",         role: "Director, Applied Engineering", channel: "All channels",      freq: "Daily",   content: "Platform development, tech oversight",  owner: "Joseph" },
+  { name: "Allison Gabriel",      role: "Youth Ambassador",             channel: "WhatsApp + Email",   freq: "Weekly",  content: "Programs, events, campaigns",          owner: "Tokunbo" },
+  { name: "Pieter-Bas Nederveen", role: "Senior Energy Advisor",        channel: "Email",              freq: "Monthly", content: "Strategy reports, briefings",          owner: "Lucy" },
+  { name: "Kosie Onuora",         role: "Board Secretary",              channel: "Email + WhatsApp",   freq: "Weekly",  content: "Legal updates, governance",            owner: "Lucy" },
+  { name: "Tokunbo Khadijat",     role: "Content Manager",              channel: "Slack / Email",      freq: "Weekly",  content: "Content calendar, drafts, publishing", owner: "Lucy" },
 ];
 
 const EXTERNAL_STAKEHOLDERS = [
-  { name: "PTC Berlin (Rana)",   type: "Strategic Partner",     channel: "Email + LinkedIn",       freq: "Monthly",   content: "Partnership updates, reports",          owner: "Lucy" },
-  { name: "EITEP Institute",     type: "Training Partner",      channel: "Email",                  freq: "Monthly",   content: "Training pipeline, curriculum",         owner: "Lucy + Joseph" },
-  { name: "NMDPRA",              type: "Government Regulator",  channel: "Formal Email",           freq: "Quarterly", content: "Official APRN reports",                 owner: "Lucy" },
-  { name: "NCDMB",               type: "Government Body",       channel: "Formal Email",           freq: "Quarterly", content: "Training compliance reports",           owner: "Lucy" },
-  { name: "GIZ Nigeria",         type: "Funder",                channel: "Email + Proposals",      freq: "Monthly",   content: "Funding proposals, impact reports",     owner: "Lucy" },
-  { name: "PLAN Members",        type: "Industry Association",  channel: "Newsletter + LinkedIn",  freq: "Monthly",   content: "Research, events, industry news",       owner: "Tokunbo" },
-  { name: "General Members",     type: "APRN Members",          channel: "Newsletter + Dashboard", freq: "Weekly",    content: "Research, training, news",              owner: "Tokunbo" },
-  { name: "Public / Industry",   type: "General Audience",      channel: "Website + LinkedIn + Newsletter", freq: "Weekly", content: "Articles, insights, events",  owner: "Tokunbo + Allison" },
+  { name: "PTC Berlin (Rana)",    type: "Strategic Partner",    channel: "Email + LinkedIn",          freq: "Monthly",   content: "Partnership updates, reports",     owner: "Lucy" },
+  { name: "EITEP Institute",      type: "Training Partner",     channel: "Email",                     freq: "Monthly",   content: "Training pipeline, curriculum",    owner: "Lucy + Joseph" },
+  { name: "NMDPRA",               type: "Government Regulator", channel: "Formal Email",              freq: "Quarterly", content: "Official APRN reports",            owner: "Lucy" },
+  { name: "NCDMB",                type: "Government Body",      channel: "Formal Email",              freq: "Quarterly", content: "Training compliance reports",      owner: "Lucy" },
+  { name: "GIZ Nigeria",          type: "Funder",               channel: "Email + Proposals",         freq: "Monthly",   content: "Funding proposals, impact reports", owner: "Lucy" },
+  { name: "PLAN Members",         type: "Industry Association", channel: "Newsletter + LinkedIn",     freq: "Monthly",   content: "Research, events, industry news",  owner: "Tokunbo" },
+  { name: "General Members",      type: "APRN Members",         channel: "Newsletter + Dashboard",    freq: "Weekly",    content: "Research, training, news",         owner: "Tokunbo" },
+  { name: "Public / Industry",    type: "General Audience",     channel: "Website + LinkedIn + Newsletter", freq: "Weekly", content: "Articles, insights, events",  owner: "Tokunbo + Allison" },
 ];
 
 const CHANNELS = [
-  { name: "WhatsApp",    freq: "Daily",    content: "Quick decisions, urgent updates, personal outreach",      audience: "Internal team, close partners" },
-  { name: "LinkedIn",    freq: "Weekly",   content: "Thought leadership, research highlights, event promos",   audience: "Industry, funders, public" },
-  { name: "Website",     freq: "Weekly",   content: "Research, insights, training programs, events",           audience: "All" },
-  { name: "Newsletter",  freq: "Weekly",   content: "Research summaries, training updates, member news",       audience: "Members, partners, subscribers" },
-  { name: "Email",       freq: "Weekly",   content: "Partner updates, formal correspondence, proposals",       audience: "Partners, funders, government" },
-  { name: "Webinars",    freq: "Monthly",  content: "Technical briefings, policy discussions, training",       audience: "Members, industry professionals" },
+  { id: "whatsapp",   name: "WhatsApp",   freq: "Daily",   content: "Quick decisions, urgent updates, personal outreach",    audience: "Internal team, close partners", owner: "Lucy / Joseph" },
+  { id: "linkedin",   name: "LinkedIn",   freq: "Weekly",  content: "Thought leadership, research highlights, event promos", audience: "Industry, funders, public",     owner: "Tokunbo + Allison" },
+  { id: "website",    name: "Website",    freq: "Weekly",  content: "Research, insights, training programs, events",         audience: "All",                           owner: "Tokunbo" },
+  { id: "newsletter", name: "Newsletter", freq: "Weekly",  content: "Research summaries, training updates, member news",     audience: "Members, partners, subscribers", owner: "Tokunbo" },
+  { id: "email",      name: "Email",      freq: "Weekly",  content: "Partner updates, formal correspondence, proposals",     audience: "Partners, funders, government", owner: "Lucy" },
+  { id: "webinars",   name: "Webinars",   freq: "Monthly", content: "Technical briefings, policy discussions, training",     audience: "Members, industry professionals", owner: "Lucy + Joseph" },
 ];
 
 const APPROVAL_FLOW = [
-  { step: "01", title: "Create",  who: "Tokunbo / Allison",     desc: "Draft content aligned with APRN brand and messaging guidelines" },
-  { step: "02", title: "Review",  who: "Tokunbo + Joseph",      desc: "Content quality and brand check (Tokunbo); technical accuracy check (Joseph)" },
-  { step: "03", title: "Approve", who: "Lucy Okeke",            desc: "Final sign-off on all public-facing and partner communications" },
-  { step: "04", title: "Publish", who: "Tokunbo Khadijat",      desc: "Schedule and publish via appropriate channel (website, newsletter, social)" },
+  { step: "01", title: "Create",  who: "Tokunbo / Allison",  desc: "Draft content aligned with APRN brand and messaging guidelines" },
+  { step: "02", title: "Review",  who: "Tokunbo + Joseph",   desc: "Content quality and brand check (Tokunbo); technical accuracy check (Joseph)" },
+  { step: "03", title: "Approve", who: "Lucy Okeke",         desc: "Final sign-off on all public-facing and partner communications" },
+  { step: "04", title: "Publish", who: "Tokunbo Khadijat",   desc: "Schedule and publish via appropriate channel (website, newsletter, social)" },
 ];
 
-const CALENDAR = [
-  { week: "Week 1",  items: ["Newsletter issue", "LinkedIn post (research)", "Member digest email"] },
-  { week: "Week 2",  items: ["LinkedIn post (training)", "WhatsApp team sync", "Partner update emails"] },
-  { week: "Week 3",  items: ["Newsletter issue", "LinkedIn post (event/announcement)", "Website blog post"] },
-  { week: "Week 4",  items: ["Monthly webinar", "Partner reports (as needed)", "Board update (Kosie)"] },
+const STATIC_CALENDAR = [
+  { week: "Week 1", weekNum: 1, items: [
+    { id: "s1a", item: "Newsletter issue",               owner: "Tokunbo" },
+    { id: "s1b", item: "LinkedIn post (research)",        owner: "Tokunbo" },
+    { id: "s1c", item: "Member digest email",             owner: "Tokunbo" },
+  ]},
+  { week: "Week 2", weekNum: 2, items: [
+    { id: "s2a", item: "LinkedIn post (training)",        owner: "Allison" },
+    { id: "s2b", item: "WhatsApp team sync",              owner: "Joseph" },
+    { id: "s2c", item: "Partner update emails",           owner: "Lucy" },
+  ]},
+  { week: "Week 3", weekNum: 3, items: [
+    { id: "s3a", item: "Newsletter issue",                owner: "Tokunbo" },
+    { id: "s3b", item: "LinkedIn post (event/announcement)", owner: "Allison" },
+    { id: "s3c", item: "Website blog post",               owner: "Tokunbo" },
+  ]},
+  { week: "Week 4", weekNum: 4, items: [
+    { id: "s4a", item: "Monthly webinar",                 owner: "Lucy" },
+    { id: "s4b", item: "Partner reports (as needed)",     owner: "Lucy" },
+    { id: "s4c", item: "Board update (Kosie)",            owner: "Lucy" },
+  ]},
 ];
-
-// ── Sections for sidebar nav ────────────────────────────────────────────────
 
 const SECTIONS = [
-  { id: "overview",     label: "Overview & Purpose" },
-  { id: "internal",     label: "Internal Stakeholders" },
-  { id: "external",     label: "External Stakeholders" },
-  { id: "channels",     label: "Channel Strategy" },
-  { id: "approval",     label: "Approval Process" },
-  { id: "calendar",     label: "Communication Calendar" },
+  { id: "overview",  label: "Overview & Purpose" },
+  { id: "internal",  label: "Internal Stakeholders" },
+  { id: "external",  label: "External Stakeholders" },
+  { id: "channels",  label: "Channel Strategy" },
+  { id: "approval",  label: "Approval Process" },
+  { id: "calendar",  label: "Communication Calendar" },
 ];
 
-// ── Component ───────────────────────────────────────────────────────────────
+// ── Component ────────────────────────────────────────────────────────────────
 
 export default function CommunicationStrategyPage() {
-  const [aiOutput, setAiOutput] = useState("");
-  const [loading, setLoading] = useState(false);
+  // ── AI panel ──
+  const [aiOutput, setAiOutput]       = useState("");
+  const [loading, setLoading]         = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(false);
   const aiRef = useRef<HTMLDivElement>(null);
+
+  // ── Channel editing ──
+  const [channelOverrides, setChannelOverrides] = useState<Record<string, DbChannel>>({});
+  const [editingChannel, setEditingChannel]     = useState<string | null>(null);
+  const [editForm, setEditForm]                 = useState<Partial<DbChannel> & { whatsapp_groups: WaGroup[] }>({ whatsapp_groups: [] });
+  const [savingChannel, setSavingChannel]       = useState(false);
+  const [channelSaved, setChannelSaved]         = useState(false);
+
+  // ── Calendar ──
+  const [calItems, setCalItems]         = useState<CalItem[] | null>(null); // null = loading
+  const [addingToWeek, setAddingToWeek] = useState<number | null>(null);
+  const [newItem, setNewItem]           = useState({ item: "", owner: "" });
+  const [deletingId, setDeletingId]     = useState<string | null>(null);
+  const [addingItem, setAddingItem]     = useState(false);
+
+  // ── Load on mount ──────────────────────────────────────────────────────────
+
+  const loadData = useCallback(async () => {
+    try {
+      const [chRes, calRes] = await Promise.all([
+        fetch("/api/admin/strategy/channels"),
+        fetch("/api/admin/strategy/calendar"),
+      ]);
+      if (chRes.ok) {
+        const { channels } = await chRes.json() as { channels: Record<string, DbChannel> };
+        setChannelOverrides(channels ?? {});
+      }
+      if (calRes.ok) {
+        const { items } = await calRes.json() as { items: CalItem[] };
+        setCalItems(items ?? []);
+      } else {
+        setCalItems([]);
+      }
+    } catch {
+      setCalItems([]);
+    }
+  }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  // ── Merged channel data ───────────────────────────────────────────────────
+
+  function mergedChannel(ch: (typeof CHANNELS)[0]) {
+    const ov = channelOverrides[ch.id] as Partial<DbChannel> | undefined;
+    if (!ov) return ch;
+    return {
+      id:       ch.id,
+      name:     ov.name     ?? ch.name,
+      freq:     ov.freq     ?? ch.freq,
+      content:  ov.content  ?? ch.content,
+      audience: ov.audience ?? ch.audience,
+      owner:    ov.owner    ?? ch.owner,
+      notes:    ov.notes    ?? "",
+      whatsapp_groups: ov.whatsapp_groups ?? [],
+    };
+  }
+
+  // ── Calendar helpers ──────────────────────────────────────────────────────
+
+  const useStaticCal = !calItems || calItems.length === 0;
+
+  const calByWeek = useStaticCal
+    ? STATIC_CALENDAR.map((w) => ({ week: w.week, weekNum: w.weekNum, items: w.items as CalItem[] }))
+    : [1, 2, 3, 4].map((wn) => ({
+        week: `Week ${wn}`,
+        weekNum: wn,
+        items: calItems.filter((i) => i.week_number === wn).sort((a, b) => a.sort_order - b.sort_order),
+      }));
+
+  async function handleDeleteCalItem(id: string) {
+    if (useStaticCal) return;
+    setDeletingId(id);
+    try {
+      await fetch(`/api/admin/strategy/calendar?id=${id}`, { method: "DELETE" });
+      setCalItems((prev) => (prev ?? []).filter((i) => i.id !== id));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function handleAddCalItem() {
+    if (!newItem.item.trim() || addingToWeek === null) return;
+    setAddingItem(true);
+    try {
+      const res = await fetch("/api/admin/strategy/calendar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          week_number: addingToWeek,
+          week_label: `Week ${addingToWeek}`,
+          item: newItem.item.trim(),
+          owner: newItem.owner.trim(),
+        }),
+      });
+      if (res.ok) {
+        const { item } = await res.json() as { item: CalItem };
+        setCalItems((prev) => [...(prev ?? []), item]);
+        setNewItem({ item: "", owner: "" });
+        setAddingToWeek(null);
+      }
+    } finally {
+      setAddingItem(false);
+    }
+  }
+
+  // ── Channel edit drawer ───────────────────────────────────────────────────
+
+  function openEdit(channelId: string) {
+    const ch = CHANNELS.find((c) => c.id === channelId);
+    if (!ch) return;
+    const merged = mergedChannel(ch);
+    setEditForm({
+      id:             channelId,
+      name:           merged.name,
+      freq:           merged.freq,
+      content:        merged.content,
+      audience:       merged.audience,
+      owner:          merged.owner ?? "",
+      notes:          (merged as { notes?: string }).notes ?? "",
+      whatsapp_groups: (merged as { whatsapp_groups?: WaGroup[] }).whatsapp_groups ?? [],
+    });
+    setEditingChannel(channelId);
+    setChannelSaved(false);
+  }
+
+  function closeEdit() {
+    setEditingChannel(null);
+    setEditForm({ whatsapp_groups: [] });
+  }
+
+  function addWaGroup() {
+    setEditForm((f) => ({
+      ...f,
+      whatsapp_groups: [
+        ...(f.whatsapp_groups ?? []),
+        { id: crypto.randomUUID(), name: "", member_count: "", manager: "", last_broadcast: "" },
+      ],
+    }));
+  }
+
+  function removeWaGroup(id: string) {
+    setEditForm((f) => ({
+      ...f,
+      whatsapp_groups: (f.whatsapp_groups ?? []).filter((g) => g.id !== id),
+    }));
+  }
+
+  function updateWaGroup(id: string, field: keyof WaGroup, value: string) {
+    setEditForm((f) => ({
+      ...f,
+      whatsapp_groups: (f.whatsapp_groups ?? []).map((g) =>
+        g.id === id ? { ...g, [field]: value } : g
+      ),
+    }));
+  }
+
+  async function saveChannel() {
+    if (!editForm.id) return;
+    setSavingChannel(true);
+    try {
+      const res = await fetch("/api/admin/strategy/channels", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editForm),
+      });
+      if (res.ok) {
+        setChannelOverrides((prev) => ({
+          ...prev,
+          [editForm.id!]: editForm as DbChannel,
+        }));
+        setChannelSaved(true);
+        setTimeout(() => { setChannelSaved(false); closeEdit(); }, 1200);
+      }
+    } finally {
+      setSavingChannel(false);
+    }
+  }
+
+  // ── AI panel ──────────────────────────────────────────────────────────────
 
   async function handleRegenerate() {
     setLoading(true);
@@ -94,6 +318,8 @@ export default function CommunicationStrategyPage() {
       setLoading(false);
     }
   }
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="flex gap-0 min-h-screen -m-6 md:-m-8">
@@ -146,8 +372,8 @@ export default function CommunicationStrategyPage() {
                 {[
                   { label: "Internal Stakeholders", value: "6" },
                   { label: "External Stakeholders", value: "8+" },
-                  { label: "Active Channels", value: "6" },
-                  { label: "Approval Stages", value: "4" },
+                  { label: "Active Channels",       value: "6" },
+                  { label: "Approval Stages",       value: "4" },
                 ].map((s) => (
                   <div key={s.label} className="bg-navy-900 border border-white/5 p-3 text-center">
                     <div className="text-2xl font-bold text-gold-500 mb-1" style={{ fontFamily: "var(--font-playfair), serif" }}>{s.value}</div>
@@ -179,21 +405,62 @@ export default function CommunicationStrategyPage() {
           {/* 4. Channel Strategy */}
           <section id="channels">
             <SectionHeader icon="fa-satellite-dish" title="Channel Strategy" />
+            <p className="text-xs text-slate-500 mb-4 -mt-2">
+              Click <i className="fa-solid fa-pen-to-square mx-0.5" /> on any card to update details or manage WhatsApp groups.
+            </p>
             <div className="grid md:grid-cols-2 gap-4">
-              {CHANNELS.map((c) => (
-                <div key={c.name} className="bg-navy-800 border border-white/5 p-5 rounded-sm hover:border-gold-500/20 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-bold text-white">{c.name}</h3>
-                    <span className="text-[10px] font-bold text-gold-500 uppercase tracking-widest bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 rounded-full">
-                      {c.freq}
-                    </span>
+              {CHANNELS.map((staticCh) => {
+                const ch = mergedChannel(staticCh);
+                const hasGroups = ch.id === "whatsapp" && (ch as { whatsapp_groups?: WaGroup[] }).whatsapp_groups?.length;
+                return (
+                  <div key={ch.id} className="bg-navy-800 border border-white/5 p-5 rounded-sm hover:border-gold-500/20 transition-colors group">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-white">{ch.name}</h3>
+                        {channelOverrides[ch.id] && (
+                          <span className="text-[9px] text-gold-500 border border-gold-500/30 px-1.5 py-px rounded-full">edited</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-gold-500 uppercase tracking-widest bg-gold-500/10 border border-gold-500/20 px-2 py-0.5 rounded-full">
+                          {ch.freq}
+                        </span>
+                        <button
+                          onClick={() => openEdit(ch.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6 flex items-center justify-center text-slate-400 hover:text-gold-500 hover:bg-navy-700 rounded-sm"
+                          title="Edit channel"
+                        >
+                          <i className="fa-solid fa-pen-to-square text-[10px]" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-2">{ch.content}</p>
+                    <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">
+                      <i className="fa-solid fa-users text-[9px] mr-1" />{ch.audience}
+                    </p>
+                    {ch.owner && (
+                      <p className="text-[10px] text-slate-600 uppercase tracking-wider">
+                        <i className="fa-solid fa-user text-[9px] mr-1" />Owner: {ch.owner}
+                      </p>
+                    )}
+                    {hasGroups && (
+                      <div className="mt-3 pt-3 border-t border-white/5">
+                        <p className="text-[10px] font-bold text-gold-500/70 uppercase tracking-widest mb-2">
+                          <i className="fa-brands fa-whatsapp mr-1" />WhatsApp Groups
+                        </p>
+                        <div className="space-y-1">
+                          {((ch as { whatsapp_groups?: WaGroup[] }).whatsapp_groups ?? []).map((g) => (
+                            <div key={g.id} className="flex items-center justify-between text-[11px] text-slate-400">
+                              <span className="font-medium text-slate-300">{g.name}</span>
+                              <span className="text-slate-500">{g.member_count} members · {g.manager}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed mb-2">{c.content}</p>
-                  <p className="text-[10px] text-slate-600 uppercase tracking-wider">
-                    <i className="fa-solid fa-users text-[9px] mr-1" />{c.audience}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -221,22 +488,98 @@ export default function CommunicationStrategyPage() {
 
           {/* 6. Calendar */}
           <section id="calendar">
-            <SectionHeader icon="fa-calendar-alt" title="Monthly Communication Calendar" />
+            <div className="flex items-center justify-between mb-5">
+              <SectionHeader icon="fa-calendar-alt" title="Monthly Communication Calendar" />
+              {useStaticCal && calItems !== null && (
+                <span className="text-[10px] text-slate-600 italic">DB not connected — showing defaults</span>
+              )}
+            </div>
             <div className="grid md:grid-cols-2 gap-4">
-              {CALENDAR.map((w) => (
+              {calByWeek.map((w) => (
                 <div key={w.week} className="bg-navy-800 border border-white/5 p-5 rounded-sm">
-                  <h3 className="text-xs font-bold text-gold-500 uppercase tracking-widest mb-3">{w.week}</h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold text-gold-500 uppercase tracking-widest">{w.week}</h3>
+                    {!useStaticCal && (
+                      <button
+                        onClick={() => { setAddingToWeek(w.weekNum); setNewItem({ item: "", owner: "" }); }}
+                        className="text-[10px] text-slate-500 hover:text-gold-500 transition-colors flex items-center gap-1"
+                      >
+                        <i className="fa-solid fa-plus text-[9px]" />Add
+                      </button>
+                    )}
+                  </div>
                   <ul className="space-y-2">
-                    {w.items.map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-sm text-slate-300">
-                        <i className="fa-solid fa-check text-[9px] mt-1 text-gold-500 shrink-0" />
-                        {item}
+                    {w.items.map((calItem) => (
+                      <li key={calItem.id} className="flex items-start justify-between gap-2 group/item">
+                        <div className="flex items-start gap-2 min-w-0">
+                          <i className="fa-solid fa-check text-[9px] mt-1 text-gold-500 shrink-0" />
+                          <span className="text-sm text-slate-300 truncate">{calItem.item}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {calItem.owner && (
+                            <span className="text-[10px] text-slate-600">{calItem.owner}</span>
+                          )}
+                          {!useStaticCal && (
+                            <button
+                              onClick={() => handleDeleteCalItem(calItem.id)}
+                              disabled={deletingId === calItem.id}
+                              className="opacity-0 group-hover/item:opacity-100 transition-opacity text-slate-600 hover:text-red-400 text-[10px] disabled:opacity-40"
+                              title="Remove item"
+                            >
+                              {deletingId === calItem.id
+                                ? <i className="fa-solid fa-spinner animate-spin" />
+                                : <i className="fa-solid fa-xmark" />
+                              }
+                            </button>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>
+
+                  {/* Inline add form */}
+                  {!useStaticCal && addingToWeek === w.weekNum && (
+                    <div className="mt-3 pt-3 border-t border-white/5">
+                      <input
+                        autoFocus
+                        value={newItem.item}
+                        onChange={(e) => setNewItem((p) => ({ ...p, item: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleAddCalItem(); if (e.key === "Escape") setAddingToWeek(null); }}
+                        placeholder="New item…"
+                        className="w-full bg-navy-900 border border-white/10 text-xs text-white px-3 py-2 mb-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                      />
+                      <div className="flex gap-2">
+                        <input
+                          value={newItem.owner}
+                          onChange={(e) => setNewItem((p) => ({ ...p, owner: e.target.value }))}
+                          placeholder="Owner (e.g. Tokunbo)"
+                          className="flex-1 bg-navy-900 border border-white/10 text-xs text-white px-3 py-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                        />
+                        <button
+                          onClick={handleAddCalItem}
+                          disabled={addingItem || !newItem.item.trim()}
+                          className="px-3 py-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 text-navy-900 text-xs font-bold transition-colors"
+                        >
+                          {addingItem ? <i className="fa-solid fa-spinner animate-spin" /> : "Add"}
+                        </button>
+                        <button
+                          onClick={() => setAddingToWeek(null)}
+                          className="px-3 py-2 text-slate-500 hover:text-white text-xs border border-white/10 hover:border-white/20 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
+            {useStaticCal && calItems !== null && (
+              <p className="mt-3 text-[11px] text-slate-600">
+                <i className="fa-solid fa-circle-info mr-1" />
+                Run the Supabase migration to enable live calendar editing (add &amp; remove items).
+              </p>
+            )}
           </section>
 
           {/* AI Output Panel */}
@@ -270,11 +613,188 @@ export default function CommunicationStrategyPage() {
 
         </div>
       </div>
+
+      {/* Channel Edit Drawer */}
+      {editingChannel && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/50"
+            onClick={closeEdit}
+          />
+          <div className="fixed right-0 top-0 h-full w-full max-w-md z-50 bg-navy-900 border-l border-white/10 flex flex-col shadow-2xl overflow-hidden">
+            {/* Drawer header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 shrink-0">
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-gold-500 uppercase mb-0.5">Edit Channel</p>
+                <h2 className="text-sm font-bold text-white">{editForm.name}</h2>
+              </div>
+              <button onClick={closeEdit} className="text-slate-500 hover:text-white transition-colors">
+                <i className="fa-solid fa-xmark" />
+              </button>
+            </div>
+
+            {/* Drawer body */}
+            <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+
+              <Field label="Channel Name">
+                <input
+                  value={editForm.name ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                  className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                />
+              </Field>
+
+              <Field label="Frequency">
+                <input
+                  value={editForm.freq ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, freq: e.target.value }))}
+                  placeholder="e.g. Daily, Weekly, Monthly"
+                  className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                />
+              </Field>
+
+              <Field label="Content Types">
+                <textarea
+                  rows={2}
+                  value={editForm.content ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, content: e.target.value }))}
+                  className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none resize-none"
+                />
+              </Field>
+
+              <Field label="Audience">
+                <input
+                  value={editForm.audience ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, audience: e.target.value }))}
+                  className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                />
+              </Field>
+
+              <Field label="Owner">
+                <input
+                  value={editForm.owner ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, owner: e.target.value }))}
+                  placeholder="e.g. Tokunbo"
+                  className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                />
+              </Field>
+
+              <Field label="Notes (internal)">
+                <textarea
+                  rows={2}
+                  value={editForm.notes ?? ""}
+                  onChange={(e) => setEditForm((f) => ({ ...f, notes: e.target.value }))}
+                  placeholder="Any internal notes about this channel…"
+                  className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none resize-none"
+                />
+              </Field>
+
+              {/* WhatsApp groups (only show for whatsapp channel) */}
+              {editingChannel === "whatsapp" && (
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">
+                      <i className="fa-brands fa-whatsapp text-green-500 mr-1.5" />
+                      WhatsApp Groups
+                    </label>
+                    <button
+                      onClick={addWaGroup}
+                      className="text-[10px] text-gold-500 hover:text-gold-400 flex items-center gap-1 transition-colors"
+                    >
+                      <i className="fa-solid fa-plus text-[9px]" />Add group
+                    </button>
+                  </div>
+                  {(editForm.whatsapp_groups ?? []).length === 0 && (
+                    <p className="text-[11px] text-slate-600 italic">No groups added yet.</p>
+                  )}
+                  <div className="space-y-4">
+                    {(editForm.whatsapp_groups ?? []).map((g) => (
+                      <div key={g.id} className="bg-navy-800 border border-white/5 p-4 rounded-sm space-y-2">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Group</span>
+                          <button
+                            onClick={() => removeWaGroup(g.id)}
+                            className="text-[10px] text-slate-600 hover:text-red-400 transition-colors"
+                          >
+                            <i className="fa-solid fa-trash-can" />
+                          </button>
+                        </div>
+                        <input
+                          value={g.name}
+                          onChange={(e) => updateWaGroup(g.id, "name", e.target.value)}
+                          placeholder="Group name"
+                          className="w-full bg-navy-900 border border-white/10 text-xs text-white px-3 py-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            value={g.member_count}
+                            onChange={(e) => updateWaGroup(g.id, "member_count", e.target.value)}
+                            placeholder="Members (e.g. 47)"
+                            className="bg-navy-900 border border-white/10 text-xs text-white px-3 py-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                          />
+                          <input
+                            value={g.manager}
+                            onChange={(e) => updateWaGroup(g.id, "manager", e.target.value)}
+                            placeholder="Manager"
+                            className="bg-navy-900 border border-white/10 text-xs text-white px-3 py-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                          />
+                        </div>
+                        <input
+                          value={g.last_broadcast}
+                          onChange={(e) => updateWaGroup(g.id, "last_broadcast", e.target.value)}
+                          placeholder="Last broadcast (e.g. 10 Jun 2026)"
+                          className="w-full bg-navy-900 border border-white/10 text-xs text-white px-3 py-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Drawer footer */}
+            <div className="px-6 py-4 border-t border-white/5 shrink-0 flex items-center justify-between gap-3">
+              <button
+                onClick={closeEdit}
+                className="px-4 py-2 text-xs text-slate-400 hover:text-white border border-white/10 hover:border-white/20 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveChannel}
+                disabled={savingChannel}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-60 text-navy-900 text-xs font-bold tracking-wide uppercase transition-colors"
+              >
+                {channelSaved ? (
+                  <><i className="fa-solid fa-check" />Saved!</>
+                ) : savingChannel ? (
+                  <><i className="fa-solid fa-spinner animate-spin" />Saving…</>
+                ) : (
+                  <><i className="fa-solid fa-floppy-disk" />Save Changes</>
+                )}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
     </div>
   );
 }
 
-// ── Sub-components ───────────────────────────────────────────────────────────
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1.5">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
 
 function SectionHeader({ icon, title }: { icon: string; title: string }) {
   return (

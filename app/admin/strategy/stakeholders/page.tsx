@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -95,6 +95,11 @@ const INF_COLOR: Record<InfluenceLevel, string> = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+interface StakeholderMeta {
+  last_contact_date: string | null;
+  notes: string | null;
+}
+
 export default function StakeholdersPage() {
   const [filter, setFilter] = useState<StakeholderType | "All">("All");
   const [selected, setSelected] = useState<Stakeholder | null>(null);
@@ -102,12 +107,70 @@ export default function StakeholdersPage() {
   const [loadingBrief, setLoadingBrief] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // ── Meta overrides (last contact date + notes from DB) ──────────────────────
+  const [metaMap, setMetaMap] = useState<Record<string, StakeholderMeta>>({});
+  const [editDate, setEditDate]   = useState("");
+  const [editNotes, setEditNotes] = useState("");
+  const [savingMeta, setSavingMeta] = useState(false);
+  const [metaSaved, setMetaSaved]   = useState(false);
+
+  const loadMeta = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/strategy/stakeholders");
+      if (res.ok) {
+        const { meta } = await res.json() as { meta: Record<string, StakeholderMeta> };
+        setMetaMap(meta ?? {});
+      }
+    } catch { /* silent — fallback to static */ }
+  }, []);
+
+  useEffect(() => { loadMeta(); }, [loadMeta]);
+
+  function displayLastContact(s: Stakeholder): string {
+    const db = metaMap[s.id];
+    if (db?.last_contact_date) {
+      const d = new Date(db.last_contact_date);
+      return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+    }
+    return s.lastContact ?? "—";
+  }
+
+  async function saveMeta() {
+    if (!selected) return;
+    setSavingMeta(true);
+    try {
+      const res = await fetch("/api/admin/strategy/stakeholders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          stakeholder_id: selected.id,
+          last_contact_date: editDate || null,
+          notes: editNotes || null,
+        }),
+      });
+      if (res.ok) {
+        setMetaMap((prev) => ({
+          ...prev,
+          [selected.id]: { last_contact_date: editDate || null, notes: editNotes || null },
+        }));
+        setMetaSaved(true);
+        setTimeout(() => setMetaSaved(false), 2000);
+      }
+    } finally {
+      setSavingMeta(false);
+    }
+  }
+
   const filtered = filter === "All" ? STAKEHOLDERS : STAKEHOLDERS.filter((s) => s.type === filter);
 
   async function generateBrief(s: Stakeholder) {
     setSelected(s);
     setDrawerOpen(true);
     setAiOutput("");
+    setMetaSaved(false);
+    const existingMeta = metaMap[s.id];
+    setEditDate(existingMeta?.last_contact_date ?? "");
+    setEditNotes(existingMeta?.notes ?? "");
     setLoadingBrief(true);
     const context = `${s.name}${s.org ? ` (${s.org})` : ""}, Type: ${s.type}, Influence: ${s.influence}, Interest: ${s.interest}, Relationship: ${s.relationship}. Engagement note: ${s.engagementStrategy}`;
     try {
@@ -255,7 +318,7 @@ export default function StakeholdersPage() {
                   </td>
                   <td className="px-4 py-3 text-slate-400 text-xs">{s.relationship}</td>
                   <td className="px-4 py-3 text-slate-400 text-xs max-w-xs">{s.engagementStrategy}</td>
-                  <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{s.lastContact ?? "—"}</td>
+                  <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{displayLastContact(s)}</td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => generateBrief(s)}
@@ -311,7 +374,7 @@ export default function StakeholdersPage() {
                 </div>
                 <div className="bg-navy-900 border border-white/5 p-3 rounded-sm">
                   <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Last Contact</p>
-                  <p className="text-xs font-semibold text-white">{selected.lastContact ?? "Not yet"}</p>
+                  <p className="text-xs font-semibold text-white">{displayLastContact(selected)}</p>
                 </div>
               </div>
 
@@ -319,6 +382,52 @@ export default function StakeholdersPage() {
               <div className="bg-navy-900 border border-white/5 p-4 rounded-sm">
                 <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-2">Engagement Strategy</p>
                 <p className="text-xs text-slate-300 leading-relaxed">{selected.engagementStrategy}</p>
+              </div>
+
+              {/* Editable: last contact + notes */}
+              <div className="border border-white/10 rounded-sm p-4 space-y-3 bg-navy-900/50">
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <i className="fa-solid fa-pen-to-square text-gold-500/60" />
+                  Update Contact Log
+                </p>
+                <div>
+                  <label className="block text-[10px] text-slate-500 uppercase tracking-widest mb-1">Last Contact Date</label>
+                  <input
+                    type="date"
+                    value={editDate}
+                    onChange={(e) => setEditDate(e.target.value)}
+                    className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2 focus:border-gold-500/50 focus:outline-none scheme-dark"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-slate-500 uppercase tracking-widest mb-1">Notes</label>
+                  <textarea
+                    rows={3}
+                    value={editNotes}
+                    onChange={(e) => setEditNotes(e.target.value)}
+                    placeholder="Meeting notes, next steps, context…"
+                    className="w-full bg-navy-800 border border-white/10 text-xs text-white px-3 py-2 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none resize-none"
+                  />
+                </div>
+                <button
+                  onClick={saveMeta}
+                  disabled={savingMeta}
+                  className="w-full py-2 bg-navy-700 hover:bg-navy-600 border border-white/10 hover:border-white/20 disabled:opacity-50 text-xs text-white font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  {metaSaved ? (
+                    <><i className="fa-solid fa-check text-emerald-400" /><span className="text-emerald-400">Saved</span></>
+                  ) : savingMeta ? (
+                    <><i className="fa-solid fa-spinner animate-spin" />Saving…</>
+                  ) : (
+                    <><i className="fa-solid fa-floppy-disk text-slate-400" />Save Contact Log</>
+                  )}
+                </button>
+                {metaMap[selected.id]?.notes && (
+                  <div className="pt-2 border-t border-white/5">
+                    <p className="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Saved Note</p>
+                    <p className="text-xs text-slate-400 leading-relaxed">{metaMap[selected.id].notes}</p>
+                  </div>
+                )}
               </div>
 
               {/* AI Brief */}

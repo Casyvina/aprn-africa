@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type DocCategory = "Presentations" | "Reports" | "Letters" | "Research" | "Strategy" | "Database";
+type DocCategory = "Presentations" | "Reports" | "Research" | "Strategy" | "Database";
 type ViewMode = "grid" | "list";
 type EditTab = "metadata" | "ai";
 
@@ -62,24 +62,6 @@ const INITIAL_DOCS: DocEntry[] = [
     canView: false, notes: "",
   },
   {
-    id: "employ-joseph",
-    name: "Employment Letter — Joseph Agwuh",
-    version: "v2", date: "May 2026", category: "Letters",
-    format: "DOCX", icon: "fa-file-word",
-    description: "Official APRN employment letter for Joseph Agwuh, Director of Applied Engineering.",
-    filename: "APRN_Employment_Letter_Joseph_Agwuh_v2.docx",
-    canView: false, notes: "",
-  },
-  {
-    id: "ambassador-allison",
-    name: "Ambassador Letter — Allison Gabriel",
-    version: "v2", date: "May 2026", category: "Letters",
-    format: "DOCX", icon: "fa-file-word",
-    description: "Official APRN Youth Ambassador appointment letter for Allison Gabriel.",
-    filename: "APRN_Ambassador_Letter_Allison_Gabriel_v2.docx",
-    canView: false, notes: "",
-  },
-  {
     id: "research-brief",
     name: "Research Briefing — 11 Questions",
     version: "v1", date: "May 2026", category: "Research",
@@ -112,7 +94,6 @@ const CATEGORIES: Array<{ label: string; value: DocCategory | "All" }> = [
   { label: "All",           value: "All" },
   { label: "Presentations", value: "Presentations" },
   { label: "Reports",       value: "Reports" },
-  { label: "Letters",       value: "Letters" },
   { label: "Research",      value: "Research" },
   { label: "Strategy",      value: "Strategy" },
   { label: "Database",      value: "Database" },
@@ -139,6 +120,35 @@ export default function DocumentLibraryPage() {
   const [uploading, setUploading] = useState(false);
   const [migrating, setMigrating] = useState(false);
   const [migrateMsg, setMigrateMsg] = useState("");
+
+  // Delete
+  const [deletingDoc, setDeletingDoc]     = useState<DocEntry | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError]     = useState<string | null>(null);
+
+  async function handleDeleteConfirm() {
+    if (!deletingDoc) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
+    try {
+      if (storageUrls[deletingDoc.filename]) {
+        const res = await fetch(`/api/admin/documents?filename=${encodeURIComponent(deletingDoc.filename)}`, { method: "DELETE" });
+        if (!res.ok) {
+          const { error } = await res.json() as { error: string };
+          throw new Error(error);
+        }
+        setStorageUrls((prev) => { const next = { ...prev }; delete next[deletingDoc.filename]; return next; });
+      }
+      // Remove from docs list if it was user-uploaded (not in original INITIAL_DOCS set)
+      const isInitial = INITIAL_DOCS.some((d) => d.id === deletingDoc.id);
+      if (!isInitial) setDocs((prev) => prev.filter((d) => d.id !== deletingDoc.id));
+      setDeletingDoc(null);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
 
   // Edit drawer
   const [editDoc, setEditDoc] = useState<DocEntry | null>(null);
@@ -171,8 +181,17 @@ export default function DocumentLibraryPage() {
 
   useEffect(() => { refreshStorageUrls(); }, []);
 
-  function getDocUrl(doc: DocEntry) {
-    return storageUrls[doc.filename] ?? `/documents/${doc.filename}`;
+  function getDocUrl(doc: DocEntry): string | null {
+    return storageUrls[doc.filename] ?? null;
+  }
+
+  // For HTML files, use the server proxy so they render correctly in the browser
+  function getViewUrl(doc: DocEntry): string | null {
+    if (!doc.canView || !storageUrls[doc.filename]) return null;
+    if (doc.format === "HTML") {
+      return `/api/admin/documents/view?filename=${encodeURIComponent(doc.filename)}`;
+    }
+    return storageUrls[doc.filename] ?? null;
   }
 
   const filtered = docs.filter((d) => {
@@ -465,11 +484,14 @@ export default function DocumentLibraryPage() {
               key={doc.id}
               doc={doc}
               docUrl={getDocUrl(doc)}
+              viewUrl={getViewUrl(doc)}
               inCloud={!!storageUrls[doc.filename]}
               summary={summaries[doc.id]}
               isLoading={loadingId === doc.id}
               onSummarise={() => summariseDoc(doc)}
               onEdit={() => openEdit(doc)}
+              onDelete={() => setDeletingDoc(doc)}
+              onSync={handleMigrate}
             />
           ))}
         </div>
@@ -515,31 +537,69 @@ export default function DocumentLibraryPage() {
                     }
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {doc.canView && (
-                        <a href={getDocUrl(doc)} target="_blank" rel="noopener noreferrer"
-                          className="text-[10px] font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 whitespace-nowrap">
-                          <i className="fa-solid fa-eye text-[9px]" /> View
-                        </a>
-                      )}
-                      <a href={getDocUrl(doc)} download={doc.filename}
-                        className="text-[10px] font-bold text-gold-500 hover:text-gold-400 flex items-center gap-1 whitespace-nowrap">
-                        <i className="fa-solid fa-download text-[9px]" /> Download
-                      </a>
-                      <button onClick={() => summariseDoc(doc)} disabled={loadingId === doc.id}
-                        className="text-[10px] font-bold text-slate-400 hover:text-white flex items-center gap-1 whitespace-nowrap disabled:opacity-50">
-                        <i className={`fa-solid fa-wand-magic-sparkles text-[9px] ${loadingId === doc.id ? "animate-spin" : ""}`} /> AI
-                      </button>
-                      <button onClick={() => openEdit(doc)}
-                        className="text-[10px] font-bold text-slate-400 hover:text-white flex items-center gap-1 whitespace-nowrap">
-                        <i className="fa-solid fa-pen text-[9px]" /> Edit
-                      </button>
-                    </div>
+                    <ListRowMenu
+                      docUrl={getDocUrl(doc)}
+                      viewUrl={getViewUrl(doc)}
+                      filename={doc.filename}
+                      canView={doc.canView}
+                      aiLoading={loadingId === doc.id}
+                      onSync={handleMigrate}
+                      onSummarise={() => summariseDoc(doc)}
+                      onEdit={() => openEdit(doc)}
+                      onDelete={() => setDeletingDoc(doc)}
+                    />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* ── Delete Confirmation Modal ─────────────────────────────────────── */}
+      {deletingDoc && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70">
+          <div className="bg-navy-800 border border-white/10 p-6 w-full max-w-sm shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                <i className="fa-solid fa-trash-can text-red-400 text-sm" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Confirm Delete</p>
+                <h3 className="text-sm font-bold text-white leading-snug">{deletingDoc.name}</h3>
+              </div>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed mb-2">
+              {storageUrls[deletingDoc.filename]
+                ? "This will permanently remove the file from cloud storage. The document entry will remain in the registry until you upload a new version."
+                : "This document is not in cloud storage — it will be removed from the list for this session."}
+            </p>
+            <p className="text-[11px] text-slate-600 font-mono truncate mb-5">{deletingDoc.filename}</p>
+            {deleteError && (
+              <p className="text-[11px] text-red-400 mb-3 flex items-center gap-1.5">
+                <i className="fa-solid fa-circle-exclamation" /> {deleteError}
+              </p>
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setDeletingDoc(null); setDeleteError(null); }}
+                disabled={deleteLoading}
+                className="flex-1 py-2.5 border border-white/10 hover:border-white/20 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                disabled={deleteLoading}
+                className="flex-1 py-2.5 bg-red-500 hover:bg-red-400 disabled:opacity-60 text-white text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+              >
+                {deleteLoading
+                  ? <><i className="fa-solid fa-spinner animate-spin" />Deleting…</>
+                  : <><i className="fa-solid fa-trash-can" />Delete</>
+                }
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -762,20 +822,35 @@ export default function DocumentLibraryPage() {
 // ── DocCard ───────────────────────────────────────────────────────────────────
 
 function DocCard({
-  doc, docUrl, inCloud, summary, isLoading, onSummarise, onEdit,
+  doc, docUrl, viewUrl, inCloud, summary, isLoading, onSummarise, onEdit, onDelete, onSync,
 }: {
   doc: DocEntry;
-  docUrl: string;
+  docUrl: string | null;
+  viewUrl: string | null;
   inCloud: boolean;
   summary?: string;
   isLoading: boolean;
   onSummarise: () => void;
   onEdit: () => void;
+  onDelete: () => void;
+  onSync: () => void;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onOutside);
+    return () => document.removeEventListener("mousedown", onOutside);
+  }, []);
+
   return (
-    <div className="bg-navy-800 border border-white/5 hover:border-gold-500/20 transition-all flex flex-col group">
+    <div className="bg-navy-800 border border-white/5 hover:border-gold-500/20 transition-all flex flex-col">
+      {/* Card header */}
       <div className="p-5 flex items-start gap-4 border-b border-white/5">
-        <div className="w-12 h-12 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0 group-hover:border-gold-500/20 transition-colors">
+        <div className="w-12 h-12 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
           <i className={`fa-solid ${doc.icon} text-gold-500 text-lg`} />
         </div>
         <div className="min-w-0 flex-1">
@@ -784,18 +859,65 @@ function DocCard({
               {doc.format}
             </span>
             <span className="text-[9px] text-slate-500 uppercase tracking-widest">{doc.version}</span>
-            {inCloud && (
-              <span className="text-[9px] text-emerald-400" title="Stored in Supabase Storage">
-                <i className="fa-solid fa-cloud text-[8px] mr-0.5" />Cloud
-              </span>
-            )}
+            {inCloud
+              ? <span className="text-[9px] text-emerald-400"><i className="fa-solid fa-cloud text-[8px] mr-0.5" />Cloud</span>
+              : <span className="text-[9px] text-amber-500/70"><i className="fa-solid fa-cloud-slash text-[8px] mr-0.5" />Not synced</span>
+            }
             <span className="text-[9px] text-slate-600 ml-auto">{doc.date}</span>
           </div>
           <h3 className="text-sm font-bold text-white leading-snug">{doc.name}</h3>
           <span className="text-[10px] text-gold-500/60 uppercase tracking-widest">{doc.category}</span>
         </div>
+
+        {/* Kebab menu */}
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="w-7 h-7 flex items-center justify-center text-slate-500 hover:text-white hover:bg-navy-700 transition-colors rounded-sm"
+            title="Options"
+          >
+            <i className="fa-solid fa-ellipsis-vertical text-xs" />
+          </button>
+          {menuOpen && (
+            <div className="absolute right-0 top-8 z-20 w-44 bg-navy-700 border border-white/10 shadow-xl py-1">
+              {viewUrl && (
+                <a
+                  href={viewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors"
+                >
+                  <i className="fa-solid fa-eye w-3.5 text-center text-blue-400" /> View
+                </a>
+              )}
+              <button
+                onClick={() => { onSummarise(); setMenuOpen(false); }}
+                disabled={isLoading}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors disabled:opacity-50"
+              >
+                <i className={`fa-solid fa-wand-magic-sparkles w-3.5 text-center text-gold-500/70 ${isLoading ? "animate-spin" : ""}`} />
+                {isLoading ? "Summarising…" : summary ? "Re-summarise" : "Summarise"}
+              </button>
+              <button
+                onClick={() => { onEdit(); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors"
+              >
+                <i className="fa-solid fa-pen w-3.5 text-center text-slate-400" /> Edit
+              </button>
+              <div className="border-t border-white/5 my-1" />
+              <button
+                onClick={() => { onDelete(); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+              >
+                <i className="fa-solid fa-trash-can w-3.5 text-center" /> Delete
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Body */}
       <div className="px-5 py-3 flex-1">
         <p className="text-xs text-slate-400 leading-relaxed">{doc.description}</p>
         {doc.notes && (
@@ -806,6 +928,7 @@ function DocCard({
         )}
       </div>
 
+      {/* AI summary */}
       {(summary || isLoading) && (
         <div className="mx-5 mb-3 border border-gold-500/20 bg-navy-900 p-3">
           <p className="text-[9px] font-bold text-gold-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
@@ -824,27 +947,104 @@ function DocCard({
         </div>
       )}
 
-      <div className="px-5 py-3 border-t border-white/5 flex items-center gap-1.5 flex-wrap">
-        {doc.canView && (
-          <a href={docUrl} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-2 bg-navy-700 hover:bg-navy-600 border border-white/10 hover:border-blue-400/30 text-blue-400 text-[10px] font-bold uppercase tracking-wide transition-colors">
-            <i className="fa-solid fa-eye text-[9px]" /> View
+      {/* Footer — primary action only */}
+      <div className="px-5 py-3 border-t border-white/5">
+        {!docUrl ? (
+          <button
+            onClick={onSync}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 border border-amber-500/20 bg-amber-500/5 text-amber-400 hover:text-amber-300 text-[10px] font-bold uppercase tracking-wide transition-colors"
+          >
+            <i className="fa-solid fa-cloud-arrow-up text-[9px]" /> Upload to enable downloads
+          </button>
+        ) : (
+          <a
+            href={docUrl}
+            download={doc.filename}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-gold-500 hover:bg-gold-400 text-navy-900 text-[10px] font-bold uppercase tracking-wide transition-colors"
+          >
+            <i className="fa-solid fa-download text-[9px]" /> Download
           </a>
         )}
-        <a href={docUrl} download={doc.filename}
-          className="flex items-center gap-1.5 px-3 py-2 bg-gold-500 hover:bg-gold-400 text-navy-900 text-[10px] font-bold uppercase tracking-wide transition-colors">
+      </div>
+    </div>
+  );
+}
+
+// ── ListRowMenu ───────────────────────────────────────────────────────────────
+
+function ListRowMenu({
+  docUrl, viewUrl, filename, canView, aiLoading, onSync, onSummarise, onEdit, onDelete,
+}: {
+  docUrl: string | null;
+  viewUrl: string | null;
+  filename: string;
+  canView: boolean;
+  aiLoading: boolean;
+  onSync: () => void;
+  onSummarise: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onOutside);
+    return () => document.removeEventListener("mousedown", onOutside);
+  }, []);
+
+  return (
+    <div className="relative flex items-center gap-2" ref={ref}>
+      {docUrl ? (
+        <a
+          href={docUrl}
+          download={filename}
+          className="text-[10px] font-bold text-gold-500 hover:text-gold-400 flex items-center gap-1 whitespace-nowrap"
+        >
           <i className="fa-solid fa-download text-[9px]" /> Download
         </a>
-        <button onClick={onSummarise} disabled={isLoading}
-          className="flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-gold-500/30 text-slate-400 hover:text-white text-[10px] font-bold uppercase tracking-wide transition-colors disabled:opacity-50">
-          <i className={`fa-solid fa-wand-magic-sparkles text-[9px] ${isLoading ? "animate-spin" : ""}`} />
-          {summary ? "Re-summarise" : isLoading ? "Working…" : "Summarise"}
+      ) : (
+        <button
+          onClick={onSync}
+          className="text-[10px] text-amber-400 hover:text-amber-300 flex items-center gap-1 whitespace-nowrap"
+        >
+          <i className="fa-solid fa-cloud-arrow-up text-[9px]" /> Sync
         </button>
-        <button onClick={onEdit}
-          className="ml-auto flex items-center gap-1.5 px-3 py-2 border border-white/10 hover:border-white/30 text-slate-400 hover:text-white text-[10px] font-bold uppercase tracking-wide transition-colors">
-          <i className="fa-solid fa-pen text-[9px]" />
-          {doc.canView ? "Edit / AI" : "Edit"}
+      )}
+      <div className="relative">
+        <button
+          onClick={() => setOpen((o) => !o)}
+          className="w-6 h-6 flex items-center justify-center text-slate-500 hover:text-white hover:bg-navy-600 rounded-sm transition-colors"
+        >
+          <i className="fa-solid fa-ellipsis-vertical text-[10px]" />
         </button>
+        {open && (
+          <div className="absolute right-0 top-7 z-20 w-40 bg-navy-700 border border-white/10 shadow-xl py-1">
+            {viewUrl && canView && (
+              <a href={viewUrl} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors">
+                <i className="fa-solid fa-eye w-3 text-center text-blue-400" /> View
+              </a>
+            )}
+            <button onClick={() => { onSummarise(); setOpen(false); }} disabled={aiLoading}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors disabled:opacity-50">
+              <i className={`fa-solid fa-wand-magic-sparkles w-3 text-center text-gold-500/70 ${aiLoading ? "animate-spin" : ""}`} />
+              {aiLoading ? "Working…" : "Summarise"}
+            </button>
+            <button onClick={() => { onEdit(); setOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors">
+              <i className="fa-solid fa-pen w-3 text-center text-slate-400" /> Edit
+            </button>
+            <div className="border-t border-white/5 my-1" />
+            <button onClick={() => { onDelete(); setOpen(false); }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
+              <i className="fa-solid fa-trash-can w-3 text-center" /> Delete
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
