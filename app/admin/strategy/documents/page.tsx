@@ -158,7 +158,8 @@ export default function DocumentLibraryPage() {
   useEffect(() => { loadDocs(); }, [loadDocs]);
 
   function getDocUrl(doc: DocEntry): string | null {
-    return storageUrls[doc.filename] ?? null;
+    if (!storageUrls[doc.filename]) return null;
+    return `/api/admin/documents/download?filename=${encodeURIComponent(doc.filename)}`;
   }
 
   function getViewUrl(doc: DocEntry): string | null {
