@@ -2,6 +2,13 @@ import { sanityFetch } from '@/lib/sanity/fetch'
 import { FEATURED_PARTNERS_QUERY, type PartnerCard } from '@/lib/queries/partners'
 import PartnershipsSectionClient from './PartnershipsSectionClient'
 
+interface Props {
+  badge?: string
+  heading?: string
+  subtext?: string
+  backgroundImageUrl?: string
+}
+
 const FALLBACK_PARTNERS: PartnerCard[] = [
   { _id: 'f1', name: 'Nigerian National Petroleum Company Limited', slug: 'nnpcl',                    type: 'energy-company', tier: 'strategic',     featured: true  },
   { _id: 'f2', name: 'ECOWAS Energy Commission',                    slug: 'ecowas-energy-commission', type: 'regulatory',     tier: 'institutional', featured: true  },
@@ -11,7 +18,7 @@ const FALLBACK_PARTNERS: PartnerCard[] = [
   { _id: 'f6', name: 'ONHYM Morocco',                               slug: 'onhym-morocco',             type: 'energy-company', tier: 'strategic',     featured: false },
 ]
 
-export default async function PartnershipsSection() {
+export default async function PartnershipsSection({ badge, heading, subtext, backgroundImageUrl }: Props) {
   let partners: PartnerCard[] = FALLBACK_PARTNERS
 
   try {
@@ -21,5 +28,13 @@ export default async function PartnershipsSection() {
     // use fallbacks
   }
 
-  return <PartnershipsSectionClient partners={partners} />
+  return (
+    <PartnershipsSectionClient
+      partners={partners}
+      badge={badge}
+      heading={heading}
+      subtext={subtext}
+      backgroundImageUrl={backgroundImageUrl}
+    />
+  )
 }

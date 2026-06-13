@@ -76,6 +76,31 @@ export interface HomepageConfig {
   pillarsSectionHeading?: string
   pillars?: Pillar[]
 
+  // Partnerships
+  partnershipsBadge?: string
+  partnershipsHeading?: string
+  partnershipsSubtext?: string
+  partnershipsBackgroundImageUrl?: string
+
+  // Corridors / Map
+  corridorsHeading?: string
+  corridorsSubtext?: string
+  corridorSpotlightLabel?: string
+  corridorSpotlightTitle?: string
+  corridorSpotlightSubtitle?: string
+
+  // Research / Intelligence
+  researchBadge?: string
+  researchHeading?: string
+  researchSubtext?: string
+  researchBackgroundImageUrl?: string
+
+  // Newsletter
+  newsletterBadge?: string
+  newsletterHeading?: string
+  newsletterSubtext?: string
+  newsletterBackgroundImageUrl?: string
+
   // Roadmap
   roadmapHeading?: string
   roadmapMilestones?: RoadmapMilestone[]
@@ -136,6 +161,31 @@ export const HOMEPAGE_CONFIG_QUERY = groq`
     pillarsSectionTag,
     pillarsSectionHeading,
     pillars[]{ icon, title, description },
+
+    // Partnerships
+    partnershipsBadge,
+    partnershipsHeading,
+    partnershipsSubtext,
+    "partnershipsBackgroundImageUrl": partnershipsBackgroundImage.asset->url,
+
+    // Corridors / Map
+    corridorsHeading,
+    corridorsSubtext,
+    corridorSpotlightLabel,
+    corridorSpotlightTitle,
+    corridorSpotlightSubtitle,
+
+    // Research / Intelligence
+    researchBadge,
+    researchHeading,
+    researchSubtext,
+    "researchBackgroundImageUrl": researchBackgroundImage.asset->url,
+
+    // Newsletter
+    newsletterBadge,
+    newsletterHeading,
+    newsletterSubtext,
+    "newsletterBackgroundImageUrl": newsletterBackgroundImage.asset->url,
 
     // Roadmap
     roadmapHeading,

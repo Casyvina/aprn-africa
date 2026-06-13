@@ -20,12 +20,30 @@ function typeIcon(type: string) {
   return map[type] ?? "fa-landmark"
 }
 
-export default function PartnershipsSectionClient({ partners }: { partners: PartnerCard[] }) {
+interface Props {
+  partners: PartnerCard[]
+  badge?: string
+  heading?: string
+  subtext?: string
+  backgroundImageUrl?: string
+}
+
+export default function PartnershipsSectionClient({
+  partners,
+  badge = 'Institutional Network',
+  heading = 'Partners & Affiliates',
+  subtext = 'APRN operates within a framework of regulatory, academic, and industry partnerships that ensure our programmes align with global standards.',
+  backgroundImageUrl,
+}: Props) {
   return (
     <section id="partnerships" className="py-24 bg-navy-800 relative border-t border-navy-700">
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(circle at 20% 100%, rgba(212, 160, 23, 0.05) 0%, transparent 50%)" }}
+        style={
+          backgroundImageUrl
+            ? { backgroundImage: `url('${backgroundImageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.12 }
+            : { backgroundImage: "radial-gradient(circle at 20% 100%, rgba(212, 160, 23, 0.05) 0%, transparent 50%)" }
+        }
       />
       <div className="max-w-360 mx-auto px-6 md:px-12 relative z-10">
         <motion.div
@@ -36,14 +54,13 @@ export default function PartnershipsSectionClient({ partners }: { partners: Part
           transition={{ duration: 0.6, ease: "easeOut" as const }}
         >
           <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">
-            Institutional Network
+            {badge}
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-            Partners &amp; Affiliates
+            {heading}
           </h2>
           <p className="text-slate-400 mt-4 max-w-xl mx-auto">
-            APRN operates within a framework of regulatory, academic, and industry partnerships that
-            ensure our programmes align with global standards.
+            {subtext}
           </p>
         </motion.div>
 

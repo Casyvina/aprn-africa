@@ -87,9 +87,25 @@ export default async function Home() {
           sectionHeading={config?.pillarsSectionHeading}
           pillars={config?.pillars}
         />
-        <PartnershipsSection />
-        <MapSection />
-        <ResearchSection />
+        <PartnershipsSection
+          badge={config?.partnershipsBadge}
+          heading={config?.partnershipsHeading}
+          subtext={config?.partnershipsSubtext}
+          backgroundImageUrl={config?.partnershipsBackgroundImageUrl}
+        />
+        <MapSection
+          heading={config?.corridorsHeading}
+          subtext={config?.corridorsSubtext}
+          spotlightLabel={config?.corridorSpotlightLabel}
+          spotlightTitle={config?.corridorSpotlightTitle}
+          spotlightSubtitle={config?.corridorSpotlightSubtitle}
+        />
+        <ResearchSection
+          badge={config?.researchBadge}
+          heading={config?.researchHeading}
+          subtext={config?.researchSubtext}
+          backgroundImageUrl={config?.researchBackgroundImageUrl}
+        />
         <RoadmapSection
           heading={config?.roadmapHeading}
           milestones={config?.roadmapMilestones}

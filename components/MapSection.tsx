@@ -141,18 +141,31 @@ function PipelineMap() {
   return <div ref={mapRef} className="w-full h-full" />;
 }
 
-export default function MapSection() {
+interface MapSectionProps {
+  heading?: string
+  subtext?: string
+  spotlightLabel?: string
+  spotlightTitle?: string
+  spotlightSubtitle?: string
+}
+
+export default function MapSection({
+  heading = 'Strategic Corridors',
+  subtext = 'Interactive intelligence on active and proposed pipeline infrastructure driving regional integration.',
+  spotlightLabel = 'Featured Corridor',
+  spotlightTitle = 'Nigeria–Morocco Gas Pipeline (NMGP)',
+  spotlightSubtitle = '~5,660 km · 13 nations · Atlantic coastline route',
+}: MapSectionProps) {
   return (
     <section id="map" className="py-24 bg-navy-900 border-y border-navy-700">
       <div className="max-w-360 mx-auto px-6 md:px-12">
         <div className="flex flex-col lg:flex-row justify-between items-end mb-12 gap-6">
           <div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-              Strategic Corridors
+              {heading}
             </h2>
             <p className="text-slate-400 max-w-xl">
-              Interactive intelligence on active and proposed pipeline infrastructure driving regional
-              integration.
+              {subtext}
             </p>
           </div>
           <div className="flex gap-4">
@@ -169,18 +182,18 @@ export default function MapSection() {
           <PipelineMap />
         </div>
 
-        {/* NMGP Corridor spotlight */}
+        {/* Corridor spotlight */}
         <div className="mt-6 glass-panel rounded-sm p-6 border-l-4 border-gold-500">
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             <div className="shrink-0">
               <span className="text-xs font-bold text-gold-500 uppercase tracking-widest block mb-1">
-                Featured Corridor
+                {spotlightLabel}
               </span>
               <h3 className="font-display text-lg font-bold text-white">
-                Nigeria–Morocco Gas Pipeline (NMGP)
+                {spotlightTitle}
               </h3>
               <p className="text-sm text-slate-400 mt-1">
-                ~5,660 km · 13 nations · Atlantic coastline route
+                {spotlightSubtitle}
               </p>
             </div>
             <div className="h-px lg:h-10 lg:w-px bg-navy-700 lg:mx-4 shrink-0" />

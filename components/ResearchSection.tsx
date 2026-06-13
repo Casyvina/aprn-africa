@@ -63,7 +63,19 @@ const FALLBACK_PUBS: HomepageResearchCard[] = [
 
 // -- Component -----------------------------------------------------------------
 
-export default async function ResearchSection() {
+interface Props {
+  badge?: string
+  heading?: string
+  subtext?: string
+  backgroundImageUrl?: string
+}
+
+export default async function ResearchSection({
+  badge = 'Intelligence Hub',
+  heading = 'Research & Intelligence',
+  subtext = 'Authoritative analysis on African pipeline infrastructure, regulatory developments, and workforce intelligence — accessible to all network members.',
+  backgroundImageUrl,
+}: Props) {
   let featured: HomepageResearchCard | null = FALLBACK_FEATURED
   let publications: HomepageResearchCard[] = FALLBACK_PUBS
 
@@ -80,21 +92,25 @@ export default async function ResearchSection() {
   const cfg = typeConfig(featured?.reportType)
 
   return (
-    <section id="research" className="py-24 bg-navy-900 border-t border-navy-800 relative">
-      <div className="max-w-360 mx-auto px-6 md:px-12">
+    <section
+      id="research"
+      className="py-24 bg-navy-900 border-t border-navy-800 relative"
+      style={backgroundImageUrl ? { backgroundImage: `url('${backgroundImageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+    >
+      {backgroundImageUrl && <div className="absolute inset-0 bg-navy-900/90" />}
+      <div className="max-w-360 mx-auto px-6 md:px-12 relative z-10">
 
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-end mb-14 gap-6">
           <div>
             <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">
-              Intelligence Hub
+              {badge}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-              Research &amp; Intelligence
+              {heading}
             </h2>
             <p className="text-slate-400 mt-3 max-w-lg">
-              Authoritative analysis on African pipeline infrastructure, regulatory developments, and
-              workforce intelligence — accessible to all network members.
+              {subtext}
             </p>
           </div>
           <Link
