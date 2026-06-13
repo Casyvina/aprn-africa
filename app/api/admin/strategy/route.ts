@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       if (hasContent) {
         userPrompt = `Provide a 3-bullet executive summary of this APRN document. Each bullet must be 1 concise sentence. Cover: (1) key purpose, (2) main findings or content highlights, (3) relevance to APRN's mission in African pipeline research and capacity building.\n\n${context}`;
       } else {
-        userPrompt = `Based on the following document metadata, write a 3-bullet executive summary for an APRN internal document library. Each bullet must be 1 concise sentence. Cover: (1) what this document is and its purpose, (2) the likely scope and audience based on the title/description, (3) how it relates to APRN's mission in African pipeline research and capacity building. Work only from the information given — do not ask for more.\n\n${context}`;
+        userPrompt = `Write exactly 3 executive summary bullet points for this APRN internal document. Output ONLY the 3 bullets — no preamble, no requests for more information, no caveats about missing content. Even if the description is blank, infer purpose and scope directly from the document title and format. Each bullet = 1 short sentence. Cover: (1) inferred purpose from the title, (2) likely content scope and target audience, (3) relevance to APRN's pipeline research and capacity-building mission.\n\n${context}`;
       }
       break;
     }
