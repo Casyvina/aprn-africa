@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Json } from "@/types/database";
 
 function isAdmin(email: string | undefined): boolean {
   if (!email) return false;
@@ -40,13 +41,13 @@ export async function PUT(req: NextRequest) {
 
   const body = await req.json() as {
     id: string;
-    name?: string;
+    name: string;
     freq?: string;
     content?: string;
     audience?: string;
     owner?: string;
     notes?: string;
-    whatsapp_groups?: unknown[];
+    whatsapp_groups?: Json;
     sort_order?: number;
   };
 

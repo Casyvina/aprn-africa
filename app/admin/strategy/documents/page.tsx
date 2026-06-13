@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -22,73 +22,17 @@ interface DocEntry {
   notes: string;
 }
 
-// ── Static document registry ──────────────────────────────────────────────────
+interface MetaRow {
+  filename: string;
+  display_name: string | null;
+  description: string | null;
+  doc_date: string | null;
+  version: string | null;
+  notes: string | null;
+  category: string | null;
+}
 
-const INITIAL_DOCS: DocEntry[] = [
-  {
-    id: "pres-v11",
-    name: "APRN Presentation",
-    version: "v11", date: "June 2026", category: "Presentations",
-    format: "PPTX", icon: "fa-file-powerpoint",
-    description: "Main APRN corporate presentation covering mission, team, programs, and partnerships.",
-    filename: "APRN_Presentation_v11.pptx",
-    canView: false, notes: "",
-  },
-  {
-    id: "ci-v8",
-    name: "Competitive Intelligence Report",
-    version: "v8", date: "June 2026", category: "Reports",
-    format: "HTML", icon: "fa-chart-bar",
-    description: "Deep analysis of APRN's competitive landscape across African pipeline training and research organisations.",
-    filename: "APRN_Competitive_Intelligence_Report_v8.html",
-    canView: true, notes: "",
-  },
-  {
-    id: "brand-v2",
-    name: "Brand Guidelines",
-    version: "v2", date: "May 2026", category: "Strategy",
-    format: "HTML", icon: "fa-palette",
-    description: "Official APRN brand guidelines including colour palette, typography, logo usage, and tone of voice.",
-    filename: "APRN_Brand_Guidelines_v2.html",
-    canView: true, notes: "",
-  },
-  {
-    id: "membership",
-    name: "Membership Structure",
-    version: "v1", date: "May 2026", category: "Strategy",
-    format: "DOCX", icon: "fa-id-card",
-    description: "APRN membership tiers, pricing, benefits structure, and eligibility criteria.",
-    filename: "APRN_Membership_Structure.docx",
-    canView: false, notes: "",
-  },
-  {
-    id: "research-brief",
-    name: "Research Briefing — 11 Questions",
-    version: "v1", date: "May 2026", category: "Research",
-    format: "DOCX", icon: "fa-file-lines",
-    description: "Internal research briefing document covering 11 key strategic questions for APRN's research agenda.",
-    filename: "APRN_Research_Briefing_11_Questions.docx",
-    canView: false, notes: "",
-  },
-  {
-    id: "pipeline-db",
-    name: "Pipeline Industry Database",
-    version: "v1", date: "June 2026", category: "Database",
-    format: "XLSX", icon: "fa-file-excel",
-    description: "Master database of African pipeline operators, contacts, project status, and market intelligence.",
-    filename: "APRN_Pipeline_Database_Master.xlsx",
-    canView: false, notes: "",
-  },
-  {
-    id: "progress-june",
-    name: "APRN Progress Report — June 2026",
-    version: "v1", date: "June 2026", category: "Reports",
-    format: "HTML", icon: "fa-chart-line",
-    description: "Internal progress report covering all APRN activities, milestones, and KPIs for June 2026.",
-    filename: "APRN_Progress_Report_June2026.html",
-    canView: true, notes: "",
-  },
-];
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const CATEGORIES: Array<{ label: string; value: DocCategory | "All" }> = [
   { label: "All",           value: "All" },
@@ -107,85 +51,116 @@ const FORMAT_COLOR: Record<string, string> = {
   PDF:  "text-red-400 border-red-400/20 bg-red-400/10",
 };
 
+function filenameToName(filename: string): string {
+  return filename
+    .replace(/\.[^/.]+$/, "")
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function currentMonth(): string {
+  return new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+}
+
+function iconForExt(ext: string): string {
+  const map: Record<string, string> = {
+    PPTX: "fa-file-powerpoint",
+    XLSX: "fa-file-excel",
+    PDF:  "fa-file-pdf",
+    HTML: "fa-chart-bar",
+    DOCX: "fa-file-lines",
+  };
+  return map[ext] ?? "fa-file";
+}
+
+function guessCategory(ext: string): DocCategory {
+  if (ext === "PPTX") return "Presentations";
+  if (ext === "XLSX") return "Database";
+  if (ext === "PDF")  return "Reports";
+  return "Strategy";
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function DocumentLibraryPage() {
-  const [docs, setDocs] = useState<DocEntry[]>(INITIAL_DOCS);
+  const [docs, setDocs]           = useState<DocEntry[]>([]);
   const [storageUrls, setStorageUrls] = useState<Record<string, string>>({});
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<DocCategory | "All">("All");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [loadingDocs, setLoadingDocs] = useState(true);
+  const [search, setSearch]       = useState("");
+  const [category, setCategory]   = useState<DocCategory | "All">("All");
+  const [viewMode, setViewMode]   = useState<ViewMode>("grid");
   const [summaries, setSummaries] = useState<Record<string, string>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [migrating, setMigrating] = useState(false);
-  const [migrateMsg, setMigrateMsg] = useState("");
 
   // Delete
   const [deletingDoc, setDeletingDoc]     = useState<DocEntry | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError]     = useState<string | null>(null);
 
-  async function handleDeleteConfirm() {
-    if (!deletingDoc) return;
-    setDeleteLoading(true);
-    setDeleteError(null);
-    try {
-      if (storageUrls[deletingDoc.filename]) {
-        const res = await fetch(`/api/admin/documents?filename=${encodeURIComponent(deletingDoc.filename)}`, { method: "DELETE" });
-        if (!res.ok) {
-          const { error } = await res.json() as { error: string };
-          throw new Error(error);
-        }
-        setStorageUrls((prev) => { const next = { ...prev }; delete next[deletingDoc.filename]; return next; });
-      }
-      // Remove from docs list if it was user-uploaded (not in original INITIAL_DOCS set)
-      const isInitial = INITIAL_DOCS.some((d) => d.id === deletingDoc.id);
-      if (!isInitial) setDocs((prev) => prev.filter((d) => d.id !== deletingDoc.id));
-      setDeletingDoc(null);
-    } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : "Delete failed");
-    } finally {
-      setDeleteLoading(false);
-    }
-  }
-
   // Edit drawer
-  const [editDoc, setEditDoc] = useState<DocEntry | null>(null);
+  const [editDoc,   setEditDoc]   = useState<DocEntry | null>(null);
   const [editDraft, setEditDraft] = useState<Partial<DocEntry>>({});
-  const [editTab, setEditTab] = useState<EditTab>("metadata");
+  const [editTab,   setEditTab]   = useState<EditTab>("metadata");
+  const [editSaving, setEditSaving] = useState(false);
 
   // AI Edit state
   const [aiInstruction, setAiInstruction] = useState("");
-  const [aiEditing, setAiEditing] = useState(false);
+  const [aiEditing,     setAiEditing]     = useState(false);
   const [aiPreviewHtml, setAiPreviewHtml] = useState("");
-  const [aiCharCount, setAiCharCount] = useState(0);
-  const [aiSaving, setAiSaving] = useState(false);
-  const [aiSaved, setAiSaved] = useState(false);
+  const [aiCharCount,   setAiCharCount]   = useState(0);
+  const [aiSaving,      setAiSaving]      = useState(false);
+  const [aiSaved,       setAiSaved]       = useState(false);
 
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // ── Load signed URLs from Supabase Storage ──────────────────────────────────
+  // ── Load docs from storage + metadata ──────────────────────────────────────
 
-  function refreshStorageUrls() {
-    return fetch("/api/admin/documents")
-      .then((r) => r.json())
-      .then(({ files }: { files: Array<{ filename: string; signedUrl: string }> }) => {
-        const map: Record<string, string> = {};
-        (files ?? []).forEach((f) => { if (f.signedUrl) map[f.filename] = f.signedUrl; });
-        setStorageUrls(map);
-        return map;
-      })
-      .catch(() => ({}));
-  }
+  const loadDocs = useCallback(async () => {
+    setLoadingDocs(true);
+    try {
+      const [storageRes, metaRes] = await Promise.all([
+        fetch("/api/admin/documents"),
+        fetch("/api/admin/documents/meta"),
+      ]);
+      const { files } = await storageRes.json() as { files: Array<{ filename: string; signedUrl: string | null }> };
+      const { meta } = await metaRes.json() as { meta: Record<string, MetaRow> };
 
-  useEffect(() => { refreshStorageUrls(); }, []);
+      const urlMap: Record<string, string> = {};
+      const docList: DocEntry[] = (files ?? []).map((f) => {
+        if (f.signedUrl) urlMap[f.filename] = f.signedUrl;
+        const m = meta?.[f.filename];
+        const ext = (f.filename.split(".").pop() ?? "").toUpperCase() || "FILE";
+        return {
+          id: f.filename,
+          name: m?.display_name ?? filenameToName(f.filename),
+          version: m?.version ?? "v1",
+          date: m?.doc_date ?? currentMonth(),
+          category: (m?.category as DocCategory) ?? guessCategory(ext),
+          format: ext,
+          icon: iconForExt(ext),
+          description: m?.description ?? "",
+          filename: f.filename,
+          canView: ext === "HTML",
+          notes: m?.notes ?? "",
+        };
+      });
+
+      setDocs(docList);
+      setStorageUrls(urlMap);
+    } catch {
+      // non-fatal — show empty state
+    } finally {
+      setLoadingDocs(false);
+    }
+  }, []);
+
+  useEffect(() => { loadDocs(); }, [loadDocs]);
 
   function getDocUrl(doc: DocEntry): string | null {
     return storageUrls[doc.filename] ?? null;
   }
 
-  // For HTML files, use the server proxy so they render correctly in the browser
   function getViewUrl(doc: DocEntry): string | null {
     if (!doc.canView || !storageUrls[doc.filename]) return null;
     if (doc.format === "HTML") {
@@ -204,48 +179,31 @@ export default function DocumentLibraryPage() {
     return matchSearch && matchCat;
   });
 
-  // ── Migrate existing files to Supabase Storage ──────────────────────────────
+  // ── Delete ──────────────────────────────────────────────────────────────────
 
-  async function handleMigrate() {
-    setMigrating(true);
-    setMigrateMsg("");
+  async function handleDeleteConfirm() {
+    if (!deletingDoc) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
     try {
-      const res = await fetch("/api/admin/documents/migrate", { method: "POST" });
-      const { results } = await res.json() as { results: Array<{ filename: string; success: boolean }> };
-      const ok = results.filter((r) => r.success).length;
-      setMigrateMsg(`Synced ${ok}/${results.length} files to cloud storage.`);
-      await refreshStorageUrls();
-    } catch {
-      setMigrateMsg("Migration failed — check server logs.");
-    } finally {
-      setMigrating(false);
-    }
-  }
-
-  // ── AI Summarise ────────────────────────────────────────────────────────────
-
-  async function summariseDoc(doc: DocEntry) {
-    setLoadingId(doc.id);
-    setSummaries((prev) => ({ ...prev, [doc.id]: "" }));
-    const context = `Document: "${doc.name}" (${doc.format}, ${doc.version}, ${doc.date}). Description: ${doc.description}${doc.notes ? `. Additional context: ${doc.notes}` : ""}`;
-    try {
-      const res = await fetch("/api/admin/strategy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "summarise_document", context }),
-      });
-      if (!res.body) throw new Error("No stream");
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        setSummaries((prev) => ({ ...prev, [doc.id]: (prev[doc.id] ?? "") + decoder.decode(value) }));
+      // Remove from Supabase Storage if it's there
+      if (storageUrls[deletingDoc.filename]) {
+        const res = await fetch(`/api/admin/documents?filename=${encodeURIComponent(deletingDoc.filename)}`, { method: "DELETE" });
+        if (!res.ok) {
+          const { error } = await res.json() as { error: string };
+          throw new Error(error);
+        }
       }
-    } catch {
-      setSummaries((prev) => ({ ...prev, [doc.id]: "Error generating summary. Please try again." }));
+      // Remove metadata row (best-effort — ignore failure)
+      await fetch(`/api/admin/documents/meta?filename=${encodeURIComponent(deletingDoc.filename)}`, { method: "DELETE" });
+      // Always remove from state
+      setDocs((prev) => prev.filter((d) => d.id !== deletingDoc.id));
+      setStorageUrls((prev) => { const next = { ...prev }; delete next[deletingDoc.filename]; return next; });
+      setDeletingDoc(null);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Delete failed");
     } finally {
-      setLoadingId(null);
+      setDeleteLoading(false);
     }
   }
 
@@ -253,18 +211,42 @@ export default function DocumentLibraryPage() {
 
   function openEdit(doc: DocEntry) {
     setEditDoc(doc);
-    setEditDraft({ name: doc.name, version: doc.version, date: doc.date, description: doc.description, notes: doc.notes });
+    setEditDraft({ name: doc.name, version: doc.version, date: doc.date, category: doc.category, description: doc.description, notes: doc.notes });
     setEditTab("metadata");
     setAiInstruction("");
     setAiPreviewHtml("");
     setAiCharCount(0);
     setAiSaved(false);
+    setEditSaving(false);
   }
 
-  function saveEdit() {
+  async function saveEdit() {
     if (!editDoc) return;
-    setDocs((prev) => prev.map((d) => d.id === editDoc.id ? { ...d, ...editDraft } : d));
-    setEditDoc(null);
+    setEditSaving(true);
+    const updated = { ...editDoc, ...editDraft };
+    try {
+      await fetch("/api/admin/documents/meta", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename: editDoc.filename,
+          display_name: updated.name,
+          version: updated.version,
+          doc_date: updated.date,
+          description: updated.description,
+          notes: updated.notes,
+          category: updated.category,
+        }),
+      });
+      setDocs((prev) => prev.map((d) => d.id === editDoc.id ? { ...d, ...editDraft } : d));
+      setEditDoc(null);
+    } catch {
+      // silent — local state still updated
+      setDocs((prev) => prev.map((d) => d.id === editDoc.id ? { ...d, ...editDraft } : d));
+      setEditDoc(null);
+    } finally {
+      setEditSaving(false);
+    }
   }
 
   // ── AI Edit ─────────────────────────────────────────────────────────────────
@@ -326,6 +308,33 @@ export default function DocumentLibraryPage() {
     }
   }
 
+  // ── AI Summarise ─────────────────────────────────────────────────────────────
+
+  async function summariseDoc(doc: DocEntry) {
+    setLoadingId(doc.id);
+    setSummaries((prev) => ({ ...prev, [doc.id]: "" }));
+    const context = `Document: "${doc.name}" (${doc.format}, ${doc.version}, ${doc.date}). Description: ${doc.description}${doc.notes ? `. Additional context: ${doc.notes}` : ""}`;
+    try {
+      const res = await fetch("/api/admin/strategy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "summarise_document", context }),
+      });
+      if (!res.body) throw new Error("No stream");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        setSummaries((prev) => ({ ...prev, [doc.id]: (prev[doc.id] ?? "") + decoder.decode(value) }));
+      }
+    } catch {
+      setSummaries((prev) => ({ ...prev, [doc.id]: "Error generating summary. Please try again." }));
+    } finally {
+      setLoadingId(null);
+    }
+  }
+
   // ── Upload ──────────────────────────────────────────────────────────────────
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -338,16 +347,35 @@ export default function DocumentLibraryPage() {
       const res = await fetch("/api/admin/documents", { method: "POST", body: formData });
       const { filename, signedUrl, error } = await res.json() as { filename: string; signedUrl: string; error?: string };
       if (error) throw new Error(error);
-      const ext = file.name.split(".").pop()?.toUpperCase() ?? "FILE";
+      const ext = (file.name.split(".").pop() ?? "").toUpperCase() || "FILE";
+      const cleanName = filenameToName(file.name);
+      const docDate = currentMonth();
+      const docCategory = guessCategory(ext);
+
+      // Persist initial metadata
+      await fetch("/api/admin/documents/meta", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filename,
+          display_name: cleanName,
+          version: "v1",
+          doc_date: docDate,
+          category: docCategory,
+          description: "",
+          notes: "",
+        }),
+      });
+
       const newDoc: DocEntry = {
-        id: `upload-${Date.now()}`,
-        name: file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+        id: filename,
+        name: cleanName,
         version: "v1",
-        date: new Date().toLocaleDateString("en-GB", { month: "long", year: "numeric" }),
-        category: "Strategy",
+        date: docDate,
+        category: docCategory,
         format: ext,
-        icon: ext === "PPTX" ? "fa-file-powerpoint" : ext === "XLSX" ? "fa-file-excel" : ext === "PDF" ? "fa-file-pdf" : "fa-file-lines",
-        description: "Newly uploaded document.",
+        icon: iconForExt(ext),
+        description: "",
         filename,
         canView: ext === "HTML",
         notes: "",
@@ -377,7 +405,7 @@ export default function DocumentLibraryPage() {
             Document Library
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            {docs.length} documents
+            {loadingDocs ? "Loading…" : `${docs.length} document${docs.length !== 1 ? "s" : ""}`}
             {cloudCount > 0 && (
               <span className="ml-2 text-[10px] text-emerald-400 font-semibold">
                 <i className="fa-solid fa-cloud text-[9px] mr-1" />{cloudCount} in cloud storage
@@ -386,17 +414,6 @@ export default function DocumentLibraryPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Sync to cloud */}
-          <button
-            onClick={handleMigrate}
-            disabled={migrating}
-            title="Upload all existing files to Supabase Storage"
-            className="flex items-center gap-2 px-3 py-2.5 border border-white/10 hover:border-emerald-500/30 text-emerald-400 hover:text-emerald-300 disabled:opacity-60 text-xs font-bold uppercase tracking-wide transition-colors"
-          >
-            <i className={`fa-solid ${migrating ? "fa-spinner animate-spin" : "fa-cloud-arrow-up"} text-xs`} />
-            {migrating ? "Syncing…" : "Sync to Cloud"}
-          </button>
-          {/* Upload */}
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
@@ -408,13 +425,6 @@ export default function DocumentLibraryPage() {
           <input ref={fileRef} type="file" className="hidden" onChange={handleFileChange} accept=".pdf,.docx,.pptx,.xlsx,.html" />
         </div>
       </div>
-
-      {/* Migrate feedback */}
-      {migrateMsg && (
-        <div className="bg-emerald-500/10 border border-emerald-500/20 px-4 py-2.5 text-xs text-emerald-400 flex items-center gap-2">
-          <i className="fa-solid fa-check-circle" /> {migrateMsg}
-        </div>
-      )}
 
       {/* Toolbar */}
       <div className="flex flex-col gap-3">
@@ -468,16 +478,29 @@ export default function DocumentLibraryPage() {
         </div>
       </div>
 
+      {/* Loading skeleton */}
+      {loadingDocs && (
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-navy-800 border border-white/5 h-48 animate-pulse" />
+          ))}
+        </div>
+      )}
+
       {/* Empty state */}
-      {filtered.length === 0 && (
+      {!loadingDocs && filtered.length === 0 && (
         <div className="bg-navy-800 border border-white/5 p-12 text-center">
           <i className="fa-solid fa-folder-open text-slate-600 text-3xl mb-3 block" />
-          <p className="text-slate-400 text-sm">No documents match your search.</p>
+          <p className="text-slate-400 text-sm">
+            {docs.length === 0
+              ? "No documents yet. Upload your first document to get started."
+              : "No documents match your search."}
+          </p>
         </div>
       )}
 
       {/* ── Grid View ─────────────────────────────────────────────────────── */}
-      {viewMode === "grid" && filtered.length > 0 && (
+      {!loadingDocs && viewMode === "grid" && filtered.length > 0 && (
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map((doc) => (
             <DocCard
@@ -491,14 +514,13 @@ export default function DocumentLibraryPage() {
               onSummarise={() => summariseDoc(doc)}
               onEdit={() => openEdit(doc)}
               onDelete={() => setDeletingDoc(doc)}
-              onSync={handleMigrate}
             />
           ))}
         </div>
       )}
 
       {/* ── List View ─────────────────────────────────────────────────────── */}
-      {viewMode === "list" && filtered.length > 0 && (
+      {!loadingDocs && viewMode === "list" && filtered.length > 0 && (
         <div className="border border-white/5 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -533,7 +555,7 @@ export default function DocumentLibraryPage() {
                   <td className="px-4 py-3">
                     {storageUrls[doc.filename]
                       ? <span className="text-[10px] text-emerald-400"><i className="fa-solid fa-cloud text-[9px] mr-1" />Cloud</span>
-                      : <span className="text-[10px] text-slate-600">Static</span>
+                      : <span className="text-[10px] text-slate-600">Not synced</span>
                     }
                   </td>
                   <td className="px-4 py-3">
@@ -543,7 +565,6 @@ export default function DocumentLibraryPage() {
                       filename={doc.filename}
                       canView={doc.canView}
                       aiLoading={loadingId === doc.id}
-                      onSync={handleMigrate}
                       onSummarise={() => summariseDoc(doc)}
                       onEdit={() => openEdit(doc)}
                       onDelete={() => setDeletingDoc(doc)}
@@ -571,8 +592,8 @@ export default function DocumentLibraryPage() {
             </div>
             <p className="text-xs text-slate-400 leading-relaxed mb-2">
               {storageUrls[deletingDoc.filename]
-                ? "This will permanently remove the file from cloud storage. The document entry will remain in the registry until you upload a new version."
-                : "This document is not in cloud storage — it will be removed from the list for this session."}
+                ? "This will permanently remove the file from cloud storage and cannot be undone."
+                : "This will remove the document from the library."}
             </p>
             <p className="text-[11px] text-slate-600 font-mono truncate mb-5">{deletingDoc.filename}</p>
             {deleteError && (
@@ -676,6 +697,18 @@ export default function DocumentLibraryPage() {
                   </div>
                 </div>
                 <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Category</label>
+                  <select
+                    value={editDraft.category ?? "Strategy"}
+                    onChange={(e) => setEditDraft((p) => ({ ...p, category: e.target.value as DocCategory }))}
+                    className="w-full bg-navy-900 border border-white/10 focus:border-gold-500/40 text-white text-sm px-3 py-2.5 outline-none transition-colors"
+                  >
+                    {CATEGORIES.filter((c) => c.value !== "All").map((c) => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Description</label>
                   <textarea
                     rows={3}
@@ -690,7 +723,7 @@ export default function DocumentLibraryPage() {
                     <span className="ml-2 text-slate-600 font-normal normal-case text-[10px]">Internal annotations, status, instructions</span>
                   </label>
                   <textarea
-                    rows={5}
+                    rows={4}
                     value={editDraft.notes ?? ""}
                     onChange={(e) => setEditDraft((p) => ({ ...p, notes: e.target.value }))}
                     className="w-full bg-navy-900 border border-white/10 focus:border-gold-500/40 text-white text-sm px-3 py-2.5 outline-none transition-colors resize-none"
@@ -701,23 +734,18 @@ export default function DocumentLibraryPage() {
                   <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">File Info</p>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
                     <span>Format: <span className="text-white">{editDoc.format}</span></span>
-                    <span>Category: <span className="text-white">{editDoc.category}</span></span>
+                    <span>Storage: <span className={storageUrls[editDoc.filename] ? "text-emerald-400" : "text-slate-500"}>{storageUrls[editDoc.filename] ? "Cloud" : "Not synced"}</span></span>
                     <span className="col-span-2 truncate">File: <span className="text-white">{editDoc.filename}</span></span>
-                    <span className="col-span-2">
-                      Storage:{" "}
-                      {storageUrls[editDoc.filename]
-                        ? <span className="text-emerald-400">Cloud (Supabase)</span>
-                        : <span className="text-slate-500">Static (public/documents)</span>
-                      }
-                    </span>
                   </div>
                 </div>
                 <div className="flex gap-3 mt-auto pt-2">
                   <button
                     onClick={saveEdit}
-                    className="flex-1 py-3 bg-gold-500 hover:bg-gold-400 text-navy-900 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+                    disabled={editSaving}
+                    className="flex-1 py-3 bg-gold-500 hover:bg-gold-400 disabled:opacity-60 text-navy-900 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
                   >
-                    <i className="fa-solid fa-check text-[10px]" /> Save Changes
+                    <i className={`fa-solid ${editSaving ? "fa-spinner animate-spin" : "fa-check"} text-[10px]`} />
+                    {editSaving ? "Saving…" : "Save Changes"}
                   </button>
                   <button
                     onClick={() => setEditDoc(null)}
@@ -732,29 +760,23 @@ export default function DocumentLibraryPage() {
             {/* ── AI Edit tab ───────────────────────────────────────────── */}
             {editTab === "ai" && editDoc.canView && (
               <div className="p-6 flex flex-col gap-5 flex-1 overflow-y-auto">
-                {/* Info banner */}
                 <div className="bg-navy-900 border border-gold-500/20 p-3">
                   <p className="text-[9px] font-bold text-gold-500 uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <i className="fa-solid fa-wand-magic-sparkles" /> AI Document Editor
                   </p>
                   <p className="text-xs text-slate-400 leading-relaxed">
                     Describe the change you want. Claude will apply it and return the corrected document for your review before saving.
-                    Best for targeted edits — dates, names, grammar, new sections.
                   </p>
                 </div>
 
-                {/* Success */}
                 {aiSaved && (
                   <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 flex items-center gap-2 text-xs text-emerald-400">
                     <i className="fa-solid fa-circle-check" /> Saved to Supabase Storage successfully.
                   </div>
                 )}
 
-                {/* Instruction input */}
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">
-                    Edit Instruction
-                  </label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Edit Instruction</label>
                   <textarea
                     rows={4}
                     value={aiInstruction}
@@ -765,19 +787,15 @@ export default function DocumentLibraryPage() {
                   />
                 </div>
 
-                {/* Apply button */}
                 <button
                   onClick={handleAiEdit}
                   disabled={aiEditing || !aiInstruction.trim()}
                   className="w-full py-3 bg-gold-500 hover:bg-gold-400 disabled:opacity-60 text-navy-900 text-xs font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
                 >
                   <i className={`fa-solid fa-wand-magic-sparkles text-[9px] ${aiEditing ? "animate-spin" : ""}`} />
-                  {aiEditing
-                    ? `Generating… ${aiCharCount.toLocaleString()} chars`
-                    : "Apply with AI"}
+                  {aiEditing ? `Generating… ${aiCharCount.toLocaleString()} chars` : "Apply with AI"}
                 </button>
 
-                {/* Preview */}
                 {aiPreviewHtml && !aiEditing && (
                   <div className="flex flex-col gap-3">
                     <div>
@@ -822,7 +840,7 @@ export default function DocumentLibraryPage() {
 // ── DocCard ───────────────────────────────────────────────────────────────────
 
 function DocCard({
-  doc, docUrl, viewUrl, inCloud, summary, isLoading, onSummarise, onEdit, onDelete, onSync,
+  doc, docUrl, viewUrl, inCloud, summary, isLoading, onSummarise, onEdit, onDelete,
 }: {
   doc: DocEntry;
   docUrl: string | null;
@@ -833,7 +851,6 @@ function DocCard({
   onSummarise: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  onSync: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -919,7 +936,7 @@ function DocCard({
 
       {/* Body */}
       <div className="px-5 py-3 flex-1">
-        <p className="text-xs text-slate-400 leading-relaxed">{doc.description}</p>
+        <p className="text-xs text-slate-400 leading-relaxed">{doc.description || <span className="italic text-slate-600">No description — click Edit to add one.</span>}</p>
         {doc.notes && (
           <div className="mt-3 pt-3 border-t border-white/5">
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">Notes</p>
@@ -947,15 +964,10 @@ function DocCard({
         </div>
       )}
 
-      {/* Footer — primary action only */}
+      {/* Footer */}
       <div className="px-5 py-3 border-t border-white/5">
         {!docUrl ? (
-          <button
-            onClick={onSync}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 border border-amber-500/20 bg-amber-500/5 text-amber-400 hover:text-amber-300 text-[10px] font-bold uppercase tracking-wide transition-colors"
-          >
-            <i className="fa-solid fa-cloud-arrow-up text-[9px]" /> Upload to enable downloads
-          </button>
+          <p className="text-center text-[10px] text-slate-600 italic">Upload to enable downloads</p>
         ) : (
           <a
             href={docUrl}
@@ -973,14 +985,13 @@ function DocCard({
 // ── ListRowMenu ───────────────────────────────────────────────────────────────
 
 function ListRowMenu({
-  docUrl, viewUrl, filename, canView, aiLoading, onSync, onSummarise, onEdit, onDelete,
+  docUrl, viewUrl, filename, canView, aiLoading, onSummarise, onEdit, onDelete,
 }: {
   docUrl: string | null;
   viewUrl: string | null;
   filename: string;
   canView: boolean;
   aiLoading: boolean;
-  onSync: () => void;
   onSummarise: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -1007,12 +1018,7 @@ function ListRowMenu({
           <i className="fa-solid fa-download text-[9px]" /> Download
         </a>
       ) : (
-        <button
-          onClick={onSync}
-          className="text-[10px] text-amber-400 hover:text-amber-300 flex items-center gap-1 whitespace-nowrap"
-        >
-          <i className="fa-solid fa-cloud-arrow-up text-[9px]" /> Sync
-        </button>
+        <span className="text-[10px] text-slate-600 italic">Not synced</span>
       )}
       <div className="relative">
         <button

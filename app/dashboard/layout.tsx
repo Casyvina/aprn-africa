@@ -167,7 +167,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
         {/* Scrollable content */}
         <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          {profile && <DashboardHydrator profile={{ ...profile, topics: profile.topics ?? [] }} />}
+          {profile && <DashboardHydrator profile={{ ...profile, topics: profile.topics ?? [], membership_tier: (profile.membership_tier as import("@/store/auth").MembershipTier) ?? "free" }} />}
           {children}
         </main>
       </div>
