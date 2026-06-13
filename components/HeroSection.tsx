@@ -9,10 +9,25 @@ const fadeUp = {
 
 interface HeroMetric { label: string; value: string; width: string }
 
+function AccentHeading({ text, accent, className }: { text: string; accent?: string; className?: string }) {
+  if (!accent || !text.includes(accent)) {
+    return <span className={className}>{text}</span>
+  }
+  const [before, ...rest] = text.split(accent)
+  return (
+    <span className={className}>
+      {before}
+      <span className="text-gradient">{accent}</span>
+      {rest.join(accent)}
+    </span>
+  )
+}
+
 interface HeroProps {
   stats?: HeroMetric[]
   badgeLabel?: string
   headline?: string
+  headlineAccent?: string
   subtext?: string
   primaryButtonLabel?: string
   secondaryButtonLabel?: string
@@ -22,6 +37,7 @@ export default function HeroSection({
   stats,
   badgeLabel,
   headline,
+  headlineAccent,
   subtext,
   primaryButtonLabel,
   secondaryButtonLabel,
@@ -80,7 +96,7 @@ export default function HeroSection({
             className="font-display text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white"
           >
             {headline ? (
-              headline
+              <AccentHeading text={headline} accent={headlineAccent} />
             ) : (
               <>
                 Anchoring Pipeline <br />

@@ -36,7 +36,15 @@ export const homepageConfig = defineType({
       title: 'Headline',
       type: 'string',
       group: 'hero',
-      description: 'Main headline. Leave blank to use the default multi-line formatted version.',
+      description: 'Full headline text. Leave blank to use the default.',
+    }),
+    defineField({
+      name: 'heroHeadlineAccent',
+      title: 'Headline Accent (Gold)',
+      type: 'string',
+      group: 'hero',
+      description: 'Type the word(s) from the Headline that should appear in gold. Must match exactly — e.g. if your Headline is "Anchoring Pipeline Technology in Africa" and you want "Technology" gold, type Technology here.',
+      initialValue: 'Technology',
     }),
     defineField({
       name: 'heroSubtext',
@@ -447,6 +455,14 @@ export const homepageConfig = defineType({
       type: 'string',
       group: 'cta',
       initialValue: 'Africa\'s infrastructure future requires African engineering capacity',
+    }),
+    defineField({
+      name: 'ctaHeadlineAccent',
+      title: 'Headline Accent (Gold)',
+      type: 'string',
+      group: 'cta',
+      description: 'Type the word(s) from the Headline that should appear in gold. Must match exactly.',
+      initialValue: 'African engineering capacity',
     }),
     defineField({
       name: 'ctaSubtext',

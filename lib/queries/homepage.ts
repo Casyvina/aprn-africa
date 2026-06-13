@@ -38,6 +38,7 @@ export interface HomepageConfig {
   // Hero
   heroBadgeLabel?: string
   heroHeadline?: string
+  heroHeadlineAccent?: string
   heroSubtext?: string
   heroImageUrl?: string
   heroPrimaryButtonLabel?: string
@@ -107,6 +108,7 @@ export interface HomepageConfig {
 
   // CTA
   ctaHeadline?: string
+  ctaHeadlineAccent?: string
   ctaSubtext?: string
   ctaButtonLabel?: string
   ctaSecondaryButtonLabel?: string
@@ -120,6 +122,7 @@ export const HOMEPAGE_CONFIG_QUERY = groq`
     // Hero
     heroBadgeLabel,
     heroHeadline,
+    heroHeadlineAccent,
     heroSubtext,
     "heroImageUrl": heroImage.asset->url,
     heroPrimaryButtonLabel,
@@ -193,6 +196,7 @@ export const HOMEPAGE_CONFIG_QUERY = groq`
 
     // CTA
     ctaHeadline,
+    ctaHeadlineAccent,
     ctaSubtext,
     ctaButtonLabel,
     ctaSecondaryButtonLabel,

@@ -59,6 +59,7 @@ export default async function Home() {
           stats={heroStats}
           badgeLabel={config?.heroBadgeLabel}
           headline={config?.heroHeadline}
+          headlineAccent={config?.heroHeadlineAccent}
           subtext={config?.heroSubtext}
           primaryButtonLabel={config?.heroPrimaryButtonLabel}
           secondaryButtonLabel={config?.heroSecondaryButtonLabel}
@@ -112,6 +113,7 @@ export default async function Home() {
         />
         <CTASection
           headline={config?.ctaHeadline}
+          headlineAccent={config?.ctaHeadlineAccent}
           primaryButtonLabel={config?.ctaButtonLabel}
           secondaryButtonLabel={config?.ctaSecondaryButtonLabel}
           backgroundImageUrl={config?.ctaBackgroundImageUrl}

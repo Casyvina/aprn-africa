@@ -7,8 +7,21 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
 };
 
+function AccentHeading({ text, accent }: { text: string; accent?: string }) {
+  if (!accent || !text.includes(accent)) return <>{text}</>
+  const [before, ...rest] = text.split(accent)
+  return (
+    <>
+      {before}
+      <span className="text-gradient">{accent}</span>
+      {rest.join(accent)}
+    </>
+  )
+}
+
 interface CTAProps {
   headline?: string
+  headlineAccent?: string
   primaryButtonLabel?: string
   secondaryButtonLabel?: string
   backgroundImageUrl?: string
@@ -16,12 +29,14 @@ interface CTAProps {
 
 export default function CTASection({
   headline,
+  headlineAccent,
   primaryButtonLabel,
   secondaryButtonLabel,
   backgroundImageUrl,
 }: CTAProps) {
-  const heading = headline            ?? "Africa\u2019s infrastructure future requires African engineering capacity";
-  const btn1    = primaryButtonLabel  ?? "Partner With Us";
+  const heading = headline             ?? "Africa\u2019s infrastructure future requires African engineering capacity";
+  const accent  = headlineAccent       ?? "African engineering capacity";
+  const btn1    = primaryButtonLabel   ?? "Partner With Us";
   const btn2    = secondaryButtonLabel ?? "Access Research Portal";
 
   return (
@@ -51,14 +66,7 @@ export default function CTASection({
           className="fa-solid fa-globe text-4xl text-gold-500 mb-6 block"
         />
         <motion.h2 variants={fadeUp} className="font-display text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
-          {heading.includes("African engineering capacity") ? (
-            <>
-              {heading.split("African engineering capacity")[0]}
-              <span className="text-gradient">African engineering capacity</span>
-            </>
-          ) : (
-            heading
-          )}
+          <AccentHeading text={heading} accent={accent} />
         </motion.h2>
         <motion.div variants={fadeUp} className="flex flex-col sm:flex-row justify-center gap-4">
           <button className="px-8 py-4 bg-gold-500 hover:bg-gold-400 active:scale-95 text-navy-900 font-bold tracking-wide transition-all rounded-sm shadow-[0_0_20px_rgba(212,160,23,0.2)] cursor-pointer">
