@@ -31,7 +31,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -78,8 +78,10 @@ function LoginForm() {
 
         {/* Title */}
         <motion.div variants={rowVariants} className="text-center mb-6 sm:mb-10">
-          <h2 className="text-2xl font-semibold text-white mb-2">Institutional Login</h2>
-          <p className="text-slate-400 text-sm">Authenticate to access intelligence systems</p>
+          <h2 className="text-2xl font-semibold text-white mb-2">
+            Welcome back{email.includes("@") ? `, ${email.split("@")[0].split(/[._-]/)[0].replace(/^\w/, (c) => c.toUpperCase())}` : ""}
+          </h2>
+          <p className="text-slate-400 text-sm">Sign in to your APRN member account</p>
         </motion.div>
 
         {/* Alerts */}
@@ -98,21 +100,21 @@ function LoginForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <motion.div variants={rowVariants} className="space-y-2">
             <label className="text-xs text-slate-400 uppercase tracking-wider font-medium">
-              Corporate Email
+              Email address
             </label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="executive@aprn.network"
+              placeholder="you@example.com"
               className={inputClass}
             />
           </motion.div>
 
           <motion.div variants={rowVariants} className="space-y-2">
             <label className="text-xs text-slate-400 uppercase tracking-wider font-medium">
-              Security Credential
+              Password
             </label>
             <div className="relative">
               <input
@@ -141,7 +143,7 @@ function LoginForm() {
               <span className="text-sm text-slate-400">Remember session</span>
             </label>
             <Link href="/forgot-password" className="text-sm text-slate-400 hover:text-gold-500 transition-colors">
-              Forgot credentials?
+              Forgot password?
             </Link>
           </motion.div>
 
@@ -165,7 +167,7 @@ function LoginForm() {
               className="w-full text-navy-900 font-semibold py-4 mt-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               style={{ background: "linear-gradient(to right, #D4A017, #E5B83B)", borderRadius: "12px" }}
             >
-              {loading ? "Authenticating…" : "Secure Login"}
+              {loading ? "Signing in…" : "Sign In"}
             </motion.button>
           </motion.div>
         </form>
@@ -173,7 +175,7 @@ function LoginForm() {
         {/* Divider */}
         <motion.div variants={rowVariants} className="flex items-center gap-4 my-8">
           <div className="h-px bg-white/10 flex-1" />
-          <span className="text-xs text-slate-500 uppercase tracking-wider">Or authenticate via</span>
+          <span className="text-xs text-slate-500 uppercase tracking-wider">Or continue with</span>
           <div className="h-px bg-white/10 flex-1" />
         </motion.div>
 
@@ -188,25 +190,15 @@ function LoginForm() {
             style={{ borderRadius: "12px" }}
           >
             <i className="fa-brands fa-google text-[#EA4335]" />
-            Google Workspace
-          </motion.button>
-          <motion.button
-            whileHover={{ y: -1, backgroundColor: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.2)" }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.15 }}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-navy-900 border border-white/10 transition-colors text-sm font-medium text-white cursor-pointer"
-            style={{ borderRadius: "12px" }}
-          >
-            <i className="fa-brands fa-microsoft text-[#00A4EF]" />
-            Microsoft Azure AD
+            Continue with Google
           </motion.button>
         </motion.div>
 
         {/* Footer link */}
         <motion.p variants={rowVariants} className="mt-8 text-center text-sm text-slate-500">
-          No account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-gold-500 hover:text-gold-400 transition-colors font-medium">
-            Request access
+            Join APRN
           </Link>
         </motion.p>
 

@@ -8,7 +8,7 @@ export default async function AdminMembersPage() {
 
   const [profilesRes, usersRes] = await Promise.all([
     admin.from("profiles")
-      .select("id, full_name, membership_tier, country, discipline, organisation, topics, updated_at")
+      .select("id, full_name, membership_tier, country, discipline, organisation, topics, updated_at, last_seen_at")
       .order("updated_at", { ascending: false }),
     admin.auth.admin.listUsers({ page: 1, perPage: 500 }),
   ]);
@@ -30,7 +30,7 @@ export default async function AdminMembersPage() {
       organisation: profile?.organisation ?? "",
       topics:       profile?.topics ?? [],
       joinedAt:     u.created_at,
-      lastActiveAt: u.last_sign_in_at ?? u.created_at,
+      lastActiveAt: profile?.last_seen_at ?? u.last_sign_in_at ?? u.created_at,
       updatedAt:    profile?.updated_at ?? u.created_at,
     };
   });

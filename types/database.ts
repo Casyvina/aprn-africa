@@ -54,6 +54,7 @@ export type Database = {
           full_name: string | null
           id: string
           job_title: string | null
+          last_seen_at: string | null
           linkedin_url: string | null
           membership_tier: string
           organisation: string | null
@@ -69,6 +70,7 @@ export type Database = {
           full_name?: string | null
           id: string
           job_title?: string | null
+          last_seen_at?: string | null
           linkedin_url?: string | null
           membership_tier?: string
           organisation?: string | null
@@ -84,6 +86,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           job_title?: string | null
+          last_seen_at?: string | null
           linkedin_url?: string | null
           membership_tier?: string
           organisation?: string | null

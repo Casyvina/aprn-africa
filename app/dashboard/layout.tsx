@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import DashboardNav from "@/components/DashboardNav";
 import DashboardMobileNav from "@/components/DashboardMobileNav";
 import DashboardHydrator from "@/components/DashboardHydrator";
@@ -16,6 +18,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  // Update last_seen_at after the response is sent — doesn't block render
+  after(async () => {
+    const admin = createAdminClient();
+    await admin.from("profiles").update({ last_seen_at: new Date().toISOString() }).eq("id", user.id);
+  });
 
   const { data: profile } = await supabase
     .from("profiles")

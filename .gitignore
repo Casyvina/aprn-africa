@@ -54,9 +54,9 @@ Desktop.ini
 *.p12
 *.key
 
-# documents — all files in public/documents are served via Supabase Storage
-# never commit documents to the repo (security + file size)
+# documents — uploaded to cloud manually, never committed
 /public/documents/
+/documents/
 
 # website templates (large HTML files, not source code)
 /website-templates
