@@ -281,7 +281,13 @@ export default function DocumentLibraryPage() {
         accumulated += decoder.decode(value);
         setAiCharCount(accumulated.length);
       }
-      setAiPreviewHtml(accumulated);
+      // Strip markdown code fences if Claude wraps the response despite instructions
+      const cleaned = accumulated
+        .replace(/^```html\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```\s*$/, "")
+        .trim();
+      setAiPreviewHtml(cleaned);
     } catch (e) {
       setAiPreviewHtml(`<!-- Error: ${e instanceof Error ? e.message : "Unknown"} -->`);
     } finally {

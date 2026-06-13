@@ -52,16 +52,17 @@ export async function POST(req: NextRequest) {
   }
 
   const stream = await claude.messages.stream({
-    model: "claude-sonnet-4-6",
-    max_tokens: 8192,
+    model: "claude-opus-4-6",
+    max_tokens: 32000,
     system:
       "You are editing an internal HTML document for APRN Africa, a pan-African pipeline research and networking organisation. " +
       "Apply the requested change precisely and return ONLY the complete corrected HTML document. " +
-      "Do not include any commentary, explanation, or markdown code fences — just the raw HTML.",
+      "CRITICAL: Output raw HTML only — no markdown, no code fences, no backticks, no commentary before or after. " +
+      "Your response must start with <!DOCTYPE or <html and end with </html>.",
     messages: [
       {
         role: "user",
-        content: `Apply this change to the document: "${instruction}"\n\nReturn the complete corrected HTML document only.\n\n---\n\n${htmlContent}`,
+        content: `Apply this change to the document: "${instruction}"\n\nReturn the complete corrected HTML document only. Start your response directly with <!DOCTYPE or <html — no preamble.\n\n---\n\n${htmlContent}`,
       },
     ],
   });
