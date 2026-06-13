@@ -92,6 +92,7 @@ export default function DocumentLibraryPage() {
   const [summaries, setSummaries] = useState<Record<string, string>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Delete
   const [deletingDoc, setDeletingDoc]     = useState<DocEntry | null>(null);
@@ -381,6 +382,15 @@ export default function DocumentLibraryPage() {
     }
   }
 
+  function copyLink(doc: DocEntry) {
+    const url = storageUrls[doc.filename];
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(doc.id);
+      setTimeout(() => setCopiedId(null), 2500);
+    });
+  }
+
   // ── Upload ──────────────────────────────────────────────────────────────────
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -559,12 +569,15 @@ export default function DocumentLibraryPage() {
               doc={doc}
               docUrl={getDocUrl(doc)}
               viewUrl={getViewUrl(doc)}
+              signedUrl={storageUrls[doc.filename] ?? null}
               inCloud={!!storageUrls[doc.filename]}
               summary={summaries[doc.id]}
               isLoading={loadingId === doc.id}
+              copied={copiedId === doc.id}
               onSummarise={() => summariseDoc(doc)}
               onEdit={() => openEdit(doc)}
               onDelete={() => setDeletingDoc(doc)}
+              onCopyLink={() => copyLink(doc)}
             />
           ))}
         </div>
@@ -613,12 +626,15 @@ export default function DocumentLibraryPage() {
                     <ListRowMenu
                       docUrl={getDocUrl(doc)}
                       viewUrl={getViewUrl(doc)}
+                      signedUrl={storageUrls[doc.filename] ?? null}
                       filename={doc.filename}
                       canView={doc.canView}
                       aiLoading={loadingId === doc.id}
+                      copied={copiedId === doc.id}
                       onSummarise={() => summariseDoc(doc)}
                       onEdit={() => openEdit(doc)}
                       onDelete={() => setDeletingDoc(doc)}
+                      onCopyLink={() => copyLink(doc)}
                     />
                   </td>
                 </tr>
@@ -672,6 +688,14 @@ export default function DocumentLibraryPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ── Copy link toast ───────────────────────────────────────────────── */}
+      {copiedId && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-navy-700 border border-emerald-500/30 text-xs text-emerald-400 shadow-2xl pointer-events-none">
+          <i className="fa-solid fa-check text-[10px]" />
+          Link copied — expires in 1 hour
         </div>
       )}
 
@@ -891,17 +915,20 @@ export default function DocumentLibraryPage() {
 // ── DocCard ───────────────────────────────────────────────────────────────────
 
 function DocCard({
-  doc, docUrl, viewUrl, inCloud, summary, isLoading, onSummarise, onEdit, onDelete,
+  doc, docUrl, viewUrl, signedUrl, inCloud, summary, isLoading, copied, onSummarise, onEdit, onDelete, onCopyLink,
 }: {
   doc: DocEntry;
   docUrl: string | null;
   viewUrl: string | null;
+  signedUrl: string | null;
   inCloud: boolean;
   summary?: string;
   isLoading: boolean;
+  copied: boolean;
   onSummarise: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onCopyLink: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(true);
@@ -971,6 +998,15 @@ function DocCard({
                 <i className={`fa-solid fa-wand-magic-sparkles w-3.5 text-center text-gold-500/70 ${isLoading ? "animate-spin" : ""}`} />
                 {isLoading ? "Summarising…" : summary ? "Re-summarise" : "Summarise"}
               </button>
+              {signedUrl && (
+                <button
+                  onClick={() => { onCopyLink(); setMenuOpen(false); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors"
+                >
+                  <i className={`fa-solid ${copied ? "fa-check" : "fa-link"} w-3.5 text-center ${copied ? "text-emerald-400" : "text-slate-400"}`} />
+                  {copied ? "Copied!" : "Copy Link"}
+                </button>
+              )}
               <button
                 onClick={() => { onEdit(); setMenuOpen(false); }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors"
@@ -1051,16 +1087,19 @@ function DocCard({
 // ── ListRowMenu ───────────────────────────────────────────────────────────────
 
 function ListRowMenu({
-  docUrl, viewUrl, filename, canView, aiLoading, onSummarise, onEdit, onDelete,
+  docUrl, viewUrl, signedUrl, filename, canView, aiLoading, copied, onSummarise, onEdit, onDelete, onCopyLink,
 }: {
   docUrl: string | null;
   viewUrl: string | null;
+  signedUrl: string | null;
   filename: string;
   canView: boolean;
   aiLoading: boolean;
+  copied: boolean;
   onSummarise: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onCopyLink: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -1106,6 +1145,13 @@ function ListRowMenu({
               <i className={`fa-solid fa-wand-magic-sparkles w-3 text-center text-gold-500/70 ${aiLoading ? "animate-spin" : ""}`} />
               {aiLoading ? "Working…" : "Summarise"}
             </button>
+            {signedUrl && (
+              <button onClick={() => { onCopyLink(); setOpen(false); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors">
+                <i className={`fa-solid ${copied ? "fa-check" : "fa-link"} w-3 text-center ${copied ? "text-emerald-400" : "text-slate-400"}`} />
+                {copied ? "Copied!" : "Copy Link"}
+              </button>
+            )}
             <button onClick={() => { onEdit(); setOpen(false); }}
               className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors">
               <i className="fa-solid fa-pen w-3 text-center text-slate-400" /> Edit
