@@ -854,7 +854,11 @@ function DocCard({
   onDelete: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Re-open summary panel whenever a new generation starts
+  useEffect(() => { if (isLoading) setSummaryOpen(true); }, [isLoading]);
 
   useEffect(() => {
     function onOutside(e: MouseEvent) {
@@ -948,19 +952,30 @@ function DocCard({
 
       {/* AI summary */}
       {(summary || isLoading) && (
-        <div className="mx-5 mb-3 border border-gold-500/20 bg-navy-900 p-3">
-          <p className="text-[9px] font-bold text-gold-500 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-            <i className="fa-solid fa-wand-magic-sparkles" /> AI Summary
-          </p>
-          {isLoading && !summary ? (
-            <div className="flex items-center gap-2 text-slate-500 text-xs">
-              <span className="w-1.5 h-1.5 bg-gold-500 rounded-full animate-pulse" /> Generating…
+        <div className="mx-5 mb-3 border border-gold-500/20 bg-navy-900">
+          <button
+            onClick={() => setSummaryOpen((o) => !o)}
+            className="w-full flex items-center justify-between px-3 py-2 text-[9px] font-bold text-gold-500 uppercase tracking-widest hover:bg-white/5 transition-colors"
+          >
+            <span className="flex items-center gap-1.5">
+              <i className={`fa-solid fa-wand-magic-sparkles ${isLoading ? "animate-spin" : ""}`} />
+              AI Summary
+            </span>
+            <i className={`fa-solid fa-chevron-${summaryOpen ? "up" : "down"} text-[8px] text-slate-500`} />
+          </button>
+          {summaryOpen && (
+            <div className="px-3 pb-3">
+              {isLoading && !summary ? (
+                <div className="flex items-center gap-2 text-slate-500 text-xs">
+                  <span className="w-1.5 h-1.5 bg-gold-500 rounded-full animate-pulse" /> Generating…
+                </div>
+              ) : (
+                <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-wrap">
+                  {summary}
+                  {isLoading && <span className="inline-block w-0.5 h-3 bg-gold-500 animate-pulse ml-0.5" />}
+                </p>
+              )}
             </div>
-          ) : (
-            <p className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-wrap">
-              {summary}
-              {isLoading && <span className="inline-block w-0.5 h-3 bg-gold-500 animate-pulse ml-0.5" />}
-            </p>
           )}
         </div>
       )}
