@@ -17,6 +17,19 @@ export default async function DashboardPage() {
   const tier = profile?.membership_tier ?? "free";
   const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
 
+  function lastSeenLabel(iso: string | null | undefined): string {
+    if (!iso) return "";
+    const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    if (mins < 2)   return "Active now";
+    if (mins < 60)  return `Last active ${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24)   return `Last active ${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    return `Last active ${days}d ago`;
+  }
+
+  const lastSeen = lastSeenLabel(profile?.last_seen_at);
+
   return (
     <div className="flex flex-col gap-10 max-w-320">
 
@@ -36,6 +49,12 @@ export default async function DashboardPage() {
                 Welcome back, {firstName}
               </h2>
               <p className="text-slate-400 text-sm">Your intelligence briefing is ready for review.</p>
+              {lastSeen && (
+                <p className="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                  {lastSeen}
+                </p>
+              )}
             </div>
             <div className="flex items-center gap-2 bg-navy-900/80 border border-gold-500/30 px-4 py-2 self-start shrink-0">
               <i className="fa-solid fa-shield-halved text-gold-500 text-sm" />
