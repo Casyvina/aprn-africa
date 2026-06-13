@@ -141,7 +141,7 @@ export default function DocumentLibraryPage() {
           icon: iconForExt(ext),
           description: m?.description ?? "",
           filename: f.filename,
-          canView: ext === "HTML",
+          canView: ["HTML", "PPTX", "DOCX", "XLSX"].includes(ext),
           notes: m?.notes ?? "",
         };
       });
@@ -167,7 +167,10 @@ export default function DocumentLibraryPage() {
     if (doc.format === "HTML") {
       return `/api/admin/documents/view?filename=${encodeURIComponent(doc.filename)}`;
     }
-    return storageUrls[doc.filename] ?? null;
+    if (["PPTX", "DOCX", "XLSX"].includes(doc.format)) {
+      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(storageUrls[doc.filename])}`;
+    }
+    return null;
   }
 
   const filtered = docs.filter((d) => {
@@ -314,7 +317,41 @@ export default function DocumentLibraryPage() {
   async function summariseDoc(doc: DocEntry) {
     setLoadingId(doc.id);
     setSummaries((prev) => ({ ...prev, [doc.id]: "" }));
-    const context = `Document: "${doc.name}" (${doc.format}, ${doc.version}, ${doc.date}). Description: ${doc.description}${doc.notes ? `. Additional context: ${doc.notes}` : ""}`;
+
+    let context = `Document: "${doc.name}" (${doc.format}, ${doc.version}, ${doc.date}). Description: ${doc.description}${doc.notes ? `. Additional context: ${doc.notes}` : ""}`;
+
+    // Fetch actual document content so Claude has real text to summarise
+    if (doc.format === "HTML" && doc.canView) {
+      // HTML — fetch via view proxy and strip tags client-side
+      try {
+        const viewRes = await fetch(`/api/admin/documents/view?filename=${encodeURIComponent(doc.filename)}`);
+        if (viewRes.ok) {
+          const html = await viewRes.text();
+          const text = html
+            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+            .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/\s{2,}/g, " ")
+            .trim()
+            .slice(0, 8000);
+          if (text.length > 100) context += `\n\nDocument content:\n${text}`;
+        }
+      } catch {
+        // continue with metadata-only context
+      }
+    } else if (["PPTX", "DOCX", "XLSX"].includes(doc.format)) {
+      // Binary formats — server extracts text via officeparser
+      try {
+        const textRes = await fetch(`/api/admin/documents/text?filename=${encodeURIComponent(doc.filename)}`);
+        if (textRes.ok) {
+          const { text } = await textRes.json() as { text: string };
+          if (text && text.length > 50) context += `\n\nDocument content:\n${text.slice(0, 8000)}`;
+        }
+      } catch {
+        // continue with metadata-only context
+      }
+    }
+
     try {
       const res = await fetch("/api/admin/strategy", {
         method: "POST",
@@ -378,7 +415,7 @@ export default function DocumentLibraryPage() {
         icon: iconForExt(ext),
         description: "",
         filename,
-        canView: ext === "HTML",
+        canView: ["HTML", "PPTX", "DOCX", "XLSX"].includes(ext),
         notes: "",
       };
       setDocs((prev) => [newDoc, ...prev]);
@@ -653,7 +690,7 @@ export default function DocumentLibraryPage() {
               >
                 Metadata
               </button>
-              {editDoc.canView && (
+              {editDoc.format === "HTML" && (
                 <button
                   onClick={() => setEditTab("ai")}
                   className={`px-5 py-3 text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 ${

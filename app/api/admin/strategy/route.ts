@@ -32,9 +32,15 @@ export async function POST(req: NextRequest) {
       userPrompt = `Write a 150-word APRN stakeholder engagement brief for: ${context}. Include: (1) their importance to APRN, (2) what APRN offers them, (3) recommended first contact approach, and (4) key talking points. Be specific to APRN's mission in African pipeline research, training, and advocacy.`;
       break;
 
-    case "summarise_document":
-      userPrompt = `Provide a 3-bullet executive summary of this APRN document. Each bullet should be 1 concise sentence covering: key purpose, main content/findings, and relevance to APRN's mission. Document: ${context}`;
+    case "summarise_document": {
+      const hasContent = (context ?? "").includes("Document content:");
+      if (hasContent) {
+        userPrompt = `Provide a 3-bullet executive summary of this APRN document. Each bullet must be 1 concise sentence. Cover: (1) key purpose, (2) main findings or content highlights, (3) relevance to APRN's mission in African pipeline research and capacity building.\n\n${context}`;
+      } else {
+        userPrompt = `Based on the following document metadata, write a 3-bullet executive summary for an APRN internal document library. Each bullet must be 1 concise sentence. Cover: (1) what this document is and its purpose, (2) the likely scope and audience based on the title/description, (3) how it relates to APRN's mission in African pipeline research and capacity building. Work only from the information given — do not ask for more.\n\n${context}`;
+      }
       break;
+    }
 
     default:
       return new Response(JSON.stringify({ error: "Unknown type" }), { status: 400 });
