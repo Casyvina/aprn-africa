@@ -2,61 +2,54 @@ import Link from "next/link";
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { sanityFetch } from "@/lib/sanity/fetch";
+import { EVENTS_QUERY, type EventCard } from "@/lib/queries/events";
 
 export const metadata = {
   title: "Events | APRN Africa",
   description: "Conferences, workshops, and technical forums advancing pipeline engineering across Africa.",
 };
 
-const events = [
-  {
-    slug: "apls-morocco-2026",
-    title: "Africa Pipeline Leaders Summit — Morocco 2026",
-    subtitle: "The continent's premier gathering for pipeline engineers, policymakers, and investors",
-    dates: "October 2026",
-    location: "Marrakech, Morocco",
-    type: "Summit",
-    typeColor: "text-gold-500 border-gold-500/30",
-    status: "Registration Opening Soon",
-    statusColor: "text-gold-500 bg-gold-500/10 border-gold-500/20",
-    attendees: "600+",
-    image: "/images/hero-pipeline.jpg",
-    tags: ["Pipeline Integrity", "Policy", "Renewable Energy", "Finance", "Training"],
-    featured: true,
-  },
-  {
-    slug: null,
-    title: "West Africa Pipeline Integrity Workshop",
-    subtitle: "Hands-on masterclass for integrity engineers",
-    dates: "Q3 2026",
-    location: "Accra, Ghana",
-    type: "Workshop",
-    typeColor: "text-emerald-400 border-emerald-400/30",
-    status: "Coming Soon",
-    statusColor: "text-slate-400 bg-navy-900 border-white/10",
-    attendees: "80",
-    image: null,
-    tags: ["Pipeline Integrity", "Corrosion", "In-Line Inspection"],
-    featured: false,
-  },
-  {
-    slug: null,
-    title: "APRN Annual Policy Dialogue",
-    subtitle: "Regulators, ministers, and industry leaders at one table",
-    dates: "Q4 2026",
-    location: "Nairobi, Kenya",
-    type: "Policy Forum",
-    typeColor: "text-blue-400 border-blue-400/30",
-    status: "Coming Soon",
-    statusColor: "text-slate-400 bg-navy-900 border-white/10",
-    attendees: "120",
-    image: null,
-    tags: ["Regulation", "Policy", "Cross-Border Infrastructure"],
-    featured: false,
-  },
-];
+const EVENT_TYPE_COLOR: Record<string, string> = {
+  summit:     "text-gold-500 border-gold-500/30",
+  conference: "text-gold-500 border-gold-500/30",
+  workshop:   "text-emerald-400 border-emerald-400/30",
+  webinar:    "text-sky-400 border-sky-400/30",
+  forum:      "text-blue-400 border-blue-400/30",
+  community:  "text-purple-400 border-purple-400/30",
+};
 
-export default function EventsPage() {
+const STATUS_COLOR: Record<string, string> = {
+  published:   "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
+  coming_soon: "text-gold-500 bg-gold-500/10 border-gold-500/20",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  published:   "Registration Open",
+  coming_soon: "Registration Opening Soon",
+};
+
+function formatEventDate(startDate: string, endDate?: string, timezone?: string): string {
+  const start = new Date(startDate)
+  const opts: Intl.DateTimeFormatOptions = { month: "long", year: "numeric", day: "numeric" }
+  if (!endDate) return start.toLocaleDateString("en-GB", opts)
+  const end = new Date(endDate)
+  if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+    return `${start.getDate()}–${end.getDate()} ${start.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`
+  }
+  return `${start.toLocaleDateString("en-GB", opts)} – ${end.toLocaleDateString("en-GB", opts)}`
+}
+
+export default async function EventsPage() {
+  let events: EventCard[] = []
+  try {
+    const fetched = await sanityFetch<EventCard[]>(EVENTS_QUERY, {}, ["event"])
+    if (fetched?.length) events = fetched
+  } catch { /* show empty state if Sanity unavailable */ }
+
+  const featured = events.find((e) => e.featured)
+  const rest = events.filter((e) => !e.featured)
+
   return (
     <>
       <Navigation />
@@ -104,41 +97,41 @@ export default function EventsPage() {
             >
               Upcoming Events
             </h2>
-            <div className="flex gap-2">
-              {["All", "Conference", "Workshop", "Forum"].map((f, i) => (
-                <button
-                  key={f}
-                  className={`px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase transition-colors ${
-                    i === 0
-                      ? "bg-gold-500 text-navy-900"
-                      : "border border-white/10 text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
           </div>
 
+          {/* Empty state */}
+          {events.length === 0 && (
+            <div className="py-20 text-center">
+              <i className="fa-solid fa-calendar-xmark text-4xl text-slate-600 mb-4 block" />
+              <p className="text-slate-400 text-lg font-semibold mb-2">No upcoming events scheduled</p>
+              <p className="text-slate-500 text-sm">Check back soon — new events are added regularly.</p>
+            </div>
+          )}
+
           {/* Featured event */}
-          {events.filter((e) => e.featured).map((event) => (
-            <div
-              key={event.title}
-              className="bg-navy-800 border border-white/5 border-t-2 border-t-gold-500 overflow-hidden"
-            >
+          {featured && (
+            <div className="bg-navy-800 border border-white/5 border-t-2 border-t-gold-500 overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-5">
                 {/* Image */}
-                <div className="lg:col-span-2 relative h-56 lg:h-auto min-h-48 overflow-hidden">
-                  <Image
-                    src={event.image!}
-                    alt={event.title}
-                    fill
-                    className="object-cover opacity-40"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-r from-transparent to-navy-800" />
+                <div className="lg:col-span-2 relative h-56 lg:h-auto min-h-48 overflow-hidden bg-navy-900">
+                  {featured.coverImage?.asset?.url ? (
+                    <>
+                      <Image
+                        src={featured.coverImage.asset.url}
+                        alt={featured.coverImage.alt ?? featured.title}
+                        fill
+                        className="object-cover opacity-40"
+                      />
+                      <div className="absolute inset-0 bg-linear-to-r from-transparent to-navy-800" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <i className="fa-solid fa-calendar-days text-5xl text-navy-700" />
+                    </div>
+                  )}
                   <div className="absolute top-4 left-4">
-                    <span className={`px-3 py-1 border text-[9px] font-bold tracking-widest uppercase ${event.typeColor}`}>
-                      {event.type}
+                    <span className={`px-3 py-1 border text-[9px] font-bold tracking-widest uppercase ${EVENT_TYPE_COLOR[featured.eventType] ?? "text-gold-500 border-gold-500/30"}`}>
+                      {featured.eventType}
                     </span>
                   </div>
                 </div>
@@ -147,17 +140,17 @@ export default function EventsPage() {
                 <div className="lg:col-span-3 p-8 flex flex-col gap-5">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 border text-[9px] font-bold tracking-widest uppercase mb-3 ${event.statusColor}`}>
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 border text-[9px] font-bold tracking-widest uppercase mb-3 ${STATUS_COLOR[featured.status] ?? STATUS_COLOR.coming_soon}`}>
                         <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-                        {event.status}
+                        {STATUS_LABEL[featured.status] ?? featured.status}
                       </span>
                       <h3
                         className="text-2xl font-bold text-white mb-1"
                         style={{ fontFamily: "var(--font-playfair), serif" }}
                       >
-                        {event.title}
+                        {featured.title}
                       </h3>
-                      <p className="text-sm text-slate-400">{event.subtitle}</p>
+                      {featured.subtitle && <p className="text-sm text-slate-400">{featured.subtitle}</p>}
                     </div>
                   </div>
 
@@ -168,105 +161,135 @@ export default function EventsPage() {
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-500 uppercase tracking-widest">Dates</p>
-                        <p className="text-white text-xs font-medium">{event.dates}</p>
+                        <p className="text-white text-xs font-medium">{formatEventDate(featured.startDate, featured.endDate)}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
-                        <i className="fa-solid fa-location-dot text-gold-500 text-xs" />
+                    {featured.location && (
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
+                          <i className="fa-solid fa-location-dot text-gold-500 text-xs" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-widest">Venue</p>
+                          <p className="text-white text-xs font-medium">{featured.location}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-slate-500 uppercase tracking-widest">Venue</p>
-                        <p className="text-white text-xs font-medium">{event.location}</p>
+                    )}
+                    {featured.expectedAttendees && (
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
+                          <i className="fa-solid fa-users text-gold-500 text-xs" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-widest">Expected</p>
+                          <p className="text-white text-xs font-medium">{featured.expectedAttendees.toLocaleString()}+ attendees</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
-                        <i className="fa-solid fa-users text-gold-500 text-xs" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-500 uppercase tracking-widest">Expected</p>
-                        <p className="text-white text-xs font-medium">{event.attendees} attendees</p>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    {event.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 bg-navy-900 border border-white/5 text-[9px] font-bold tracking-widest text-slate-400 uppercase"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  {featured.tags && featured.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {featured.tags.map((tag) => (
+                        <span
+                          key={tag.title}
+                          className="px-2 py-0.5 bg-navy-900 border border-white/5 text-[9px] font-bold tracking-widest text-slate-400 uppercase"
+                        >
+                          {tag.title}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="flex gap-3 pt-2 border-t border-white/5">
                     <Link
-                      href={`/events/${event.slug}`}
+                      href={`/events/${featured.slug}`}
                       className="px-6 py-3 bg-gold-500 text-navy-900 text-xs font-bold tracking-widest uppercase hover:bg-gold-400 transition-colors"
                     >
-                      View Summit
+                      View Event
                     </Link>
-                    <Link
-                      href={`/events/${event.slug}#register`}
-                      className="px-6 py-3 border border-gold-500/30 text-gold-500 text-xs font-bold tracking-widest uppercase hover:bg-gold-500/10 transition-colors"
-                    >
-                      Express Interest
-                    </Link>
+                    {featured.registrationUrl ? (
+                      <a
+                        href={featured.registrationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-6 py-3 border border-gold-500/30 text-gold-500 text-xs font-bold tracking-widest uppercase hover:bg-gold-500/10 transition-colors"
+                      >
+                        Register
+                      </a>
+                    ) : (
+                      <Link
+                        href={`/events/${featured.slug}#register`}
+                        className="px-6 py-3 border border-gold-500/30 text-gold-500 text-xs font-bold tracking-widest uppercase hover:bg-gold-500/10 transition-colors"
+                      >
+                        Express Interest
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+          )}
 
-          {/* Upcoming smaller events */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-            {events.filter((e) => !e.featured).map((event) => (
-              <div
-                key={event.title}
-                className="bg-navy-800 border border-white/5 p-6 flex flex-col gap-4 hover:border-gold-500/20 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <span className={`px-2 py-0.5 border text-[9px] font-bold tracking-widest uppercase ${event.typeColor}`}>
-                    {event.type}
-                  </span>
-                  <span className={`px-2 py-0.5 border text-[9px] font-bold tracking-widest uppercase ${event.statusColor}`}>
-                    {event.status}
-                  </span>
-                </div>
-
-                <div>
-                  <h3
-                    className="text-lg font-bold text-white mb-1"
-                    style={{ fontFamily: "var(--font-playfair), serif" }}
-                  >
-                    {event.title}
-                  </h3>
-                  <p className="text-xs text-slate-400">{event.subtitle}</p>
-                </div>
-
-                <div className="flex flex-col gap-2 text-xs text-slate-400">
-                  <span className="flex items-center gap-2">
-                    <i className="fa-solid fa-calendar text-gold-500 text-[10px] w-4" />
-                    {event.dates}
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <i className="fa-solid fa-location-dot text-gold-500 text-[10px] w-4" />
-                    {event.location}
-                  </span>
-                </div>
-
-                <button
-                  disabled
-                  className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-white/5 cursor-not-allowed"
+          {/* Remaining events */}
+          {rest.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+              {rest.map((ev) => (
+                <div
+                  key={ev._id}
+                  className="bg-navy-800 border border-white/5 p-6 flex flex-col gap-4 hover:border-gold-500/20 transition-colors"
                 >
-                  Registration Opening Soon
-                </button>
-              </div>
-            ))}
-          </div>
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={`px-2 py-0.5 border text-[9px] font-bold tracking-widest uppercase ${EVENT_TYPE_COLOR[ev.eventType] ?? "text-gold-500 border-gold-500/30"}`}>
+                      {ev.eventType}
+                    </span>
+                    <span className={`px-2 py-0.5 border text-[9px] font-bold tracking-widest uppercase ${STATUS_COLOR[ev.status] ?? "text-slate-400 bg-navy-900 border-white/10"}`}>
+                      {STATUS_LABEL[ev.status] ?? ev.status}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3
+                      className="text-lg font-bold text-white mb-1"
+                      style={{ fontFamily: "var(--font-playfair), serif" }}
+                    >
+                      {ev.title}
+                    </h3>
+                    {ev.subtitle && <p className="text-xs text-slate-400">{ev.subtitle}</p>}
+                  </div>
+
+                  <div className="flex flex-col gap-2 text-xs text-slate-400">
+                    <span className="flex items-center gap-2">
+                      <i className="fa-solid fa-calendar text-gold-500 text-[10px] w-4" />
+                      {formatEventDate(ev.startDate, ev.endDate)}
+                    </span>
+                    {ev.location && (
+                      <span className="flex items-center gap-2">
+                        <i className="fa-solid fa-location-dot text-gold-500 text-[10px] w-4" />
+                        {ev.location}
+                      </span>
+                    )}
+                  </div>
+
+                  {ev.status === "published" ? (
+                    <Link
+                      href={ev.registrationUrl ?? `/events/${ev.slug}#register`}
+                      className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-gold-500 border border-gold-500/30 hover:bg-gold-500/10 transition-colors"
+                    >
+                      Register Now
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className="w-full py-2.5 text-center text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-white/5 cursor-not-allowed"
+                    >
+                      Registration Opening Soon
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -36,6 +36,7 @@ import { intelligenceUpdate } from './documents/editorial/intelligenceUpdate'
 import { editorialInsight }   from './documents/editorial/editorialInsight'
 import { newsletter }         from './documents/editorial/newsletter'
 import { subscriber }         from './documents/editorial/subscriber'
+import { event }              from './documents/editorial/event'
 
 // ── Singletons ───────────────────────────────────────────────────────
 import { siteSettings }      from './singletons/siteSettings'
@@ -80,6 +81,7 @@ export const schemaTypes = [
   editorialInsight,
   newsletter,
   subscriber,
+  event,
 
   // Singletons
   siteSettings,

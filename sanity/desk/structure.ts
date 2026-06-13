@@ -11,6 +11,7 @@ import {
   ComponentIcon,
   EditIcon,
   EnvelopeIcon,
+  CalendarIcon,
 } from '@sanity/icons'
 
 export const structure = (S: StructureBuilder) =>
@@ -108,6 +109,15 @@ export const structure = (S: StructureBuilder) =>
                 .title('Countries')
                 .icon(EarthGlobeIcon),
             ])
+        ),
+
+      // ── Events ────────────────────────────────────────────────────
+      S.listItem()
+        .title('Events')
+        .icon(CalendarIcon)
+        .child(
+          S.documentTypeList('event')
+            .title('Events')
         ),
 
       // ── Training ──────────────────────────────────────────────────
