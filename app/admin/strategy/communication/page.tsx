@@ -5,12 +5,12 @@ import { useState, useRef } from "react";
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const INTERNAL_STAKEHOLDERS = [
-  { name: "Lucy Okeke",          role: "Founder & Executive Director", channel: "WhatsApp + Email",  freq: "Daily",   content: "Decisions, updates, strategy",   owner: "Joseph" },
-  { name: "Joseph Agwuh",        role: "Director, Applied Engineering", channel: "All channels",     freq: "Daily",   content: "All content & operations",       owner: "Joseph" },
-  { name: "Allison Gabriel",     role: "Youth Ambassador",             channel: "WhatsApp + Email",  freq: "Weekly",  content: "Programs, events, campaigns",    owner: "Joseph" },
-  { name: "Pieter-Bas Nederveen",role: "Senior Energy Advisor",        channel: "Email",             freq: "Monthly", content: "Strategy reports, briefings",    owner: "Lucy" },
-  { name: "Kosie Onuora",        role: "Board Secretary",              channel: "Email + WhatsApp",  freq: "Weekly",  content: "Legal updates, governance",      owner: "Lucy" },
-  { name: "Tokunbo Khadijat",    role: "Content Manager",              channel: "Slack / Email",     freq: "Weekly",  content: "Content calendar, drafts",       owner: "Joseph" },
+  { name: "Lucy Okeke",          role: "Founder & Executive Director", channel: "WhatsApp + Email",  freq: "Daily",   content: "Decisions, updates, strategy",        owner: "Lucy" },
+  { name: "Joseph Agwuh",        role: "Director, Applied Engineering", channel: "All channels",     freq: "Daily",   content: "Platform development, tech oversight", owner: "Joseph" },
+  { name: "Allison Gabriel",     role: "Youth Ambassador",             channel: "WhatsApp + Email",  freq: "Weekly",  content: "Programs, events, campaigns",         owner: "Tokunbo" },
+  { name: "Pieter-Bas Nederveen",role: "Senior Energy Advisor",        channel: "Email",             freq: "Monthly", content: "Strategy reports, briefings",         owner: "Lucy" },
+  { name: "Kosie Onuora",        role: "Board Secretary",              channel: "Email + WhatsApp",  freq: "Weekly",  content: "Legal updates, governance",           owner: "Lucy" },
+  { name: "Tokunbo Khadijat",    role: "Content Manager",              channel: "Slack / Email",     freq: "Weekly",  content: "Content calendar, drafts, publishing", owner: "Lucy" },
 ];
 
 const EXTERNAL_STAKEHOLDERS = [
@@ -19,9 +19,9 @@ const EXTERNAL_STAKEHOLDERS = [
   { name: "NMDPRA",              type: "Government Regulator",  channel: "Formal Email",           freq: "Quarterly", content: "Official APRN reports",                 owner: "Lucy" },
   { name: "NCDMB",               type: "Government Body",       channel: "Formal Email",           freq: "Quarterly", content: "Training compliance reports",           owner: "Lucy" },
   { name: "GIZ Nigeria",         type: "Funder",                channel: "Email + Proposals",      freq: "Monthly",   content: "Funding proposals, impact reports",     owner: "Lucy" },
-  { name: "PLAN Members",        type: "Industry Association",  channel: "Newsletter + LinkedIn",  freq: "Monthly",   content: "Research, events, industry news",       owner: "Joseph" },
-  { name: "General Members",     type: "APRN Members",          channel: "Newsletter + Dashboard", freq: "Weekly",    content: "Research, training, news",              owner: "Joseph" },
-  { name: "Public / Industry",   type: "General Audience",      channel: "Website + LinkedIn + Newsletter", freq: "Weekly", content: "Articles, insights, events",  owner: "Joseph + Tokun" },
+  { name: "PLAN Members",        type: "Industry Association",  channel: "Newsletter + LinkedIn",  freq: "Monthly",   content: "Research, events, industry news",       owner: "Tokunbo" },
+  { name: "General Members",     type: "APRN Members",          channel: "Newsletter + Dashboard", freq: "Weekly",    content: "Research, training, news",              owner: "Tokunbo" },
+  { name: "Public / Industry",   type: "General Audience",      channel: "Website + LinkedIn + Newsletter", freq: "Weekly", content: "Articles, insights, events",  owner: "Tokunbo + Allison" },
 ];
 
 const CHANNELS = [
@@ -34,10 +34,10 @@ const CHANNELS = [
 ];
 
 const APPROVAL_FLOW = [
-  { step: "01", title: "Create",  who: "Joseph / Tokunbo",      desc: "Draft content aligned with APRN brand and messaging guidelines" },
-  { step: "02", title: "Review",  who: "Joseph Agwuh",          desc: "Technical accuracy, brand consistency, and strategic alignment check" },
+  { step: "01", title: "Create",  who: "Tokunbo / Allison",     desc: "Draft content aligned with APRN brand and messaging guidelines" },
+  { step: "02", title: "Review",  who: "Tokunbo + Joseph",      desc: "Content quality and brand check (Tokunbo); technical accuracy check (Joseph)" },
   { step: "03", title: "Approve", who: "Lucy Okeke",            desc: "Final sign-off on all public-facing and partner communications" },
-  { step: "04", title: "Publish", who: "Joseph / Tokunbo",      desc: "Schedule and publish via appropriate channel (website, newsletter, social)" },
+  { step: "04", title: "Publish", who: "Tokunbo Khadijat",      desc: "Schedule and publish via appropriate channel (website, newsletter, social)" },
 ];
 
 const CALENDAR = [
@@ -72,7 +72,7 @@ export default function CommunicationStrategyPage() {
     setAiOutput("");
     setTimeout(() => aiRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
 
-    const context = `APRN Communication Strategy — pan-African pipeline NGO.\nInternal team: Lucy Okeke (Founder), Joseph Agwuh (Engineering Director), Allison Gabriel (Youth Ambassador), Pieter-Bas Nederveen (Advisor), Kosie Onuora (Board Secretary), Tokunbo Khadijat (Content Manager).\nExternal partners: PTC Berlin, EITEP Institute, NMDPRA, NCDMB, GIZ Nigeria.\nChannels: WhatsApp (daily internal), LinkedIn (weekly public), Newsletter (weekly members), Email (partner comms), Webinars (monthly).`;
+    const context = `APRN Communication Strategy — pan-African pipeline NGO.\nInternal team: Lucy Okeke (Founder & ED — strategy and approvals), Joseph Agwuh (Engineering Director — platform development and tech oversight), Tokunbo Khadijat (Content Manager — content creation, calendar, and publishing), Allison Gabriel (Youth Ambassador — programs, events, campaigns), Pieter-Bas Nederveen (Advisor), Kosie Onuora (Board Secretary).\nContent flow: Tokunbo/Allison create → Tokunbo/Joseph review → Lucy approves → Tokunbo publishes.\nExternal partners: PTC Berlin, EITEP Institute, NMDPRA, NCDMB, GIZ Nigeria.\nChannels: WhatsApp (daily internal), LinkedIn (weekly public), Newsletter (weekly members), Email (partner comms), Webinars (monthly).`;
 
     try {
       const res = await fetch("/api/admin/strategy", {
