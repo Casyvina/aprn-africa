@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import AdminMobileNav from "@/components/AdminMobileNav";
 
 function isAdmin(email: string | undefined): boolean {
   if (!email) return false;
@@ -138,6 +139,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className="shrink-0 border-b border-white/5 bg-navy-900/95 backdrop-blur-md">
           <div className="px-6 md:px-8 h-14 flex items-center gap-4">
+            <AdminMobileNav userEmail={user.email ?? ""} isPersonnelUser={isPersonnelUser} />
             <span className="text-[10px] font-bold tracking-widest uppercase text-gold-500 bg-gold-500/10 border border-gold-500/20 px-2.5 py-1">
               Admin
             </span>
