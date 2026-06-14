@@ -3,11 +3,7 @@
 import Image from "next/image"
 import { motion } from "framer-motion"
 import type { PartnerCard } from "@/lib/queries/partners"
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
-}
+import { fadeUp, staggerContainer } from "@/lib/animations"
 
 function typeIcon(type: string) {
   const map: Record<string, string> = {
@@ -69,7 +65,7 @@ export default function PartnershipsSectionClient({
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.09 } } }}
+          variants={staggerContainer}
         >
           {partners.map((p) => (
             <motion.div
@@ -80,13 +76,22 @@ export default function PartnershipsSectionClient({
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center shrink-0 group-hover:bg-gold-500/20 transition-colors overflow-hidden">
                   {p.logoUrl ? (
-                    <Image
-                      src={p.logoUrl}
-                      alt={p.name}
-                      width={48}
-                      height={48}
-                      className="object-contain w-full h-full p-1"
-                    />
+                    <motion.div
+                      className="w-full h-full"
+                      initial={{ filter: "grayscale(1)", opacity: 0.55 }}
+                      whileInView={{ filter: "grayscale(0)", opacity: 1 }}
+                      viewport={{ once: true, amount: 0.5 }}
+                      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
+                      whileHover={{ filter: "drop-shadow(0 0 8px rgba(212,160,23,0.35))" }}
+                    >
+                      <Image
+                        src={p.logoUrl}
+                        alt={p.name}
+                        width={48}
+                        height={48}
+                        className="object-contain w-full h-full p-1"
+                      />
+                    </motion.div>
                   ) : (
                     <i className={`fa-solid ${typeIcon(p.type)} text-gold-500 text-lg`} />
                   )}

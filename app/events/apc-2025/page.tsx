@@ -190,7 +190,7 @@ export default function APC2025Page() {
             </div>
 
             <h1
-              className="text-5xl md:text-7xl font-bold text-white max-w-5xl leading-tight mb-6"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold text-white max-w-5xl leading-tight mb-6"
               style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               African Pipeline Conference

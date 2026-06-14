@@ -95,7 +95,7 @@ export default async function TrainingPage() {
                 </span>
               </div>
 
-              <h1 className="font-display text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 text-white">
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold leading-[1.1] mb-6 text-white">
                 Developing Africa&apos;s <br />
                 <span className="text-gradient">Pipeline Workforce</span>
               </h1>

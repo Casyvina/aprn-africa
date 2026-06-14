@@ -1,11 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
+import { fadeUp } from "@/lib/animations";
 
 interface HeroMetric { label: string; value: string; width: string }
 
@@ -71,6 +67,47 @@ export default function HeroSection({
             backgroundSize: "50px 50px",
           }}
         />
+
+        {/* Subtle SVG pipeline network — West Africa corridor pattern, fades in on load */}
+        <motion.svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          viewBox="0 0 1440 900"
+          preserveAspectRatio="xMidYMid slice"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
+          aria-hidden="true"
+        >
+          <g stroke="rgba(212,160,23,0.07)" strokeWidth="1" fill="none">
+            {/* Main trunk — Lagos to Abidjan corridor */}
+            <path d="M 720 450 L 300 380 L 100 320" />
+            {/* North branch — Kano-Niamey-Algiers */}
+            <path d="M 720 450 L 680 280 L 600 120 L 560 40" />
+            {/* East branch — Port Harcourt to Douala */}
+            <path d="M 720 450 L 900 500 L 1050 480 L 1180 420" />
+            {/* South branch — Congo Basin */}
+            <path d="M 720 450 L 780 620 L 820 780" />
+            {/* West cross-link */}
+            <path d="M 300 380 L 200 480 L 160 600" />
+            {/* East spur — Kenya */}
+            <path d="M 1180 420 L 1320 380 L 1420 340" />
+            {/* Cross-continental link */}
+            <path d="M 600 120 L 900 100 L 1180 160" />
+            {/* Southern Africa spur */}
+            <path d="M 820 780 L 960 820 L 1100 800 L 1240 760" />
+          </g>
+          {/* Node dots at pipeline junctions */}
+          <g fill="rgba(212,160,23,0.12)">
+            <circle cx="720" cy="450" r="4" />
+            <circle cx="300" cy="380" r="3" />
+            <circle cx="680" cy="280" r="3" />
+            <circle cx="900" cy="500" r="3" />
+            <circle cx="1180" cy="420" r="3" />
+            <circle cx="600" cy="120" r="2.5" />
+            <circle cx="820" cy="780" r="2.5" />
+            <circle cx="1320" cy="380" r="2.5" />
+          </g>
+        </motion.svg>
       </div>
 
       <div className="relative z-10 max-w-360 mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -93,7 +130,7 @@ export default function HeroSection({
 
           <motion.h1
             variants={fadeUp}
-            className="font-display text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white"
+            className="font-display text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white"
           >
             {headline ? (
               <AccentHeading text={headline} accent={headlineAccent} />

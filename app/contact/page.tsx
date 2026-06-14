@@ -95,7 +95,7 @@ export default function ContactPage() {
             </motion.div>
             <motion.h1
               variants={fadeUp}
-              className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
             >
               Connect With <span className="text-gold-500">APRN</span>

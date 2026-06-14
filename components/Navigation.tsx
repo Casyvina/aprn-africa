@@ -103,7 +103,7 @@ export default function Navigation() {
 
           {/* Join Network CTA */}
           <a
-            href="/contact"
+            href="/membership"
             className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 rounded-sm transition-all duration-200 shadow-[0_0_16px_rgba(212,160,23,0.3)] hover:shadow-[0_0_24px_rgba(212,160,23,0.5)] hover:gap-3"
           >
             Join Network
@@ -147,7 +147,7 @@ export default function Navigation() {
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
           >
             <motion.div
-              className="px-6 pt-3 pb-6 flex flex-col bg-navy-900/98 backdrop-blur-xl"
+              className="px-6 pt-3 pb-6 flex flex-col bg-navy-900/98 backdrop-blur-xl overflow-y-auto max-h-[calc(100dvh-5rem)]"
               initial="closed"
               animate="open"
               exit="closed"
@@ -209,7 +209,7 @@ export default function Navigation() {
                   Member Portal
                 </Link>
                 <a
-                  href="/contact"
+                  href="/membership"
                   className="flex items-center justify-center gap-2 w-full px-5 py-3.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm shadow-[0_0_16px_rgba(212,160,23,0.3)]"
                 >
                   Join Network

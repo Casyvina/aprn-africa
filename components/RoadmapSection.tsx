@@ -50,7 +50,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.6, ease: "easeOut" as const }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
         >
           {sectionHeading}
         </motion.h2>

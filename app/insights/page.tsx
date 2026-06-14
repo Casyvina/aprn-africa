@@ -75,7 +75,7 @@ export default async function InsightsPage() {
               <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">APRN Publishing</span>
             </div>
             <h1
-              className="text-5xl md:text-7xl font-bold mb-4 leading-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
             >
               Infrastructure <span className="text-gold-500">Insights</span>

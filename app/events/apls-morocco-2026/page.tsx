@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import CountdownTimer from "@/components/CountdownTimer";
 
 export const metadata = {
   title: "APLS Morocco 2026 | Africa Pipeline Leaders Summit | APRN Africa",
@@ -169,7 +170,7 @@ export default function APLSMorocco2026Page() {
           </div>
 
           <h1
-            className="text-5xl md:text-7xl font-bold text-white mb-6 leading-[1.05]"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 leading-[1.05]"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             APLS Morocco<br />
@@ -201,6 +202,8 @@ export default function APLSMorocco2026Page() {
               </div>
             ))}
           </div>
+
+          <CountdownTimer className="mb-10" />
 
           <div className="flex flex-wrap gap-4" id="register">
             <a

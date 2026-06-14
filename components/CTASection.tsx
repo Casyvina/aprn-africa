@@ -1,11 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
+import { fadeUp } from "@/lib/animations";
 
 function AccentHeading({ text, accent }: { text: string; accent?: string }) {
   if (!accent || !text.includes(accent)) return <>{text}</>
@@ -56,12 +52,12 @@ export default function CTASection({
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
-        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.14 } } }}
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
       >
         <motion.i
           variants={{
-            hidden: { opacity: 0, scale: 0.5 },
-            visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
+            hidden:  { opacity: 0, scale: 0.5 },
+            visible: { opacity: 1, scale: 1, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] } },
           }}
           className="fa-solid fa-globe text-4xl text-gold-500 mb-6 block"
         />

@@ -27,6 +27,11 @@
   100% { transform: translateX(-50%); }
 }
 
+/* will-change scoped to continuous-animation elements only */
+.animate-ticker {
+  will-change: transform;
+}
+
 html {
   scroll-behavior: smooth;
 }

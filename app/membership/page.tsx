@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import MembershipTierCards from "@/components/MembershipTierCards";
 
 export const metadata = {
   title: "Membership | APRN — African Pipeline Resource Network",
@@ -51,7 +52,7 @@ export default function MembershipPage() {
             </div>
 
             <h1
-              className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 max-w-4xl"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] mb-6 max-w-4xl"
               style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               Join Africa&apos;s Pipeline<br />
@@ -125,48 +126,7 @@ export default function MembershipPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-              {plans.map((plan) => (
-                <div
-                  key={plan.name}
-                  className={`relative bg-navy-800 flex flex-col p-7 border transition-all hover:border-gold-500/25 ${
-                    plan.featured
-                      ? "border-t-2 border-t-gold-500 border border-gold-500/30 shadow-[0_0_30px_rgba(212,160,23,0.07)]"
-                      : "border border-white/5"
-                  }`}
-                >
-                  {plan.featured && (
-                    <div className="absolute -top-3 left-6">
-                      <span className="px-3 py-1 bg-gold-500 text-navy-900 text-[9px] font-bold tracking-widest uppercase">
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
-                  <p className={`text-[10px] font-bold tracking-widest uppercase mb-3 ${plan.color}`}>{plan.name}</p>
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <span
-                      className="text-3xl font-bold text-white"
-                      style={{ fontFamily: "var(--font-playfair), serif" }}
-                    >
-                      {plan.naira}
-                    </span>
-                    <span className="text-xs text-slate-500">/year</span>
-                  </div>
-                  <p className="text-xs text-slate-400 mb-1">{plan.tagline}</p>
-                  <p className="text-[10px] text-slate-500 italic mb-6 flex-1">{plan.note}</p>
-                  <Link
-                    href="/register"
-                    className={`w-full py-3 text-center text-[10px] font-bold tracking-widest uppercase transition-colors ${
-                      plan.featured
-                        ? "bg-gold-500 text-navy-900 hover:bg-gold-400"
-                        : "border border-gold-500/30 text-gold-500 hover:bg-gold-500/10"
-                    }`}
-                  >
-                    Join Now
-                  </Link>
-                </div>
-              ))}
-            </div>
+            <MembershipTierCards plans={plans} />
           </div>
         </section>
 

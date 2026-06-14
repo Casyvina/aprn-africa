@@ -3,23 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { LeadershipPerson } from "@/lib/queries/homepage";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
-
-const fadeLeft = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
-};
-
-const fadeRight = {
-  hidden: { opacity: 0, x: 40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
-};
-
-const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
+import { fadeUp, fadeLeft, fadeRight, staggerContainer } from "@/lib/animations";
 
 const DEFAULT_LEADERSHIP: (LeadershipPerson & { photo: string })[] = [
   { name: "Pieter-Bas Nederveen", title: "Advisory Committee Member, Senior Energy Advisor", photo: "/images/pieter-bas-nederveen.png" },
@@ -74,7 +58,7 @@ export default function AboutSection({
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            variants={{ ...stagger, ...fadeLeft }}
+            variants={staggerContainer}
           >
             <motion.h2 variants={fadeUp} className="font-display text-3xl md:text-5xl font-bold mb-6 text-white">
               {sectionHeading.includes("African Energy") ? (

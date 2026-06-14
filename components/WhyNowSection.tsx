@@ -1,24 +1,29 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import type { InsightStat } from "@/lib/queries/homepage";
+import { fadeUp, fadeLeft, cardReveal, staggerContainer, useCountUp } from "@/lib/animations";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
+/** Parses "72%", "$180B", "15+" into { prefix, num, suffix } */
+function parseStatValue(raw: string): { prefix: string; num: number; suffix: string } {
+  const match = raw.match(/^([^0-9]*)(\d+(?:\.\d+)?)(.*)$/)
+  if (!match) return { prefix: "", num: 0, suffix: raw }
+  return { prefix: match[1], num: parseFloat(match[2]), suffix: match[3] }
+}
 
-const fadeLeft = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
-};
+function AnimatedStatValue({ value }: { value: string }) {
+  const ref   = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: "-80px" })
+  const { prefix, num, suffix } = parseStatValue(value)
+  const count  = useCountUp(num, 1800, inView)
 
-const cardVariant = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
-};
-
-const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
+  return (
+    <span ref={ref} className="text-gold-500">
+      {prefix}{Number.isInteger(num) ? Math.round(count) : count}{suffix}
+    </span>
+  )
+}
 
 const DEFAULT_STATS: InsightStat[] = [
   { value: "$180B", label: "Pipeline investment projected across Africa by 2030",                         icon: "fa-chart-line" },
@@ -67,7 +72,7 @@ export default function WhyNowSection({
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            variants={{ ...stagger, ...fadeLeft }}
+            variants={staggerContainer}
           >
             <motion.span variants={fadeUp} className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
               {sectionBadge}
@@ -102,12 +107,12 @@ export default function WhyNowSection({
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.15 }}
-            variants={{ ...stagger, hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+            variants={staggerContainer}
           >
             {statCards.map((s) => (
               <motion.div
                 key={s.label}
-                variants={cardVariant}
+                variants={cardReveal}
                 className="glass-panel p-6 rounded-sm border border-navy-700 hover:border-gold-500/40 transition-colors group"
               >
                 <div className="flex items-start gap-4">
@@ -117,7 +122,9 @@ export default function WhyNowSection({
                     </div>
                   )}
                   <div>
-                    <div className="font-display text-3xl font-bold text-white mb-2">{s.value}</div>
+                    <div className="font-display text-3xl font-bold text-white mb-2">
+                      <AnimatedStatValue value={s.value} />
+                    </div>
                     <p className="text-xs text-slate-400 leading-relaxed">{s.label}</p>
                   </div>
                 </div>

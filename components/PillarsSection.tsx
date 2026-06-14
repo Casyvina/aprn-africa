@@ -2,11 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { Pillar } from "@/lib/queries/homepage";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" as const } },
-};
+import { fadeUp, staggerContainer } from "@/lib/animations";
 
 const DEFAULT_PILLARS: Pillar[] = [
   {
@@ -67,7 +63,7 @@ export default function PillarsSection({
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" as const }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
         >
           <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">
             {tag}
@@ -81,7 +77,7 @@ export default function PillarsSection({
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+          variants={staggerContainer}
         >
           {items.map((pillar) => (
             <motion.div

@@ -5,14 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { PersonCard } from "@/lib/queries/persons";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
-};
+import { fadeUp, staggerContainer } from "@/lib/animations";
 
 const challenges = [
   {
@@ -209,7 +202,7 @@ export default function AboutPageClient({ persons }: Props) {
 
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border-t border-l border-white/10"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={staggerContainer}
         >
           {challenges.map((c) => (
             <motion.div
@@ -251,7 +244,7 @@ export default function AboutPageClient({ persons }: Props) {
 
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={staggerContainer}
         >
           {pillars.map((p) => (
             <motion.div
@@ -276,7 +269,7 @@ export default function AboutPageClient({ persons }: Props) {
       <section className="py-24 border-b border-white/10 px-6 max-w-360 mx-auto">
         <motion.div
           className="grid grid-cols-2 lg:grid-cols-4 border-l border-t border-white/10"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={staggerContainer}
         >
           {stats.map((s) => (
             <motion.div key={s.label} variants={fadeUp} className="border-r border-b border-white/10 p-10">
@@ -311,7 +304,7 @@ export default function AboutPageClient({ persons }: Props) {
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-0 border-l border-t border-white/10"
-          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={staggerContainer}
         >
           {persons.map((person) => {
             const photo = person.photoUrl ?? PHOTO_FALLBACK[person.slug ?? ""] ?? null;
