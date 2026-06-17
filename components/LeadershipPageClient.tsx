@@ -431,30 +431,34 @@ export default function LeadershipPageClient({ persons, teamMembers = [], youthA
                     variants={fadeUp}
                     className="glass-panel border border-navy-700 hover:border-gold-500/30 transition-all group overflow-hidden"
                   >
-                    {/* Top accent */}
-                    <div className="h-1 bg-gold-500/40 group-hover:bg-gold-500 transition-colors" />
-
-                    <div className="p-8">
-                      {/* Avatar / Photo */}
-                      <div className="w-16 h-16 bg-navy-800 border border-gold-500/20 flex items-center justify-center mb-6 overflow-hidden">
-                        {member.photoUrl ? (
-                          <Image
-                            src={member.photoUrl}
-                            alt={member.name ?? ""}
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
-                          />
-                        ) : (
+                    {/* Photo — full width portrait */}
+                    <div className="relative w-full aspect-[3/4] bg-navy-800 overflow-hidden">
+                      {member.photoUrl ? (
+                        <Image
+                          src={member.photoUrl}
+                          alt={member.name ?? ""}
+                          fill
+                          className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
                           <span
-                            className="text-xl font-bold text-gold-500"
+                            className="text-6xl font-bold text-gold-500/30"
                             style={{ fontFamily: "var(--font-playfair), serif" }}
                           >
                             {member.name?.charAt(0) ?? "?"}
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
+                      {/* Gold bottom gradient overlay */}
+                      <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-navy-900/80 to-transparent pointer-events-none" />
+                    </div>
 
+                    {/* Gold accent line */}
+                    <div className="h-0.5 bg-gold-500/40 group-hover:bg-gold-500 transition-colors" />
+
+                    <div className="p-6">
                       {/* Name & Role */}
                       <h3
                         className="text-xl font-bold text-white mb-1 leading-snug"
