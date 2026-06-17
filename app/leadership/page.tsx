@@ -28,11 +28,11 @@ const TEAM_SLUGS = [
 
 export default async function LeadershipPage() {
   const [allPersons, youthData] = await Promise.all([
-    sanityFetch<PersonCard[]>(PERSONS_QUERY, {}, ["person"]),
+    sanityFetch<PersonCard[]>(PERSONS_QUERY, {}, ["leadership"]),
     sanityFetch<{ photoUrl?: string } | null>(
       YOUTH_PHOTO_QUERY,
       { slug: YOUTH_AMBASSADOR_SLUG },
-      ["person"],
+      ["leadership"],
     ),
   ]);
 
