@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 
 // ─── Types ────────────────────────────────────────────────
 
-export type DbDbRow = Record<string, string | null | boolean | number>;
+export type DbRow = Record<string, string | null | boolean | number>;
 
 interface TabConfig {
   key: string;
