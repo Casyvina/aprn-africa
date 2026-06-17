@@ -20,29 +20,40 @@ const TYPE_OPTIONS: { value: ContentType; label: string; desc: string; icon: str
   },
 ];
 
+interface GenerateResult {
+  title: string;
+  docId: string;
+  slug: string;
+  imageUrl?: string | null;
+}
+
 export default function GenerateContentPage() {
   const [type, setType]           = useState<ContentType>("editorialInsight");
   const [topic, setTopic]         = useState("");
   const [angle, setAngle]         = useState("");
   const [keyPoints, setKeyPoints] = useState("");
+  const [url, setUrl]             = useState("");
   const [loading, setLoading]     = useState(false);
+  const [loadingStage, setLoadingStage] = useState("");
   const [error, setError]         = useState("");
-  const [result, setResult]       = useState<{ title: string; docId: string; slug: string } | null>(null);
+  const [result, setResult]       = useState<GenerateResult | null>(null);
 
   async function handleGenerate() {
     if (!topic.trim()) { setError("Topic is required."); return; }
     setLoading(true);
     setError("");
     setResult(null);
+    setLoadingStage(url.trim() ? "Scanning URL…" : "Claude is writing…");
 
     const res = await fetch("/api/admin/generate-content", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, topic, angle, keyPoints }),
+      body: JSON.stringify({ type, topic, angle, keyPoints, url: url.trim() || undefined }),
     });
 
     const data = await res.json();
     setLoading(false);
+    setLoadingStage("");
 
     if (!res.ok) {
       setError(data.error ?? "Generation failed. Please try again.");
@@ -77,36 +88,77 @@ export default function GenerateContentPage() {
 
       {/* Success state */}
       {result && (
-        <div className="bg-emerald-400/5 border border-emerald-400/20 p-6 flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center shrink-0">
-              <i className="fa-solid fa-check text-emerald-400 text-xs" />
+        <div className="flex flex-col gap-5">
+          <div className="bg-emerald-400/5 border border-emerald-400/20 p-6 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center shrink-0">
+                <i className="fa-solid fa-check text-emerald-400 text-xs" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-emerald-400 tracking-widest uppercase">Draft Created</p>
+                <p className="text-sm font-semibold text-white mt-0.5">{result.title}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-bold text-emerald-400 tracking-widest uppercase">Draft Created</p>
-              <p className="text-sm font-semibold text-white mt-0.5">{result.title}</p>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              The draft is saved in Sanity. Open the Studio, find it in the Drafts section, add a hero image, and publish.
+            </p>
+            <div className="flex gap-3">
+              <a
+                href="/studio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 bg-gold-500 text-navy-900 text-xs font-bold tracking-widest uppercase hover:bg-gold-400 transition-colors"
+              >
+                <i className="fa-solid fa-arrow-up-right-from-square mr-2 text-[10px]" />
+                Open Studio
+              </a>
+              <button
+                onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); setUrl(""); }}
+                className="px-4 py-2.5 border border-white/10 text-xs text-slate-400 hover:text-white hover:border-white/20 transition-colors"
+              >
+                Generate Another
+              </button>
             </div>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            The draft is saved in Sanity. Open the Studio, find it in the Drafts section, add a hero image, and publish.
-          </p>
-          <div className="flex gap-3">
-            <a
-              href="/studio"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 bg-gold-500 text-navy-900 text-xs font-bold tracking-widest uppercase hover:bg-gold-400 transition-colors"
-            >
-              <i className="fa-solid fa-arrow-up-right-from-square mr-2 text-[10px]" />
-              Open Studio
-            </a>
-            <button
-              onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); }}
-              className="px-4 py-2.5 border border-white/10 text-xs text-slate-400 hover:text-white hover:border-white/20 transition-colors"
-            >
-              Generate Another
-            </button>
-          </div>
+
+          {/* Generated hero image */}
+          {result.imageUrl && (
+            <div className="bg-navy-800 border border-white/5 overflow-hidden">
+              <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
+                <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Generated Hero Image</span>
+                <a
+                  href={result.imageUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-gold-500 hover:text-gold-400 transition-colors flex items-center gap-1.5"
+                >
+                  <i className="fa-solid fa-download text-[10px]" />
+                  Download
+                </a>
+              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={result.imageUrl}
+                alt={result.title}
+                className="w-full aspect-video object-cover"
+              />
+              <div className="px-5 py-3">
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Download this image and upload it as the hero image in Sanity Studio. The URL expires after ~24 hours.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {!result.imageUrl && (
+            <div className="bg-navy-800/50 border border-white/5 border-dashed p-4 flex items-center gap-3">
+              <i className="fa-solid fa-image text-slate-600 text-sm" />
+              <p className="text-xs text-slate-500">
+                Hero image generation skipped — <code className="text-gold-500 text-[10px]">FAL_KEY</code> not set. Add a hero image manually in the Studio.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
@@ -139,6 +191,24 @@ export default function GenerateContentPage() {
                   <p className="text-[10px] text-slate-500">{opt.desc}</p>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* URL input */}
+          <div>
+            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
+              Reference URL
+              <span className="ml-2 text-slate-600 normal-case font-normal tracking-normal">— optional, scraped as research context</span>
+            </label>
+            <div className="relative">
+              <i className="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-[10px]" />
+              <input
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com/article-or-report"
+                className="w-full bg-navy-800 border border-white/10 pl-9 pr-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors"
+              />
             </div>
           </div>
 
@@ -201,7 +271,7 @@ export default function GenerateContentPage() {
             {loading ? (
               <>
                 <i className="fa-solid fa-spinner fa-spin text-[10px]" />
-                Claude is writing… this takes ~20 seconds
+                {loadingStage || "Generating…"}
               </>
             ) : (
               <>

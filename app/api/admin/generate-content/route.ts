@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { fal } from "@fal-ai/client";
 import { writeClient } from "@/lib/sanity/write-client";
 import { createClient } from "@/lib/supabase/server";
 
@@ -28,22 +29,63 @@ function toPortableText(blocks: BodyBlock[]) {
   }));
 }
 
+async function fetchUrlContext(url: string): Promise<string> {
+  try {
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; APRN-ContentBot/1.0)" },
+      signal: AbortSignal.timeout(10_000),
+    });
+    const html = await res.text();
+    const text = html
+      .replace(/<script[\s\S]*?<\/script>/gi, "")
+      .replace(/<style[\s\S]*?<\/style>/gi, "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return text.slice(0, 6000);
+  } catch {
+    return "";
+  }
+}
+
+async function generateHeroImage(title: string, topic: string): Promise<string | null> {
+  if (!process.env.FAL_KEY) return null;
+  try {
+    const result = await fal.subscribe("fal-ai/flux-pro", {
+      input: {
+        prompt: `Professional editorial cover image for an article titled "${title}". African oil and gas pipeline infrastructure, industrial engineering photography, aerial or wide-angle industrial scene. Dark navy and gold color palette, moody cinematic lighting, high resolution, photorealistic.`,
+        image_size: "landscape_16_9",
+        num_inference_steps: 28,
+        guidance_scale: 3.5,
+        num_images: 1,
+        safety_tolerance: "2",
+        output_format: "jpeg",
+      },
+    }) as { data: { images: { url: string }[] } };
+    return result?.data?.images?.[0]?.url ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
-  // Admin gate
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { type, topic, angle, keyPoints } = await req.json() as {
+  const { type, topic, angle, keyPoints, url } = await req.json() as {
     type: "editorialInsight" | "researchReport";
     topic: string;
     angle?: string;
     keyPoints?: string;
+    url?: string;
   };
 
   if (!topic) return NextResponse.json({ error: "topic is required" }, { status: 400 });
+
+  const urlContext = url ? await fetchUrlContext(url) : "";
 
   const isResearch = type === "researchReport";
 
@@ -53,6 +95,7 @@ Write a ${isResearch ? "research report" : "editorial insight article"} on this 
 Topic: ${topic}
 Angle/focus: ${angle || "Provide a comprehensive professional overview"}
 Key points to include: ${keyPoints || "Cover the most important and current aspects of this topic"}
+${urlContext ? `\nReference material extracted from URL (use as factual context):\n"""\n${urlContext}\n"""` : ""}
 
 Respond with ONLY valid JSON — no markdown fences, no explanation — in this exact structure:
 {
@@ -104,36 +147,38 @@ Guidelines:
   const today = new Date().toISOString().slice(0, 10);
   const body = toPortableText(generated.body ?? []);
 
-  if (isResearch) {
-    await writeClient.createOrReplace<Record<string, unknown>>({
-      _id: docId,
-      _type: "researchReport",
-      title: generated.title,
-      slug: { _type: "slug", current: slug },
-      subtitle: generated.subtitle ?? "",
-      executiveSummary: generated.executiveSummary ?? "",
-      pullQuote: generated.pullQuote ?? "",
-      body,
-      reportType: "working-paper",
-      publishDate: today,
-      estimatedReadTime: generated.estimatedReadTime ?? 10,
-      featured: false,
-    });
-  } else {
-    await writeClient.createOrReplace<Record<string, unknown>>({
-      _id: docId,
-      _type: "editorialInsight",
-      title: generated.title,
-      slug: { _type: "slug", current: slug },
-      subtitle: generated.subtitle ?? "",
-      excerpt: generated.excerpt ?? "",
-      pullQuote: generated.pullQuote ?? "",
-      body,
-      publishDate: today,
-      estimatedReadTime: generated.estimatedReadTime ?? 8,
-      featured: false,
-    });
-  }
+  // Run Sanity write and Fal.ai image gen in parallel
+  const [, imageUrl] = await Promise.all([
+    isResearch
+      ? writeClient.createOrReplace<Record<string, unknown>>({
+          _id: docId,
+          _type: "researchReport",
+          title: generated.title,
+          slug: { _type: "slug", current: slug },
+          subtitle: generated.subtitle ?? "",
+          executiveSummary: generated.executiveSummary ?? "",
+          pullQuote: generated.pullQuote ?? "",
+          body,
+          reportType: "working-paper",
+          publishDate: today,
+          estimatedReadTime: generated.estimatedReadTime ?? 10,
+          featured: false,
+        })
+      : writeClient.createOrReplace<Record<string, unknown>>({
+          _id: docId,
+          _type: "editorialInsight",
+          title: generated.title,
+          slug: { _type: "slug", current: slug },
+          subtitle: generated.subtitle ?? "",
+          excerpt: generated.excerpt ?? "",
+          pullQuote: generated.pullQuote ?? "",
+          body,
+          publishDate: today,
+          estimatedReadTime: generated.estimatedReadTime ?? 8,
+          featured: false,
+        }),
+    generateHeroImage(generated.title, topic),
+  ]);
 
-  return NextResponse.json({ docId, slug, title: generated.title });
+  return NextResponse.json({ docId, slug, title: generated.title, imageUrl });
 }
