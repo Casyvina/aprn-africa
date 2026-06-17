@@ -66,17 +66,13 @@ export default async function IntelligenceBriefingPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, membership_tier")
-    .eq("id", user.id)
-    .single();
+  const [{ data: profile }, { count: savedCount }, sanityResult] = await Promise.all([
+    supabase.from("profiles").select("full_name, membership_tier").eq("id", user.id).single(),
+    supabase.from("saved_items").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+    sanityFetch<InsightCard[]>(ALL_INSIGHTS_QUERY, {}, ["insights"]).catch(() => null),
+  ]);
 
-  let recentContent: InsightCard[] = [];
-  try {
-    const all = await sanityFetch<InsightCard[]>(ALL_INSIGHTS_QUERY, {}, ["insights"]);
-    recentContent = (all ?? []).slice(0, 5);
-  } catch { /* show empty state */ }
+  const recentContent = (sanityResult ?? []).slice(0, 5);
 
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
   const tier = profile?.membership_tier ?? "free";
@@ -114,7 +110,7 @@ export default async function IntelligenceBriefingPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Courses Enrolled",   value: String(ACTIVE_COURSES.length), sub: "Active" },
-            { label: "Research Saved",     value: "0",       sub: "articles" },
+            { label: "Research Saved",     value: String(savedCount ?? 0), sub: "articles" },
             { label: "Network",            value: "—",       sub: "Connections" },
             { label: "Membership",         value: tierLabel, sub: "current plan", bar: true },
           ].map((s) => (

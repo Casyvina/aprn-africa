@@ -8,6 +8,13 @@ import { passwordSchema } from "@/lib/validation";
 
 type Tab = "profile" | "security" | "notifications" | "billing";
 
+interface NotifPrefs {
+  newsletter_weekly: boolean | null;
+  research_alerts:   boolean | null;
+  event_reminders:   boolean | null;
+  member_activity:   boolean | null;
+}
+
 interface Props {
   user: { id: string; email: string };
   profile: {
@@ -20,9 +27,10 @@ interface Props {
     bio:          string | null;
     membership_tier: string | null;
   } | null;
+  notifPrefs: NotifPrefs | null;
 }
 
-export default function SettingsTabs({ user, profile }: Props) {
+export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
   const [tab, setTab] = useState<Tab>("profile");
   const updateProfile = useAuthStore((s) => s.updateProfile);
 
@@ -43,13 +51,15 @@ export default function SettingsTabs({ user, profile }: Props) {
   const [pwMsg,    setPwMsg]    = useState("");
   const [pwErrors, setPwErrors] = useState<string[]>([]);
 
-  // Notification toggles
+  // Notification toggles — seeded from DB, fallback to sensible defaults
   const [notifs, setNotifs] = useState({
-    newsletter: true,
-    research: true,
-    events: false,
-    network: false,
+    newsletter: notifPrefs?.newsletter_weekly ?? true,
+    research:   notifPrefs?.research_alerts   ?? true,
+    events:     notifPrefs?.event_reminders   ?? false,
+    network:    notifPrefs?.member_activity   ?? false,
   });
+  const [notifSaving, setNotifSaving] = useState(false);
+  const [notifMsg,    setNotifMsg]    = useState("");
 
   const supabase = createClient();
 
@@ -437,10 +447,33 @@ export default function SettingsTabs({ user, profile }: Props) {
               </div>
             ))}
           </div>
-          <div className="pt-6 border-t border-white/5">
-            <button className="px-8 py-3 bg-gold-500 text-navy-900 text-sm font-bold hover:bg-gold-400 transition-colors">
-              Save Preferences
+          <div className="pt-6 border-t border-white/5 flex items-center gap-4">
+            <button
+              onClick={async () => {
+                setNotifSaving(true);
+                setNotifMsg("");
+                const { error } = await supabase.from("notification_preferences").upsert({
+                  user_id: user.id,
+                  newsletter_weekly: notifs.newsletter,
+                  research_alerts:   notifs.research,
+                  event_reminders:   notifs.events,
+                  member_activity:   notifs.network,
+                  updated_at:        new Date().toISOString(),
+                }, { onConflict: "user_id" });
+                setNotifSaving(false);
+                setNotifMsg(error ? "Failed to save. Try again." : "Preferences saved.");
+                if (!error) setTimeout(() => setNotifMsg(""), 3000);
+              }}
+              disabled={notifSaving}
+              className="px-8 py-3 bg-gold-500 text-navy-900 text-sm font-bold hover:bg-gold-400 disabled:opacity-50 transition-colors"
+            >
+              {notifSaving ? "Saving…" : "Save Preferences"}
             </button>
+            {notifMsg && (
+              <span className={`text-xs font-medium ${notifMsg.includes("Failed") ? "text-red-400" : "text-emerald-400"}`}>
+                {notifMsg}
+              </span>
+            )}
           </div>
         </div>
       )}
