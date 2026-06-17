@@ -17,8 +17,9 @@ const adminNav = [
   { href: "/admin/members",   icon: "fa-users",               label: "Members"   },
   { href: "/admin/database",  icon: "fa-database",            label: "Database"  },
   { href: "/admin/generate",  icon: "fa-wand-magic-sparkles", label: "Generate"  },
-  { href: "/admin/payments",  icon: "fa-credit-card",         label: "Payments"  },
-  { href: "/admin/sitemap",   icon: "fa-sitemap",             label: "Site Map"  },
+  { href: "/admin/payments",       icon: "fa-credit-card",         label: "Payments"       },
+  { href: "/admin/weekly-report", icon: "fa-newspaper",           label: "Weekly Report"  },
+  { href: "/admin/sitemap",       icon: "fa-sitemap",             label: "Site Map"       },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

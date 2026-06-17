@@ -605,6 +605,39 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_reports: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          raw_data: Json | null
+          sent_at: string | null
+          sent_by: string | null
+          subject: string
+          week_of: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          raw_data?: Json | null
+          sent_at?: string | null
+          sent_by?: string | null
+          subject: string
+          week_of: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          raw_data?: Json | null
+          sent_at?: string | null
+          sent_by?: string | null
+          subject?: string
+          week_of?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
