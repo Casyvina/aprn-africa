@@ -92,6 +92,7 @@ const TABS: TabConfig[] = [
       { key: "url", label: "URL", wide: true },
       { key: "category", label: "Category" },
       { key: "source_type", label: "Type" },
+      { key: "date_published", label: "Published" },
       { key: "added_by", label: "Added By" },
     ],
   },

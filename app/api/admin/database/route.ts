@@ -30,7 +30,10 @@ export async function GET(req: NextRequest) {
   if (!validateTable(table)) return NextResponse.json({ error: "Invalid table" }, { status: 400 });
 
   const admin = createAdminClient();
-  const { data, error } = await admin.from(table).select("*").order("created_at", { ascending: true });
+  const query = table === "research_sources"
+    ? admin.from(table).select("*").order("date_published", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false })
+    : admin.from(table).select("*").order("created_at", { ascending: true });
+  const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ data });

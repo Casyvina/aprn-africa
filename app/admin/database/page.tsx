@@ -11,7 +11,7 @@ export default async function DatabasePage() {
     admin.from("contractors_epc").select("*").order("company_name"),
     admin.from("pipeline_engineers").select("*").order("full_name"),
     admin.from("regulators_associations").select("*").order("organisation"),
-    admin.from("research_sources").select("*").order("created_at", { ascending: false }),
+    admin.from("research_sources").select("*").order("date_published", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false }),
   ]);
 
   return (
