@@ -431,7 +431,7 @@ export default function DatabasePageClient({
                 </tr>
               ) : (
                 filtered.map((row) => (
-                  <tr key={row.id ?? ""} className="border-b border-white/5 hover:bg-navy-700/40 transition-colors group">
+                  <tr key={String(row.id ?? "")} className="border-b border-white/5 hover:bg-navy-700/40 transition-colors group">
                     {tab.columns.map((col) => (
                       <td key={col.key} className="px-4 py-3 text-slate-300">
                         {col.key === "url" && row[col.key] ? (
@@ -459,10 +459,10 @@ export default function DatabasePageClient({
                         >
                           <i className="fa-solid fa-pen text-[10px]" />
                         </button>
-                        {deleteConfirm === row.id ? (
+                        {deleteConfirm === String(row.id ?? "") ? (
                           <div className="flex items-center gap-1">
                             <button
-                              onClick={() => handleDelete(row.id!)}
+                              onClick={() => handleDelete(String(row.id!))}
                               className="text-[9px] text-red-400 font-bold"
                             >
                               Confirm
@@ -476,7 +476,7 @@ export default function DatabasePageClient({
                           </div>
                         ) : (
                           <button
-                            onClick={() => setDeleteConfirm(row.id ?? null)}
+                            onClick={() => setDeleteConfirm(row.id != null ? String(row.id) : null)}
                             className="text-slate-500 hover:text-red-400 transition-colors"
                             title="Delete"
                           >
