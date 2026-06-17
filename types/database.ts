@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      contractors_epc: {
+        Row: {
+          address: string | null
+          company_name: string
+          contact_person: string | null
+          country_hq: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          key_projects_africa: string | null
+          notes: string | null
+          phone: string | null
+          specialisation: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_name: string
+          contact_person?: string | null
+          country_hq?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          key_projects_africa?: string | null
+          notes?: string | null
+          phone?: string | null
+          specialisation?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_name?: string
+          contact_person?: string | null
+          country_hq?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          key_projects_africa?: string | null
+          notes?: string | null
+          phone?: string | null
+          specialisation?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      event_registrations: {
+        Row: {
+          amount_paid: number
+          email: string
+          full_name: string
+          id: string
+          organisation: string | null
+          registered_at: string
+          sanity_event_id: string
+          status: string
+          ticket_ref: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_paid?: number
+          email: string
+          full_name: string
+          id?: string
+          organisation?: string | null
+          registered_at?: string
+          sanity_event_id: string
+          status?: string
+          ticket_ref?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          email?: string
+          full_name?: string
+          id?: string
+          organisation?: string | null
+          registered_at?: string
+          sanity_event_id?: string
+          status?: string
+          ticket_ref?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           event_reminders: boolean | null
@@ -44,6 +131,147 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount_ngn: number
+          created_at: string
+          currency: string
+          id: string
+          metadata: Json
+          paid_at: string | null
+          payment_type: string
+          paystack_ref: string
+          paystack_txn_id: string | null
+          related_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_ngn: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json
+          paid_at?: string | null
+          payment_type: string
+          paystack_ref: string
+          paystack_txn_id?: string | null
+          related_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_ngn?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          metadata?: Json
+          paid_at?: string | null
+          payment_type?: string
+          paystack_ref?: string
+          paystack_txn_id?: string | null
+          related_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pipeline_engineers: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string
+          id: string
+          linkedin_web: string | null
+          location: string | null
+          notes: string | null
+          organisation: string | null
+          phone: string | null
+          qualifications: string | null
+          role_specialisation: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          linkedin_web?: string | null
+          location?: string | null
+          notes?: string | null
+          organisation?: string | null
+          phone?: string | null
+          qualifications?: string | null
+          role_specialisation?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          linkedin_web?: string | null
+          location?: string | null
+          notes?: string | null
+          organisation?: string | null
+          phone?: string | null
+          qualifications?: string | null
+          role_specialisation?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pipeline_operators: {
+        Row: {
+          company_name: string
+          contact_person: string | null
+          country: string | null
+          created_at: string | null
+          email: string | null
+          hq_address: string | null
+          id: string
+          key_pipeline_assets: string | null
+          notes: string | null
+          phone: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_person?: string | null
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          hq_address?: string | null
+          id?: string
+          key_pipeline_assets?: string | null
+          notes?: string | null
+          phone?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_person?: string | null
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          hq_address?: string | null
+          id?: string
+          key_pipeline_assets?: string | null
+          notes?: string | null
+          phone?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -53,6 +281,7 @@ export type Database = {
           discipline: string | null
           full_name: string | null
           id: string
+          is_admin: boolean
           job_title: string | null
           last_seen_at: string | null
           linkedin_url: string | null
@@ -69,6 +298,7 @@ export type Database = {
           discipline?: string | null
           full_name?: string | null
           id: string
+          is_admin?: boolean
           job_title?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
@@ -85,6 +315,7 @@ export type Database = {
           discipline?: string | null
           full_name?: string | null
           id?: string
+          is_admin?: boolean
           job_title?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
@@ -92,6 +323,93 @@ export type Database = {
           organisation?: string | null
           topics?: string[]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      regulators_associations: {
+        Row: {
+          contact_email: string | null
+          country_region: string | null
+          created_at: string | null
+          id: string
+          key_contact_title: string | null
+          notes: string | null
+          organisation: string
+          phone: string | null
+          relevance_to_aprn: string | null
+          type: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          country_region?: string | null
+          created_at?: string | null
+          id?: string
+          key_contact_title?: string | null
+          notes?: string | null
+          organisation: string
+          phone?: string | null
+          relevance_to_aprn?: string | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          country_region?: string | null
+          created_at?: string | null
+          id?: string
+          key_contact_title?: string | null
+          notes?: string | null
+          organisation?: string
+          phone?: string | null
+          relevance_to_aprn?: string | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      research_sources: {
+        Row: {
+          added_by: string | null
+          category: string | null
+          created_at: string | null
+          date_published: string | null
+          description: string | null
+          id: string
+          notes: string | null
+          source_type: string | null
+          title: string
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          added_by?: string | null
+          category?: string | null
+          created_at?: string | null
+          date_published?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          source_type?: string | null
+          title: string
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          added_by?: string | null
+          category?: string | null
+          created_at?: string | null
+          date_published?: string | null
+          description?: string | null
+          id?: string
+          notes?: string | null
+          source_type?: string | null
+          title?: string
+          updated_at?: string | null
+          url?: string | null
         }
         Relationships: []
       }

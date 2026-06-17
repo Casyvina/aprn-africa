@@ -74,12 +74,24 @@ const LEADERSHIP_FALLBACK: Record<string, {
   },
 };
 
+// Hardcoded fallback for team members not yet in Sanity
+const TEAM_FALLBACK: Record<string, Partial<PersonCard>> = {
+  "olatokunbo-ajelara": {
+    name: "Olatokunbo Ajelara",
+    title: "Content Manager",
+    bio: "Olatokunbo is a chemical engineering student with a strong interest in energy systems, research and technology-driven solutions. Through her work, she contributes to discussions on Africa's energy transition, infrastructure development, and the future of the continent's pipeline sector.",
+    linkedIn: "https://www.linkedin.com/in/olatokunbo-ajelara-86b1941b3",
+    email: "tokunbokhadijat@gmail.com",
+  },
+};
+
 interface Props {
   persons: PersonCard[];
+  teamMembers?: PersonCard[];
   youthAmbassadorPhotoUrl?: string | null;
 }
 
-export default function LeadershipPageClient({ persons, youthAmbassadorPhotoUrl }: Props) {
+export default function LeadershipPageClient({ persons, teamMembers = [], youthAmbassadorPhotoUrl }: Props) {
   return (
     <main
       className="bg-navy-900 text-white"
@@ -380,6 +392,114 @@ export default function LeadershipPageClient({ persons, youthAmbassadorPhotoUrl 
           </motion.div>
         </div>
       </section>
+
+      {/* -- Operations Team ------------------------------------ */}
+      {(() => {
+        // Merge Sanity data with hardcoded fallbacks; always show slugs in TEAM_FALLBACK
+        const allSlugs = Object.keys(TEAM_FALLBACK);
+        const displayTeam: Array<Partial<PersonCard> & { slug: string }> = allSlugs.map((slug) => {
+          const fromSanity = teamMembers.find((m) => m.slug === slug);
+          const fallback = TEAM_FALLBACK[slug] ?? {};
+          return { slug, ...fallback, ...fromSanity };
+        });
+        if (displayTeam.length === 0) return null;
+        return (
+          <section className="py-32 px-6 lg:px-12 border-t border-white/10 bg-navy-800/20">
+            <div className="max-w-360 mx-auto">
+              <motion.div
+                className="mb-16"
+                initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={fadeUp}
+              >
+                <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-4 block">
+                  Content &amp; Communications
+                </span>
+                <h2
+                  className="text-4xl md:text-5xl font-bold text-white"
+                  style={{ fontFamily: "var(--font-playfair), serif" }}
+                >
+                  Operations <span className="italic text-gold-500">Team</span>
+                </h2>
+              </motion.div>
+
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={staggerContainer}
+              >
+                {displayTeam.map((member) => (
+                  <motion.div
+                    key={member.slug}
+                    variants={fadeUp}
+                    className="glass-panel border border-navy-700 hover:border-gold-500/30 transition-all group overflow-hidden"
+                  >
+                    {/* Top accent */}
+                    <div className="h-1 bg-gold-500/40 group-hover:bg-gold-500 transition-colors" />
+
+                    <div className="p-8">
+                      {/* Avatar / Photo */}
+                      <div className="w-16 h-16 bg-navy-800 border border-gold-500/20 flex items-center justify-center mb-6 overflow-hidden">
+                        {member.photoUrl ? (
+                          <Image
+                            src={member.photoUrl}
+                            alt={member.name ?? ""}
+                            width={64}
+                            height={64}
+                            className="object-cover w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500"
+                          />
+                        ) : (
+                          <span
+                            className="text-xl font-bold text-gold-500"
+                            style={{ fontFamily: "var(--font-playfair), serif" }}
+                          >
+                            {member.name?.charAt(0) ?? "?"}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Name & Role */}
+                      <h3
+                        className="text-xl font-bold text-white mb-1 leading-snug"
+                        style={{ fontFamily: "var(--font-playfair), serif" }}
+                      >
+                        {member.name}
+                      </h3>
+                      <p className="text-xs text-gold-500 tracking-wider uppercase mb-5">{member.title}</p>
+
+                      {/* Bio */}
+                      {member.bio && (
+                        <p className="text-sm text-slate-400 leading-relaxed mb-6">{member.bio}</p>
+                      )}
+
+                      {/* Links */}
+                      <div className="flex items-center gap-3 pt-4 border-t border-white/5">
+                        {member.linkedIn && (
+                          <a
+                            href={member.linkedIn}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-gold-500 transition-colors"
+                          >
+                            <i className="fa-brands fa-linkedin text-sm" />
+                            LinkedIn
+                          </a>
+                        )}
+                        {member.email && (
+                          <a
+                            href={`mailto:${member.email}`}
+                            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-gold-500 transition-colors"
+                          >
+                            <i className="fa-solid fa-envelope text-xs" />
+                            Email
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* -- CTA ------------------------------------------------- */}
       <section className="py-32 px-6 border-t border-white/10 bg-navy-900 relative overflow-hidden">

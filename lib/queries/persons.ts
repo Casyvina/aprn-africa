@@ -14,6 +14,8 @@ export interface PersonCard {
   highlights?: PersonHighlight[]
   photoUrl?: string
   slug?: string
+  linkedIn?: string
+  email?: string
 }
 
 export const PERSONS_QUERY = groq`
@@ -26,5 +28,7 @@ export const PERSONS_QUERY = groq`
     highlights[]{ value, label },
     "photoUrl": photo.asset->url,
     "slug": slug.current,
+    linkedIn,
+    email,
   }
 `

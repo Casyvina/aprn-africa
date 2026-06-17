@@ -21,6 +21,11 @@ const LEADERSHIP_SLUGS = [
   "joseph-agwuh",
 ];
 
+// Operations / content team
+const TEAM_SLUGS = [
+  "olatokunbo-ajelara",
+];
+
 export default async function LeadershipPage() {
   const [allPersons, youthData] = await Promise.all([
     sanityFetch<PersonCard[]>(PERSONS_QUERY, {}, ["person"]),
@@ -35,6 +40,10 @@ export default async function LeadershipPage() {
     .map((slug) => allPersons?.find((p) => p.slug === slug))
     .filter((p): p is PersonCard => Boolean(p));
 
+  const teamMembers: PersonCard[] = TEAM_SLUGS
+    .map((slug) => allPersons?.find((p) => p.slug === slug))
+    .filter((p): p is PersonCard => Boolean(p));
+
   const displayPersons = persons.length > 0 ? persons : (allPersons ?? []);
 
   return (
@@ -42,6 +51,7 @@ export default async function LeadershipPage() {
       <Navigation />
       <LeadershipPageClient
         persons={displayPersons}
+        teamMembers={teamMembers}
         youthAmbassadorPhotoUrl={youthData?.photoUrl ?? null}
       />
       <Footer />
