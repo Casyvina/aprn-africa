@@ -25,6 +25,8 @@ interface GenerateResult {
   docId: string;
   slug: string;
   imageUrl?: string | null;
+  urlContextUsed?: boolean;
+  urlFetchWarning?: string;
 }
 
 export default function GenerateContentPage() {
@@ -99,6 +101,23 @@ export default function GenerateContentPage() {
                 <p className="text-sm font-semibold text-white mt-0.5">{result.title}</p>
               </div>
             </div>
+
+            {/* URL context status */}
+            {result.urlContextUsed && (
+              <div className="flex items-center gap-2 text-xs text-emerald-400/80">
+                <i className="fa-solid fa-link text-[10px]" />
+                Reference URL was scraped and used as primary source material.
+              </div>
+            )}
+            {result.urlFetchWarning && (
+              <div className="flex items-start gap-2 bg-amber-400/5 border border-amber-400/20 px-3 py-2.5">
+                <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[10px] mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-400/90 leading-relaxed">
+                  <span className="font-bold">URL not used:</span> {result.urlFetchWarning}. Claude wrote from general knowledge — review carefully for accuracy.
+                </p>
+              </div>
+            )}
+
             <p className="text-xs text-slate-400 leading-relaxed">
               The draft is saved in Sanity. Open the Studio, find it in the Drafts section, add a hero image, and publish.
             </p>

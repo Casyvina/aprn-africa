@@ -57,13 +57,14 @@ function isSafeUrl(rawUrl: string): boolean {
   return true;
 }
 
-async function fetchUrlContext(url: string): Promise<string> {
-  if (!isSafeUrl(url)) return "";
+async function fetchUrlContext(url: string): Promise<{ text: string; ok: boolean; reason?: string }> {
+  if (!isSafeUrl(url)) return { text: "", ok: false, reason: "URL blocked for security reasons (must be public https://)" };
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; APRN-ContentBot/1.0)" },
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(12_000),
     });
+    if (!res.ok) return { text: "", ok: false, reason: `Server returned ${res.status}` };
     const html = await res.text();
     const text = html
       .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -71,10 +72,143 @@ async function fetchUrlContext(url: string): Promise<string> {
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")
       .trim();
-    return text.slice(0, 6000);
-  } catch {
-    return "";
+    const trimmed = text.slice(0, 10_000);
+    if (trimmed.length < 200) return { text: "", ok: false, reason: "Page returned too little readable text (may require login or JavaScript)" };
+    return { text: trimmed, ok: true };
+  } catch (err) {
+    return { text: "", ok: false, reason: err instanceof Error ? err.message : "Fetch failed" };
   }
+}
+
+function buildPrompt(params: {
+  isResearch: boolean;
+  topic: string;
+  angle?: string;
+  keyPoints?: string;
+  urlContext: string;
+}): string {
+  const { isResearch, topic, angle, keyPoints, urlContext } = params;
+  const hasSource = urlContext.length > 200;
+
+  const jsonShape = isResearch
+    ? `{
+  "title": "Precise technical headline (max 80 chars)",
+  "subtitle": "One-line scope or methodology framing",
+  "executiveSummary": "500-char max: key findings and recommendation",
+  "pullQuote": "One evidence-based quotable sentence",
+  "estimatedReadTime": 10,
+  "body": [
+    { "style": "normal", "text": "Opening paragraph..." },
+    { "style": "h2", "text": "Background and Context" },
+    { "style": "normal", "text": "..." },
+    { "style": "h2", "text": "Key Findings" },
+    { "style": "normal", "text": "..." },
+    { "style": "h2", "text": "Implications for African Operators" },
+    { "style": "normal", "text": "..." },
+    { "style": "h2", "text": "Recommendations" },
+    { "style": "normal", "text": "..." }
+  ]
+}`
+    : `{
+  "title": "Sharp specific headline (max 80 chars)",
+  "subtitle": "One-line framing",
+  "excerpt": "280-char max summary",
+  "pullQuote": "One memorable analytical sentence",
+  "estimatedReadTime": 7,
+  "body": [
+    { "style": "normal", "text": "Opening paragraph..." },
+    { "style": "h2", "text": "Section Heading" },
+    { "style": "normal", "text": "..." }
+  ]
+}`;
+
+  if (isResearch && hasSource) {
+    return `You are a research analyst at APRN Africa producing a working paper for pipeline and energy professionals.
+
+The text below is PRIMARY SOURCE MATERIAL scraped from a reference document. Your working paper must be built on the specific facts, data, project names, figures, costs, regulatory references, and findings present in this source. Do not invent data not in it.
+
+PRIMARY SOURCE:
+"""
+${urlContext}
+"""
+
+Topic: ${topic}
+Focus: ${angle || "Technical and policy analysis of the key findings"}
+Required coverage: ${keyPoints || "Critical findings and their implications for African pipeline operators"}
+
+Write a rigorous working paper that:
+- Opens by grounding the reader in a SPECIFIC finding, number, or event from the source
+- Extracts project names, costs, timelines, technical specifications, and regulatory references from the source and builds analysis around them
+- Contextualises findings within the African pipeline sector: ECOWAS frameworks, NMDPRA/DPR regulations, WAGP, NMGP, EACOP, Trans-Saharan Gas Pipeline where relevant
+- Provides structured analysis — what the evidence shows, what it means for operators, what should be done
+- Reads like an SPE technical paper or World Bank sector assessment — not a think-piece
+
+Respond with ONLY valid JSON — no markdown fences, no explanation:
+${jsonShape}
+
+Requirements: Body 800–1100 words total. Use specific names, numbers, and references from the source. No text outside the JSON object.`;
+  }
+
+  if (isResearch && !hasSource) {
+    return `You are a research analyst at APRN Africa producing a working paper for pipeline and energy engineering professionals.
+
+Topic: ${topic}
+Focus: ${angle || "Technical and policy analysis"}
+Required coverage: ${keyPoints || "Critical technical, regulatory, and commercial dimensions"}
+
+Write a rigorous working paper. Every claim must be anchored to documented reality:
+- Reference SPECIFIC African infrastructure projects by name (WAGP, NMGP, EACOP, Trans-Saharan Gas Pipeline, Mozambique LNG, Dangote Refinery Pipeline, etc.)
+- Cite actual regulatory bodies and frameworks (NMDPRA, DPR, NPA, ECOWAS Energy Protocol, AU Agenda 2063)
+- Use documented figures where they exist (project costs, pipeline lengths, capacity, dates)
+- Structure: Executive Summary → Background → Key Technical/Policy Findings → Implications for African Operators → Recommendations
+- Tone: SPE journal meets World Bank infrastructure assessment — evidence-first, not opinion-first
+
+Respond with ONLY valid JSON:
+${jsonShape}
+
+Body: 800–1100 words. Reference specific projects and figures. No text outside the JSON object.`;
+  }
+
+  if (!isResearch && hasSource) {
+    return `You are a senior content strategist at APRN Africa writing an editorial insight piece for pipeline engineers and energy professionals.
+
+REFERENCE MATERIAL (the specific facts and events below are your starting point — ground your commentary in them):
+"""
+${urlContext}
+"""
+
+Topic: ${topic}
+Angle: ${angle || "What this means for African pipeline engineers and policymakers"}
+Cover: ${keyPoints || "Key implications and professional perspective"}
+
+Write an editorial that:
+- Opens with a SPECIFIC detail, number, project name, or event from the reference — not a generic statement
+- Builds analytical commentary ON TOP of those facts (what does this mean? what should the sector do?)
+- Targets pipeline engineers, energy managers, and policy professionals in Africa
+- Tone: authoritative, direct — Foreign Affairs meets SPE technical commentary
+
+Respond with ONLY valid JSON:
+${jsonShape}
+
+Body: 700–900 words. Open with a specific reference detail. No text outside the JSON object.`;
+  }
+
+  // Editorial, no source URL
+  return `You are a senior content strategist at APRN Africa writing an editorial insight piece for pipeline and energy professionals.
+
+Topic: ${topic}
+Angle: ${angle || "Strategic analysis and professional perspective"}
+Cover: ${keyPoints || "The most important dimensions of this topic for African energy professionals"}
+
+Write an editorial grounded in documented sector realities — not abstract commentary:
+- Reference specific African projects, companies, regulatory developments, or events by name
+- Every analytical claim should connect to a real-world reference point in the African energy sector
+- Tone: authoritative, direct — Foreign Affairs meets SPE commentary
+
+Respond with ONLY valid JSON:
+${jsonShape}
+
+Body: 700–900 words. No generic platitudes. No text outside the JSON object.`;
 }
 
 async function generateHeroImage(title: string, _topic: string): Promise<string | null> {
@@ -114,38 +248,23 @@ export async function POST(req: Request) {
 
   if (!topic) return NextResponse.json({ error: "topic is required" }, { status: 400 });
 
-  const urlContext = url ? await fetchUrlContext(url) : "";
-
   const isResearch = type === "researchReport";
 
-  const prompt = `You are a senior content strategist for APRN Africa — Africa's professional network for pipeline and energy engineers. Your writing is authoritative, data-aware, and squarely focused on the African energy sector context.
+  let urlContextText = "";
+  let urlContextUsed = false;
+  let urlFetchWarning: string | undefined;
 
-Write a ${isResearch ? "research report" : "editorial insight article"} on this topic:
-Topic: ${topic}
-Angle/focus: ${angle || "Provide a comprehensive professional overview"}
-Key points to include: ${keyPoints || "Cover the most important and current aspects of this topic"}
-${urlContext ? `\nReference material extracted from URL (use as factual context):\n"""\n${urlContext}\n"""` : ""}
+  if (url) {
+    const result = await fetchUrlContext(url);
+    if (result.ok) {
+      urlContextText = result.text;
+      urlContextUsed = true;
+    } else {
+      urlFetchWarning = result.reason;
+    }
+  }
 
-Respond with ONLY valid JSON — no markdown fences, no explanation — in this exact structure:
-{
-  "title": "A precise, compelling headline (max 80 chars)",
-  "subtitle": "One-line framing that expands on the title",
-  ${isResearch ? '"executiveSummary"' : '"excerpt"'}: "${isResearch ? "500-char max concise overview for listing cards" : "280-char max summary for listing cards and social sharing"}",
-  "pullQuote": "One powerful, quotable sentence from the article",
-  "estimatedReadTime": 8,
-  "body": [
-    { "style": "normal", "text": "Opening paragraph..." },
-    { "style": "h2", "text": "Section Heading" },
-    { "style": "normal", "text": "Body paragraph..." }
-  ]
-}
-
-Guidelines:
-- Body should be 700–1000 words total across all paragraphs
-- Use h2 headings to break the piece into 3–4 clear sections
-- Ground analysis in African context: infrastructure gaps, regulatory landscape, ECOWAS/AU frameworks, financing challenges
-- Tone: institutional, clear, evidence-aware — like Foreign Affairs meets SPE journal
-- DO NOT include any text outside the JSON object`;
+  const prompt = buildPrompt({ isResearch, topic, angle, keyPoints, urlContext: urlContextText });
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -209,5 +328,5 @@ Guidelines:
     generateHeroImage(generated.title, topic),
   ]);
 
-  return NextResponse.json({ docId, slug, title: generated.title, imageUrl });
+  return NextResponse.json({ docId, slug, title: generated.title, imageUrl, urlContextUsed, urlFetchWarning });
 }
