@@ -8,8 +8,17 @@ function isAdmin(email: string | undefined): boolean {
   return allowed.includes(email?.toLowerCase() ?? "");
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function markdownToHtml(md: string): string {
-  return md
+  return escapeHtml(md)
     .replace(/^## (.+)$/gm, '<h2 style="color:#D4A017;font-size:18px;margin:24px 0 8px;font-family:Georgia,serif;">$1</h2>')
     .replace(/^### (.+)$/gm, '<h3 style="color:#ffffff;font-size:14px;margin:20px 0 6px;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:1px;">$1</h3>')
     .replace(/^- (.+)$/gm, '<li style="color:#cbd5e1;font-size:13px;margin:4px 0;line-height:1.6;">$1</li>')

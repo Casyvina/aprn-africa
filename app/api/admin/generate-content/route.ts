@@ -29,7 +29,36 @@ function toPortableText(blocks: BodyBlock[]) {
   }));
 }
 
+function isSafeUrl(rawUrl: string): boolean {
+  let parsed: URL;
+  try { parsed = new URL(rawUrl); } catch { return false; }
+
+  if (parsed.protocol !== "https:") return false;
+
+  const host = parsed.hostname.toLowerCase();
+  if (host === "localhost" || host === "0.0.0.0" || host === "") return false;
+
+  // Block IPv4 private / loopback / link-local ranges
+  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4) {
+    const [a, b] = [Number(ipv4[1]), Number(ipv4[2])];
+    if (
+      a === 127 ||                                  // 127.0.0.0/8 loopback
+      a === 10 ||                                   // 10.0.0.0/8 private
+      (a === 172 && b >= 16 && b <= 31) ||          // 172.16.0.0/12 private
+      (a === 192 && b === 168) ||                   // 192.168.0.0/16 private
+      (a === 169 && b === 254)                      // 169.254.0.0/16 cloud metadata
+    ) return false;
+  }
+
+  // Block IPv6 loopback and ULA ranges
+  if (host === "[::1]" || /^\[f[cd]/i.test(host)) return false;
+
+  return true;
+}
+
 async function fetchUrlContext(url: string): Promise<string> {
+  if (!isSafeUrl(url)) return "";
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; APRN-ContentBot/1.0)" },
