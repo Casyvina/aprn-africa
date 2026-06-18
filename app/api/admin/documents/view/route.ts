@@ -41,8 +41,8 @@ export async function GET(req: NextRequest) {
       "Content-Type": "text/html; charset=utf-8",
       "Content-Disposition": "inline",
       "X-Content-Type-Options": "nosniff",
-      // Allow the document to load its own resources
-      "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https:; img-src * data:;",
+      // Scripts are blocked entirely — documents are styled HTML only
+      "Content-Security-Policy": "default-src 'self'; style-src 'self' 'unsafe-inline' https: data:; script-src 'none'; img-src * data:; font-src * data: https:; frame-ancestors 'none';",
     },
   });
 }

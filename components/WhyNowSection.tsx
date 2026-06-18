@@ -3,7 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import type { InsightStat } from "@/lib/queries/homepage";
-import { fadeUp, fadeLeft, cardReveal, staggerContainer, useCountUp } from "@/lib/animations";
+import { fadeUp, cardReveal, staggerContainer, useCountUp } from "@/lib/animations";
 
 /** Parses "72%", "$180B", "15+" into { prefix, num, suffix } */
 function parseStatValue(raw: string): { prefix: string; num: number; suffix: string } {

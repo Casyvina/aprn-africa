@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import type { LeadershipPerson } from "@/lib/queries/homepage";
-import { fadeUp, fadeLeft, fadeRight, staggerContainer } from "@/lib/animations";
+import { fadeUp, fadeRight, staggerContainer } from "@/lib/animations";
 
 const DEFAULT_LEADERSHIP: (LeadershipPerson & { photo: string })[] = [
   { name: "Pieter-Bas Nederveen", title: "Advisory Committee Member, Senior Energy Advisor", photo: "/images/pieter-bas-nederveen.png" },

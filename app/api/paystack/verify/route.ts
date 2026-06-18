@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // Amount in kobo per membership tier
 const TIER_AMOUNTS: Record<string, number> = {
@@ -37,7 +38,6 @@ export async function POST(req: NextRequest) {
   const expectedKobo = TIER_AMOUNTS[tier];
   if (expectedKobo && data.amount !== expectedKobo) {
     console.warn(`Amount mismatch — expected ${expectedKobo}, got ${data.amount}`);
-    // Warn but don't hard-fail in test mode
     if (process.env.NODE_ENV === "production") {
       return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
     }
@@ -51,14 +51,47 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  // 4 — Update membership tier in profiles
-  const { error: dbError } = await supabase
+  const admin = createAdminClient();
+
+  // 4 — Idempotency: reject if this reference was already processed
+  const { data: existing } = await admin
+    .from("payments")
+    .select("id")
+    .eq("paystack_ref", reference)
+    .maybeSingle();
+
+  if (existing) {
+    // Already processed — idempotent success
+    return NextResponse.json({ success: true, tier });
+  }
+
+  // 5 — Write payment record (admin client — RLS blocks server client writes)
+  const { error: paymentError } = await admin.from("payments").insert({
+    user_id: user.id,
+    paystack_ref: reference,
+    paystack_txn_id: String(data.id ?? ""),
+    amount_ngn: Math.round(data.amount / 100),
+    currency: data.currency ?? "NGN",
+    status: "success",
+    payment_type: "membership",
+    related_id: tier,
+    paid_at: data.paid_at ?? new Date().toISOString(),
+    metadata: { email: data.customer?.email ?? null, channel: data.channel ?? null },
+  });
+
+  if (paymentError) {
+    console.error("Payment insert error:", paymentError);
+    return NextResponse.json({ error: "Failed to record payment" }, { status: 500 });
+  }
+
+  // 6 — Upgrade membership tier
+  const { error: dbError } = await admin
     .from("profiles")
     .update({ membership_tier: tier, updated_at: new Date().toISOString() })
     .eq("id", user.id);
 
   if (dbError) {
-    console.error("Supabase update error:", dbError);
+    console.error("Profile update error:", dbError);
     return NextResponse.json({ error: "Failed to update membership" }, { status: 500 });
   }
 

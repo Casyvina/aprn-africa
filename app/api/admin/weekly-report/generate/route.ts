@@ -61,7 +61,7 @@ async function fetchSanityActivity(since: Date, until: Date) {
   }
 }
 
-async function fetchSupabaseActivity(since: Date, until: Date) {
+async function fetchSupabaseActivity(since: Date, _until: Date) {
   const admin = createAdminClient();
   const iso = since.toISOString();
 
@@ -147,7 +147,11 @@ Generate the weekly report now.`;
     messages: [{ role: "user", content: userPrompt }],
   });
 
-  const content = (message.content[0] as { type: string; text: string }).text;
+  const firstBlock = message.content[0];
+  if (!firstBlock || firstBlock.type !== "text") {
+    return NextResponse.json({ error: "Unexpected model response format" }, { status: 500 });
+  }
+  const content = (firstBlock as { type: "text"; text: string }).text;
 
   return NextResponse.json({ content, rawData, label });
 }

@@ -58,8 +58,8 @@ export default function SavedPageClient({ initialItems }: { initialItems: SavedI
 
   async function handleRemove(id: string) {
     setDeleting(id);
-    await fetch(`/api/dashboard/saved?id=${id}`, { method: "DELETE" });
-    setItems((prev) => prev.filter((i) => i.id !== id));
+    const res = await fetch(`/api/dashboard/saved?id=${id}`, { method: "DELETE" });
+    if (res.ok) setItems((prev) => prev.filter((i) => i.id !== id));
     setDeleting(null);
   }
 

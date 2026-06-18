@@ -55,6 +55,7 @@ export default function PersonnelPage() {
     setLoading(false);
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadDocs(); }, []);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {

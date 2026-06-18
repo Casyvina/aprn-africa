@@ -158,6 +158,7 @@ export default function DocumentLibraryPage() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadDocs(); }, [loadDocs]);
 
   function getDocUrl(doc: DocEntry): string | null {
@@ -935,6 +936,7 @@ function DocCard({
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Re-open summary panel whenever a new generation starts
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { if (isLoading) setSummaryOpen(true); }, [isLoading]);
 
   useEffect(() => {

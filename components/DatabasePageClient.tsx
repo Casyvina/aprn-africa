@@ -298,7 +298,7 @@ export default function DatabasePageClient({
     URL.revokeObjectURL(url);
   }, []);
 
-  const handleAiGenerate = useCallback(async () => {
+  async function handleAiGenerate() {
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
     setAiError("");
@@ -325,7 +325,7 @@ export default function DatabasePageClient({
     } finally {
       setAiLoading(false);
     }
-  }, [aiPrompt, tab.table, modal?.mode, formData]);
+  }
 
   // ─── Render ───────────────────────────────────────────
 

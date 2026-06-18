@@ -124,6 +124,7 @@ export default function StakeholdersPage() {
     } catch { /* silent — fallback to static */ }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadMeta(); }, [loadMeta]);
 
   function displayLastContact(s: Stakeholder): string {

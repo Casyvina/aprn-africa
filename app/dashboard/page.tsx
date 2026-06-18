@@ -2,6 +2,17 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+function lastSeenLabel(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (mins < 2)   return "Active now";
+  if (mins < 60)  return `Last active ${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)   return `Last active ${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `Last active ${days}d ago`;
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -16,18 +27,6 @@ export default async function DashboardPage() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
   const tier = profile?.membership_tier ?? "free";
   const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
-
-  function lastSeenLabel(iso: string | null | undefined): string {
-    if (!iso) return "";
-    const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
-    if (mins < 2)   return "Active now";
-    if (mins < 60)  return `Last active ${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24)   return `Last active ${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    return `Last active ${days}d ago`;
-  }
-
   const lastSeen = lastSeenLabel(profile?.last_seen_at);
 
   return (

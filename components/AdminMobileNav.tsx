@@ -36,6 +36,7 @@ export default function AdminMobileNav({
   const [mounted, setMounted] = useState(false);
 
   // Only render portal after hydration
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
   // Lock body scroll while drawer is open

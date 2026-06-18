@@ -62,6 +62,7 @@ export function useReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false)
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)")
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReduced(mq.matches)
     const handler = (e: MediaQueryListEvent) => setReduced(e.matches)
     mq.addEventListener("change", handler)
@@ -88,6 +89,7 @@ export function useCountUp(
 
   useEffect(() => {
     if (!trigger) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (reducedMotion) { setValue(target); return }
 
     const start = performance.now()

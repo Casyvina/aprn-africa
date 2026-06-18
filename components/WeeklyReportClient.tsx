@@ -211,7 +211,7 @@ export default function WeeklyReportClient({ pastReports }: Props) {
           {!content && !generating && (
             <div className="bg-navy-800 border border-white/5 p-10 text-center">
               <i className="fa-regular fa-newspaper text-3xl text-slate-700 mb-3" />
-              <p className="text-sm text-slate-500">Select a week and hit Generate to pull this week's activity.</p>
+              <p className="text-sm text-slate-500">Select a week and hit Generate to pull this week&apos;s activity.</p>
             </div>
           )}
         </div>

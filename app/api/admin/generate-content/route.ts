@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
-  .map((e) => e.trim())
+  .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
 interface BodyBlock { style: string; text: string }
@@ -48,7 +48,7 @@ async function fetchUrlContext(url: string): Promise<string> {
   }
 }
 
-async function generateHeroImage(title: string, topic: string): Promise<string | null> {
+async function generateHeroImage(title: string, _topic: string): Promise<string | null> {
   if (!process.env.FAL_KEY) return null;
   try {
     const result = await fal.subscribe("fal-ai/flux-pro", {
@@ -71,7 +71,7 @@ async function generateHeroImage(title: string, topic: string): Promise<string |
 export async function POST(req: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !ADMIN_EMAILS.includes(user.email ?? "")) {
+  if (!user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? "")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

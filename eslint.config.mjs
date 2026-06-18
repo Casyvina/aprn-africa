@@ -15,6 +15,16 @@ const eslintConfig = defineConfig([
     // Plugin/tool working directories:
     ".remember/**",
   ]),
+  {
+    rules: {
+      // Allow _ prefix for intentionally unused params/vars (e.g. _req, _topic, _until)
+      "@typescript-eslint/no-unused-vars": ["warn", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      }],
+    },
+  },
 ]);
 
 export default eslintConfig;

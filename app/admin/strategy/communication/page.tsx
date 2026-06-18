@@ -148,6 +148,7 @@ export default function CommunicationStrategyPage() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadData(); }, [loadData]);
 
   // ── Merged channel data ───────────────────────────────────────────────────

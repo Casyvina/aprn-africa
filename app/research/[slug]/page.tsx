@@ -343,11 +343,12 @@ export default async function ResearchReportPage({
 
               {/* Full body */}
               {report.body && report.body.length > 0 && (
-                <PortableText value={report.body} components={lightComponents} />
+                <>
+                  <PortableText value={report.body} components={lightComponents} />
+                  {/* Newsletter prompt — fires when reader reaches the end of the article */}
+                  <NewsletterReadPrompt />
+                </>
               )}
-
-              {/* Newsletter prompt — fires when reader reaches the end of the article */}
-              <NewsletterReadPrompt />
 
             </article>
 
