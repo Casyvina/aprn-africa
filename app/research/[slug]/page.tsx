@@ -5,6 +5,7 @@ import { PortableText, type PortableTextComponents } from "next-sanity";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import TableOfContents from "@/components/TableOfContents";
+import NewsletterReadPrompt from "@/components/NewsletterReadPrompt";
 import { extractHeadings } from "@/lib/extractHeadings";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import {
@@ -344,6 +345,9 @@ export default async function ResearchReportPage({
               {report.body && report.body.length > 0 && (
                 <PortableText value={report.body} components={lightComponents} />
               )}
+
+              {/* Newsletter prompt — fires when reader reaches the end of the article */}
+              <NewsletterReadPrompt />
 
             </article>
 
