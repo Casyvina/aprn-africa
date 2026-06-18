@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { PortableTextRenderer } from "@/components/PortableTextRenderer";
+import NewsletterReadPrompt from "@/components/NewsletterReadPrompt";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import {
   INSIGHT_BY_SLUG_QUERY,
@@ -245,6 +246,9 @@ export default async function ArticlePage({
                   <PortableTextRenderer value={article.body} />
                 </div>
               )}
+
+              {/* Newsletter prompt — fires when reader reaches end of article */}
+              {article.body && article.body.length > 0 && <NewsletterReadPrompt />}
 
               {/* -- Author card (mobile — below body) -- */}
               <div className="lg:hidden mt-12 pt-8 border-t border-navy-800">

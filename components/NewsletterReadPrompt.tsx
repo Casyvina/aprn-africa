@@ -3,18 +3,29 @@
 import { useEffect, useRef, useState } from "react";
 
 const SESSION_KEY = "aprn_newsletter_prompted";
+const MIN_READ_MS = 20_000; // must have been on page ≥ 20s before popup fires
 
 type Stage = "idle" | "visible" | "loading" | "done" | "dismissed";
 
 export default function NewsletterReadPrompt() {
   const sentinelRef  = useRef<HTMLDivElement>(null);
-  const [stage, setStage] = useState<Stage>("idle");
+  const [stage, setStage]           = useState<Stage>("idle");
   const [email, setEmail]           = useState("");
   const [firstName, setFirstName]   = useState("");
   const [error, setError]           = useState<string | null>(null);
 
+  const [reachedEnd, setReachedEnd]       = useState(false);
+  const [minTimePassed, setMinTimePassed] = useState(false);
+
+  // Minimum time guard — prevents instant fire on short/fast-scrolled articles
   useEffect(() => {
-    // Only fire once per session
+    if (sessionStorage.getItem(SESSION_KEY)) return;
+    const t = setTimeout(() => setMinTimePassed(true), MIN_READ_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Scroll sentinel — marks when reader reaches end of article
+  useEffect(() => {
     if (sessionStorage.getItem(SESSION_KEY)) return;
 
     const sentinel = sentinelRef.current;
@@ -23,8 +34,7 @@ export default function NewsletterReadPrompt() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Small delay so it doesn't pop the instant content loads on short articles
-          setTimeout(() => setStage("visible"), 600);
+          setReachedEnd(true);
           observer.disconnect();
         }
       },
@@ -34,6 +44,15 @@ export default function NewsletterReadPrompt() {
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, []);
+
+  // Fire only when BOTH conditions are met
+  useEffect(() => {
+    if (!reachedEnd || !minTimePassed) return;
+    if (sessionStorage.getItem(SESSION_KEY)) return;
+    if (stage !== "idle") return;
+    const t = setTimeout(() => setStage("visible"), 600);
+    return () => clearTimeout(t);
+  }, [reachedEnd, minTimePassed, stage]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
