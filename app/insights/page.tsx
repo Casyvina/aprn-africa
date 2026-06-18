@@ -65,7 +65,7 @@ export default async function InsightsPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+      <main id="main-content" className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 
         {/* -- Hero ------------------------------------------------ */}
         <section className="pt-32 pb-16 px-6 lg:px-12 border-b border-navy-800">

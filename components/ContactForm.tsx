@@ -71,8 +71,9 @@ export default function ContactForm() {
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Full Name</label>
+            <label htmlFor="contact-name" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Full Name</label>
             <input
+              id="contact-name"
               name="name"
               type="text"
               required
@@ -81,8 +82,9 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Organization</label>
+            <label htmlFor="contact-org" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Organization</label>
             <input
+              id="contact-org"
               name="org"
               type="text"
               required
@@ -93,8 +95,9 @@ export default function ContactForm() {
         </div>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Official Email</label>
+            <label htmlFor="contact-email" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Official Email</label>
             <input
+              id="contact-email"
               name="email"
               type="email"
               required
@@ -103,8 +106,9 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Country of Operation</label>
+            <label htmlFor="contact-country" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Country of Operation</label>
             <select
+              id="contact-country"
               name="country"
               className="w-full bg-navy-900 border border-navy-700 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none"
             >
@@ -116,8 +120,9 @@ export default function ContactForm() {
           </div>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Inquiry Type</label>
+          <label htmlFor="contact-type" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Inquiry Type</label>
           <select
+            id="contact-type"
             name="type"
             className="w-full bg-navy-900 border border-navy-700 rounded-sm px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none"
           >
@@ -127,8 +132,9 @@ export default function ContactForm() {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Message</label>
+          <label htmlFor="contact-message" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Message</label>
           <textarea
+            id="contact-message"
             name="message"
             rows={4}
             required

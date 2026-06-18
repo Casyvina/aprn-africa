@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { InsightCard, InsightCategory } from "@/lib/queries/insights";
 import { PAGE_SIZE } from "@/lib/queries/insights";
 import { fetchMoreInsights } from "@/app/actions/insights";
+import SaveButton from "@/components/SaveButton";
 
 // -- Helpers ----------------------------------------------------------------
 
@@ -37,41 +38,47 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
 function InsightCard({ article }: { article: InsightCard }) {
   const meta = categoryMeta[article.category];
   return (
-    <Link
-      href={`/insights/${article.slug}`}
-      className="group glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors rounded-sm overflow-hidden block"
-    >
-      <div
-        className="aspect-video bg-cover bg-center relative bg-navy-800"
-        style={{ backgroundImage: article.heroImage ? `url('${article.heroImage}')` : undefined }}
-      >
-        <div className="absolute inset-0 bg-navy-900/50 group-hover:bg-navy-900/30 transition-colors" />
-        <div className="absolute top-4 left-4">
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-full text-[10px] font-semibold uppercase tracking-wider ${meta.badge}`}>
-            <span className={`w-1 h-1 rounded-full ${meta.dot}`} />
-            {meta.label}
-          </span>
-        </div>
-      </div>
-      <div className="p-6">
-        <h3
-          className="text-lg font-bold mb-3 leading-snug group-hover:text-gold-500 transition-colors"
-          style={{ fontFamily: "var(--font-playfair), serif" }}
+    <article className="group relative glass-panel border border-navy-700 hover:border-gold-500/40 transition-colors rounded-sm overflow-hidden">
+      <Link href={`/insights/${article.slug}`} className="block">
+        <div
+          className="aspect-video bg-cover bg-center relative bg-navy-800"
+          style={{ backgroundImage: article.heroImage ? `url('${article.heroImage}')` : undefined }}
         >
-          {article.title}
-        </h3>
-        <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">{article.excerpt}</p>
-        <div className="flex items-center gap-3 text-[11px] text-slate-500 uppercase tracking-wider border-t border-navy-700 pt-4">
-          <span>{formatDate(article.publishDate)}</span>
-          {article.estimatedReadTime && (
-            <>
-              <span>·</span>
-              <span>{article.estimatedReadTime} min read</span>
-            </>
-          )}
+          <div className="absolute inset-0 bg-navy-900/50 group-hover:bg-navy-900/30 transition-colors" />
+          <div className="absolute top-4 left-4">
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-full text-[10px] font-semibold uppercase tracking-wider ${meta.badge}`}>
+              <span className={`w-1 h-1 rounded-full ${meta.dot}`} />
+              {meta.label}
+            </span>
+          </div>
         </div>
-      </div>
-    </Link>
+        <div className="p-6">
+          <h3
+            className="text-lg font-bold mb-3 leading-snug group-hover:text-gold-500 transition-colors"
+            style={{ fontFamily: "var(--font-playfair), serif" }}
+          >
+            {article.title}
+          </h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-4 line-clamp-3">{article.excerpt}</p>
+          <div className="flex items-center gap-3 text-[11px] text-slate-500 uppercase tracking-wider border-t border-navy-700 pt-4">
+            <span>{formatDate(article.publishDate)}</span>
+            {article.estimatedReadTime && (
+              <>
+                <span>·</span>
+                <span>{article.estimatedReadTime} min read</span>
+              </>
+            )}
+          </div>
+        </div>
+      </Link>
+      <SaveButton
+        itemId={article._id}
+        itemType={article.category}
+        itemSlug={article.slug}
+        itemTitle={article.title}
+        className="absolute top-3 right-3 z-10"
+      />
+    </article>
   );
 }
 

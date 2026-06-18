@@ -51,6 +51,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <AuthProvider>
           <PageTransition>{children}</PageTransition>
         </AuthProvider>

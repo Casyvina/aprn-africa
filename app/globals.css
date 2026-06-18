@@ -44,6 +44,32 @@ body {
   overflow-x: hidden;
 }
 
+/* Keyboard focus indicator — visible on all interactive elements */
+:focus-visible {
+  outline: 2px solid #D4A017;
+  outline-offset: 2px;
+}
+
+/* Skip-to-content link — visually hidden until focused */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: #D4A017;
+  color: #071B2A;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #071B2A; }
 ::-webkit-scrollbar-thumb { background: #15324A; border-radius: 4px; }

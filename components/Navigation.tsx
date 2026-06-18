@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
+const MotionLink = motion(Link);
+
 const navLinks = [
   { href: "/about", label: "About" },
   { href: "/leadership", label: "Leadership" },
@@ -66,19 +68,17 @@ export default function Navigation() {
           {navLinks.map((l) => {
             const isActive = pathname === l.href;
             return (
-              <a
+              <Link
                 key={l.href}
                 href={l.href}
-                className={`group relative py-1.5 transition-colors duration-200 hover:text-gold-500 cursor-pointer ${
+                className={`group relative py-1.5 transition-colors duration-200 hover:text-gold-500 ${
                   isActive ? "text-gold-500" : "text-slate-300"
                 }`}
               >
                 {l.label}
-                {/* Hover underline — only on inactive links */}
                 {!isActive && (
                   <span className="absolute -bottom-0.5 left-0 h-0.5 w-0 rounded-full bg-gold-500/40 transition-[width] duration-200 group-hover:w-full" />
                 )}
-                {/* Active underline via layoutId */}
                 {isActive && (
                   <motion.span
                     layoutId="nav-underline"
@@ -86,7 +86,7 @@ export default function Navigation() {
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
-              </a>
+              </Link>
             );
           })}
         </div>
@@ -160,7 +160,7 @@ export default function Navigation() {
               {navLinks.map((l) => {
                 const isActive = pathname === l.href;
                 return (
-                  <motion.a
+                  <MotionLink
                     key={l.href}
                     href={l.href}
                     onClick={() => setOpen(false)}
@@ -189,7 +189,7 @@ export default function Navigation() {
                         isActive ? "text-gold-500" : "text-navy-700"
                       }`}
                     />
-                  </motion.a>
+                  </MotionLink>
                 );
               })}
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ResearchCharts from "@/components/ResearchCharts";
+import SaveButton from "@/components/SaveButton";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import { RESEARCH_PAGE_QUERY, type ResearchPageResult, type ResearchPageCard } from "@/lib/queries/research";
 
@@ -82,7 +83,7 @@ export default async function ResearchPage() {
   return (
     <>
       <Navigation />
-      <main className="bg-navy-900 text-slate-100">
+      <main id="main-content" className="bg-navy-900 text-slate-100">
 
         {/* -- HERO -------------------------------------------- */}
         <section className="relative min-h-screen flex items-center pt-24 overflow-hidden bg-navy-900">
@@ -180,76 +181,96 @@ export default async function ResearchPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               {/* Main feature */}
-              <Link href={`/research/${featured.slug}`} className="lg:col-span-8 relative group cursor-pointer overflow-hidden rounded-sm bg-navy-800 block">
-                <div className="h-150 w-full relative">
-                  <Image
-                    src="/images/hero-pipeline.jpg"
-                    alt={featured.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 66vw"
-                    className="object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700 mix-blend-luminosity"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/50 to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-8 md:p-12 w-full">
-                    <div className="flex gap-3 mb-4">
-                      <span className="px-3 py-1 bg-gold-500 text-navy-900 text-xs font-bold uppercase tracking-wider"
-                        style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                        {TYPE_LABEL[featured.reportType] ?? "Report"}
-                      </span>
-                      <span
-                        className="px-3 py-1 text-gold-500 text-xs font-bold uppercase tracking-wider"
-                        style={{ background: "rgba(13,36,54,0.4)", backdropFilter: "blur(12px)", border: "1px solid rgba(212,160,23,0.15)", fontFamily: "var(--font-inter), sans-serif" }}
+              <div className="lg:col-span-8 relative group overflow-hidden rounded-sm bg-navy-800">
+                <Link href={`/research/${featured.slug}`} className="block cursor-pointer">
+                  <div className="h-80 sm:h-110 lg:h-150 w-full relative">
+                    <Image
+                      src="/images/hero-pipeline.jpg"
+                      alt={featured.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 66vw"
+                      className="object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700 mix-blend-luminosity"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/50 to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-8 md:p-12 w-full">
+                      <div className="flex gap-3 mb-4">
+                        <span className="px-3 py-1 bg-gold-500 text-navy-900 text-xs font-bold uppercase tracking-wider"
+                          style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                          {TYPE_LABEL[featured.reportType] ?? "Report"}
+                        </span>
+                        <span
+                          className="px-3 py-1 text-gold-500 text-xs font-bold uppercase tracking-wider"
+                          style={{ background: "rgba(13,36,54,0.4)", backdropFilter: "blur(12px)", border: "1px solid rgba(212,160,23,0.15)", fontFamily: "var(--font-inter), sans-serif" }}
+                        >
+                          {formatQuarter(featured.publishDate)}
+                        </span>
+                      </div>
+                      <h3
+                        className="text-3xl md:text-5xl uppercase tracking-tighter text-slate-100 mb-4 leading-tight group-hover:text-gold-500 transition-colors"
+                        style={{ fontFamily: "var(--font-oswald), sans-serif" }}
                       >
-                        {formatQuarter(featured.publishDate)}
-                      </span>
-                    </div>
-                    <h3
-                      className="text-4xl md:text-5xl uppercase tracking-tighter text-slate-100 mb-4 leading-tight group-hover:text-gold-500 transition-colors"
-                      style={{ fontFamily: "var(--font-oswald), sans-serif" }}
-                    >
-                      {featured.title}
-                    </h3>
-                    <p className="text-slate-500 text-lg mb-6 max-w-2xl hidden md:block italic"
-                      style={{ fontFamily: "var(--font-playfair), serif" }}>
-                      {featured.executiveSummary}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm tracking-widest text-gold-500 uppercase"
-                      style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                      {featured.pageCount && <span><i className="fa-regular fa-file-pdf mr-2" />{featured.pageCount} Pages</span>}
-                      {featured.estimatedReadTime && <span><i className="fa-regular fa-clock mr-2" />{featured.estimatedReadTime} Min Read</span>}
+                        {featured.title}
+                      </h3>
+                      <p className="text-slate-500 text-lg mb-6 max-w-2xl hidden md:block italic"
+                        style={{ fontFamily: "var(--font-playfair), serif" }}>
+                        {featured.executiveSummary}
+                      </p>
+                      <div className="flex items-center gap-4 text-sm tracking-widest text-gold-500 uppercase"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                        {featured.pageCount && <span><i className="fa-regular fa-file-pdf mr-2" />{featured.pageCount} Pages</span>}
+                        {featured.estimatedReadTime && <span><i className="fa-regular fa-clock mr-2" />{featured.estimatedReadTime} Min Read</span>}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+                <SaveButton
+                  itemId={featured._id}
+                  itemType="researchReport"
+                  itemSlug={featured.slug}
+                  itemTitle={featured.title}
+                  className="absolute top-4 right-4 z-10"
+                />
+              </div>
 
               {/* Secondary features */}
               <div className="lg:col-span-4 flex flex-col gap-8">
                 {secondary.map((card) => (
-                  <Link
+                  <div
                     key={card._id}
-                    href={`/research/${card.slug}`}
-                    className="flex-1 group cursor-pointer overflow-hidden rounded-sm border border-gold-500/10 bg-navy-800 p-8 flex flex-col justify-end hover:border-gold-500/40 transition-colors"
+                    className="flex-1 relative group flex flex-col overflow-hidden rounded-sm border border-gold-500/10 hover:border-gold-500/40 transition-colors"
                     style={{ background: "linear-gradient(to bottom, #0D2436, #071B2A)" }}
                   >
-                    <span className="text-gold-500 text-xs font-bold uppercase tracking-wider mb-4 block"
-                      style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                      {TYPE_LABEL[card.reportType] ?? "Report"}
-                    </span>
-                    <h4
-                      className="text-2xl uppercase tracking-tighter text-slate-100 mb-3 group-hover:text-gold-500 transition-colors"
-                      style={{ fontFamily: "var(--font-oswald), sans-serif" }}
+                    <Link
+                      href={`/research/${card.slug}`}
+                      className="flex-1 flex flex-col justify-end p-8 cursor-pointer"
                     >
-                      {card.title}
-                    </h4>
-                    <p className="text-slate-500 text-sm mb-6 italic"
-                      style={{ fontFamily: "var(--font-playfair), serif" }}>
-                      {card.executiveSummary}
-                    </p>
-                    <span className="text-xs tracking-widest text-slate-100 uppercase border-b border-gold-500/30 pb-1 self-start"
-                      style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                      Read Report →
-                    </span>
-                  </Link>
+                      <span className="text-gold-500 text-xs font-bold uppercase tracking-wider mb-4 block"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                        {TYPE_LABEL[card.reportType] ?? "Report"}
+                      </span>
+                      <h4
+                        className="text-2xl uppercase tracking-tighter text-slate-100 mb-3 group-hover:text-gold-500 transition-colors"
+                        style={{ fontFamily: "var(--font-oswald), sans-serif" }}
+                      >
+                        {card.title}
+                      </h4>
+                      <p className="text-slate-500 text-sm mb-6 italic"
+                        style={{ fontFamily: "var(--font-playfair), serif" }}>
+                        {card.executiveSummary}
+                      </p>
+                      <span className="text-xs tracking-widest text-slate-100 uppercase border-b border-gold-500/30 pb-1 self-start"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+                        Read Report →
+                      </span>
+                    </Link>
+                    <SaveButton
+                      itemId={card._id}
+                      itemType="researchReport"
+                      itemSlug={card.slug}
+                      itemTitle={card.title}
+                      className="absolute top-4 right-4 z-10"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
