@@ -31,6 +31,11 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
     badge: "bg-copper-500/10 border-copper-500/30 text-copper-500",
     dot: "bg-copper-500",
   },
+  publication: {
+    label: "Publication",
+    badge: "bg-violet-400/10 border-violet-400/30 text-violet-400",
+    dot: "bg-violet-400",
+  },
 };
 
 // -- Card -------------------------------------------------------------------

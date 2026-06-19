@@ -2,7 +2,7 @@ import { groq } from 'next-sanity'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-export type InsightCategory = 'intelligence' | 'research' | 'editorial'
+export type InsightCategory = 'intelligence' | 'research' | 'editorial' | 'publication'
 
 export interface InsightCard {
   _id: string
@@ -33,13 +33,14 @@ const CARD_FIELDS = groq`
   "slug": slug.current,
   "category": select(
     _type == "editorialInsight" => "editorial",
+    _type == "publication"      => "publication",
     reportType == "briefing"    => "intelligence",
     "research"
   ),
   featured,
   title,
   subtitle,
-  "excerpt": coalesce(excerpt, executiveSummary),
+  "excerpt": coalesce(excerpt, executiveSummary, summary),
   publishDate,
   estimatedReadTime,
   "heroImage": coalesce(heroImage.asset->url, coverImage.asset->url),
@@ -53,21 +54,21 @@ export const PAGE_SIZE = 9
 
 /** Initial page of insights — featured (1) + grid (PAGE_SIZE) */
 export const ALL_INSIGHTS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight"]] | order(publishDate desc) [0...${PAGE_SIZE + 1}] {
+  *[_type in ["researchReport", "editorialInsight", "publication"]] | order(publishDate desc) [0...${PAGE_SIZE + 1}] {
     ${CARD_FIELDS}
   }
 `
 
 /** Load-more batch — called from server action with $start / $end */
 export const MORE_INSIGHTS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight"]] | order(publishDate desc) [$start...$end] {
+  *[_type in ["researchReport", "editorialInsight", "publication"]] | order(publishDate desc) [$start...$end] {
     ${CARD_FIELDS}
   }
 `
 
 /** Full article detail for /insights/[slug] */
 export const INSIGHT_BY_SLUG_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight"] && slug.current == $slug][0] {
+  *[_type in ["researchReport", "editorialInsight", "publication"] && slug.current == $slug][0] {
     ${CARD_FIELDS}
     keyInsights[]{ value, label, icon },
     body,
@@ -77,13 +78,13 @@ export const INSIGHT_BY_SLUG_QUERY = groq`
 
 /** Static params — all slugs for generateStaticParams */
 export const INSIGHT_SLUGS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight"]]{ "slug": slug.current }
+  *[_type in ["researchReport", "editorialInsight", "publication"]]{ "slug": slug.current }
 `
 
 /** Related articles for the sidebar (excludes current slug) */
 export const RELATED_INSIGHTS_QUERY = groq`
   *[
-    _type in ["researchReport", "editorialInsight"]
+    _type in ["researchReport", "editorialInsight", "publication"]
     && slug.current != $slug
   ] | order(publishDate desc) [0...3] {
     ${CARD_FIELDS}
