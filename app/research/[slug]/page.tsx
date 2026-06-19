@@ -8,9 +8,11 @@ import TableOfContents from "@/components/TableOfContents";
 import NewsletterReadPrompt from "@/components/NewsletterReadPrompt";
 import { extractHeadings } from "@/lib/extractHeadings";
 import { sanityFetch } from "@/lib/sanity/fetch";
+import type { Metadata } from "next";
 import {
   RESEARCH_BY_SLUG_QUERY,
   RESEARCH_SLUGS_QUERY,
+  RESEARCH_META_QUERY,
   type ResearchReportDetail,
   type RelatedResearchCard,
 } from "@/lib/queries/research";
@@ -153,6 +155,44 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   } catch {
     return [];
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const report = await sanityFetch<{ title: string; executiveSummary?: string; coverImageUrl?: string } | null>(
+    RESEARCH_META_QUERY,
+    { slug },
+    ["researchReport"],
+  );
+  if (!report) return {};
+
+  const title = report.title;
+  const description = report.executiveSummary?.slice(0, 160) ?? "Research report from APRN Africa.";
+  const imageUrl = report.coverImageUrl
+    ? `${report.coverImageUrl}?w=1200&h=630&fit=crop&auto=format`
+    : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `https://aprn-africa.org/research/${slug}`,
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : [],
+    },
+  };
 }
 
 // -- Page ----------------------------------------------------------------------

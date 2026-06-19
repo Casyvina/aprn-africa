@@ -70,6 +70,14 @@ export const RESEARCH_SLUGS_QUERY = groq`
   *[_type == "researchReport"]{ "slug": slug.current }
 `
 
+export const RESEARCH_META_QUERY = groq`
+  *[_type == "researchReport" && slug.current == $slug][0] {
+    title,
+    executiveSummary,
+    "coverImageUrl": coverImage.asset->url,
+  }
+`
+
 // ── Homepage section ──────────────────────────────────────────────────────────
 
 export interface HomepageResearchCard {

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { PortableTextRenderer } from "@/components/PortableTextRenderer";
@@ -8,6 +9,7 @@ import { sanityFetch } from "@/lib/sanity/fetch";
 import {
   INSIGHT_BY_SLUG_QUERY,
   INSIGHT_SLUGS_QUERY,
+  INSIGHT_META_QUERY,
   RELATED_INSIGHTS_QUERY,
   type InsightDetail,
   type InsightCard,
@@ -49,7 +51,7 @@ const categoryMeta: Record<InsightCategory, { label: string; badge: string; dot:
   },
 };
 
-// -- Static params -------------------------------------------------------------
+// -- Static params + metadata --------------------------------------------------
 
 export const dynamicParams = true;
 
@@ -60,6 +62,44 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   } catch {
     return [];
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await sanityFetch<{ title: string; excerpt?: string; heroImage?: string } | null>(
+    INSIGHT_META_QUERY,
+    { slug },
+    ["researchReport", "editorialInsight", "publication"],
+  );
+  if (!article) return {};
+
+  const title = article.title;
+  const description = article.excerpt?.slice(0, 160) ?? "Insight from APRN Africa.";
+  const imageUrl = article.heroImage
+    ? `${article.heroImage}?w=1200&h=630&fit=crop&auto=format`
+    : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `https://aprn-africa.org/insights/${slug}`,
+      images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : [],
+    },
+  };
 }
 
 // -- Page ----------------------------------------------------------------------

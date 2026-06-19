@@ -83,6 +83,15 @@ export const INSIGHT_SLUGS_QUERY = groq`
   *[_type in ["researchReport", "editorialInsight", "publication"]]{ "slug": slug.current }
 `
 
+/** Lightweight fetch for generateMetadata — no body */
+export const INSIGHT_META_QUERY = groq`
+  *[_type in ["researchReport", "editorialInsight", "publication"] && slug.current == $slug][0] {
+    title,
+    "excerpt": coalesce(excerpt, executiveSummary, summary),
+    "heroImage": coalesce(heroImage.asset->url, coverImage.asset->url),
+  }
+`
+
 /** Related articles for the sidebar (excludes current slug) */
 export const RELATED_INSIGHTS_QUERY = groq`
   *[
