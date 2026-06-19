@@ -51,11 +51,22 @@ export const publication = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'subtitle',
+      title: 'Subtitle',
+      type: 'string',
+      description: 'One-line framing shown under the title.',
+    }),
+    defineField({
       name: 'summary',
       title: 'Summary',
       type: 'text',
       rows: 3,
       validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'estimatedReadTime',
+      title: 'Estimated Read Time (minutes)',
+      type: 'number',
     }),
     defineField({
       name: 'body',

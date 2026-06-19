@@ -92,7 +92,9 @@ function buildPublicationPrompt(params: {
 
   const jsonShape = `{
   "title": "Precise headline (max 80 chars)",
+  "subtitle": "One-line framing or context (max 120 chars)",
   "summary": "Two-sentence summary of the piece (max 300 chars)",
+  "estimatedReadTime": 4,
   "body": [
     { "style": "normal", "text": "Opening paragraph..." },
     { "style": "h2", "text": "Section Heading" },
@@ -380,7 +382,9 @@ export async function POST(req: Request) {
       _type: "publication",
       title: generated.title,
       slug: { _type: "slug", current: slug },
+      subtitle: generated.subtitle ?? "",
       summary: generated.summary ?? "",
+      estimatedReadTime: generated.estimatedReadTime ?? 4,
       body,
       publicationType: pubType ?? "op-ed",
       publishDate: today,
