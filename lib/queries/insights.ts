@@ -17,6 +17,7 @@ export interface InsightCard {
   heroImage?: string
   authorName: string
   authorRole: string
+  authorImage?: string
 }
 
 export interface InsightDetail extends InsightCard {
@@ -46,6 +47,7 @@ const CARD_FIELDS = groq`
   "heroImage": coalesce(heroImage.asset->url, coverImage.asset->url),
   "authorName": coalesce(author->name, authors[0]->name, "APRN Intelligence Desk"),
   "authorRole": coalesce(author->title, authors[0]->title, "APRN Research Team"),
+  "authorImage": coalesce(author->photo.asset->url, authors[0]->photo.asset->url),
 `
 
 // ── Queries ───────────────────────────────────────────────────────────────────

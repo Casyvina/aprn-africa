@@ -167,8 +167,17 @@ export default async function ArticlePage({
 
               {/* Author row */}
               <div className="flex items-center gap-3 pt-6 border-t border-white/10">
-                <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 flex items-center justify-center shrink-0">
-                  <i className="fa-solid fa-user text-gold-500 text-sm" />
+                <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 overflow-hidden shrink-0 flex items-center justify-center">
+                  {article.authorImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={article.authorImage}
+                      alt={article.authorName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <i className="fa-solid fa-user text-gold-500 text-sm" />
+                  )}
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-white">{article.authorName}</div>
