@@ -35,28 +35,24 @@ export async function GET() {
     metaMap[row.doc_id as string] = row;
   });
 
-  const docs = await Promise.all(
-    (files ?? [])
-      .filter((f) => f.name !== ".emptyFolderPlaceholder")
-      .map(async (f) => {
-        const storagePath = `${FOLDER}/${f.name}`;
-        const { data: urlData } = await admin.storage.from(BUCKET).createSignedUrl(storagePath, 3600);
-        const m = metaMap[storagePath] ?? {};
-        return {
-          id: storagePath,
-          filename: f.name,
-          storagePath,
-          signedUrl: urlData?.signedUrl ?? null,
-          size: (f.metadata?.size as number) ?? 0,
-          created_at: f.created_at ?? null,
-          display_name: m.display_name ?? f.name,
-          description: m.description ?? "",
-          version: m.version ?? "",
-          doc_date: m.doc_date ?? "",
-          person: m.notes ?? "",
-        };
-      })
-  );
+  const docs = (files ?? [])
+    .filter((f) => f.name !== ".emptyFolderPlaceholder")
+    .map((f) => {
+      const storagePath = `${FOLDER}/${f.name}`;
+      const m = metaMap[storagePath] ?? {};
+      return {
+        id: storagePath,
+        filename: f.name,
+        storagePath,
+        size: (f.metadata?.size as number) ?? 0,
+        created_at: f.created_at ?? null,
+        display_name: m.display_name ?? f.name,
+        description: m.description ?? "",
+        version: m.version ?? "",
+        doc_date: m.doc_date ?? "",
+        person: m.notes ?? "",
+      };
+    });
 
   return Response.json({ docs });
 }
@@ -92,8 +88,7 @@ export async function POST(req: NextRequest) {
     updated_at: new Date().toISOString(),
   }, { onConflict: "doc_id" });
 
-  const { data: urlData } = await admin.storage.from(BUCKET).createSignedUrl(storagePath, 3600);
-  return Response.json({ storagePath, signedUrl: urlData?.signedUrl ?? null });
+  return Response.json({ storagePath });
 }
 
 export async function DELETE(req: NextRequest) {

@@ -6,7 +6,6 @@ interface PersonnelDoc {
   id: string;
   filename: string;
   storagePath: string;
-  signedUrl: string | null;
   size: number;
   display_name: string;
   description: string;

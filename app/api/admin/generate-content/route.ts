@@ -80,6 +80,79 @@ async function fetchUrlContext(url: string): Promise<{ text: string; ok: boolean
   }
 }
 
+function buildPublicationPrompt(params: {
+  pubType: string;
+  topic: string;
+  angle?: string;
+  keyPoints?: string;
+  urlContext: string;
+}): string {
+  const { pubType, topic, angle, keyPoints, urlContext } = params;
+  const hasSource = urlContext.length > 200;
+
+  const jsonShape = `{
+  "title": "Precise headline (max 80 chars)",
+  "summary": "Two-sentence summary of the piece (max 300 chars)",
+  "body": [
+    { "style": "normal", "text": "Opening paragraph..." },
+    { "style": "h2", "text": "Section Heading" },
+    { "style": "normal", "text": "..." }
+  ]
+}`;
+
+  const toneMap: Record<string, string> = {
+    "op-ed":          "a direct, argued op-ed — thesis-first, evidenced, calls for action",
+    "position-paper": "a formal position paper — structured argument with stated position, evidence, and policy recommendations",
+    "technical-note": "a concise technical note — precise, specific, oriented to practitioners",
+    "event-summary":  "a factual event summary — who, what, what happened, significance, what comes next",
+    "press-release":  "a professional press release — announcement lead, supporting details, boilerplate close",
+    "commentary":     "an analytical commentary — reasoned perspective on a recent development",
+    "interview":      "a formatted Q&A interview — questions bold-style (Q:), answers as paragraphs (A:)",
+  };
+  const tone = toneMap[pubType] ?? `a ${pubType.replace(/-/g, " ")}`;
+
+  if (hasSource) {
+    return `You are writing for APRN Africa — a professional platform for pipeline engineering and energy sector professionals.
+
+Write ${tone}.
+
+REFERENCE MATERIAL (ground the piece in specific details from this source):
+"""
+${urlContext}
+"""
+
+Topic: ${topic}
+Angle: ${angle || "Key implications and professional perspective"}
+Cover: ${keyPoints || "The most important points from the source material"}
+
+- Open with a specific fact, figure, or event from the reference — not a generic statement
+- Target audience: pipeline engineers, energy managers, and policy professionals in Africa
+- Body: 400–600 words total
+
+Respond with ONLY valid JSON — no markdown fences, no explanation:
+${jsonShape}
+
+No text outside the JSON object.`;
+  }
+
+  return `You are writing for APRN Africa — a professional platform for pipeline engineering and energy sector professionals.
+
+Write ${tone}.
+
+Topic: ${topic}
+Angle: ${angle || "Key implications and professional perspective"}
+Cover: ${keyPoints || "The most important points on this topic"}
+
+- Reference specific African infrastructure projects, regulatory bodies, or documented events by name
+- Target audience: pipeline engineers, energy managers, and policy professionals in Africa
+- Body: 400–600 words total
+
+Respond with ONLY valid JSON — no markdown fences, no explanation:
+${jsonShape}
+
+No text outside the JSON object.`;
+}
+
 function buildPrompt(params: {
   isResearch: boolean;
   topic: string;
@@ -238,8 +311,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { type, topic, angle, keyPoints, url } = await req.json() as {
-    type: "editorialInsight" | "researchReport";
+  const { type, pubType, topic, angle, keyPoints, url } = await req.json() as {
+    type: "editorialInsight" | "researchReport" | "publication";
+    pubType?: string;
     topic: string;
     angle?: string;
     keyPoints?: string;
@@ -249,6 +323,7 @@ export async function POST(req: Request) {
   if (!topic) return NextResponse.json({ error: "topic is required" }, { status: 400 });
 
   const isResearch = type === "researchReport";
+  const isPublication = type === "publication";
 
   let urlContextText = "";
   let urlContextUsed = false;
@@ -264,13 +339,15 @@ export async function POST(req: Request) {
     }
   }
 
-  const prompt = buildPrompt({ isResearch, topic, angle, keyPoints, urlContext: urlContextText });
+  const prompt = isPublication
+    ? buildPublicationPrompt({ pubType: pubType ?? "op-ed", topic, angle, keyPoints, urlContext: urlContextText })
+    : buildPrompt({ isResearch, topic, angle, keyPoints, urlContext: urlContextText });
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
   const message = await anthropic.messages.create({
     model: "claude-opus-4-6",
-    max_tokens: 4096,
+    max_tokens: 8192,
     messages: [{ role: "user", content: prompt }],
   });
 
@@ -284,6 +361,7 @@ export async function POST(req: Request) {
     title: string;
     subtitle?: string;
     excerpt?: string;
+    summary?: string;
     executiveSummary?: string;
     pullQuote?: string;
     estimatedReadTime?: number;
@@ -295,36 +373,53 @@ export async function POST(req: Request) {
   const today = new Date().toISOString().slice(0, 10);
   const body = toPortableText(generated.body ?? []);
 
+  let sanityWrite: Promise<unknown>;
+  if (isPublication) {
+    sanityWrite = writeClient.createOrReplace<Record<string, unknown>>({
+      _id: docId,
+      _type: "publication",
+      title: generated.title,
+      slug: { _type: "slug", current: slug },
+      summary: generated.summary ?? "",
+      body,
+      publicationType: pubType ?? "op-ed",
+      publishDate: today,
+      featured: false,
+    });
+  } else if (isResearch) {
+    sanityWrite = writeClient.createOrReplace<Record<string, unknown>>({
+      _id: docId,
+      _type: "researchReport",
+      title: generated.title,
+      slug: { _type: "slug", current: slug },
+      subtitle: generated.subtitle ?? "",
+      executiveSummary: generated.executiveSummary ?? "",
+      pullQuote: generated.pullQuote ?? "",
+      body,
+      reportType: "working-paper",
+      publishDate: today,
+      estimatedReadTime: generated.estimatedReadTime ?? 10,
+      featured: false,
+    });
+  } else {
+    sanityWrite = writeClient.createOrReplace<Record<string, unknown>>({
+      _id: docId,
+      _type: "editorialInsight",
+      title: generated.title,
+      slug: { _type: "slug", current: slug },
+      subtitle: generated.subtitle ?? "",
+      excerpt: generated.excerpt ?? "",
+      pullQuote: generated.pullQuote ?? "",
+      body,
+      publishDate: today,
+      estimatedReadTime: generated.estimatedReadTime ?? 8,
+      featured: false,
+    });
+  }
+
   // Run Sanity write and Fal.ai image gen in parallel
   const [, imageUrl] = await Promise.all([
-    isResearch
-      ? writeClient.createOrReplace<Record<string, unknown>>({
-          _id: docId,
-          _type: "researchReport",
-          title: generated.title,
-          slug: { _type: "slug", current: slug },
-          subtitle: generated.subtitle ?? "",
-          executiveSummary: generated.executiveSummary ?? "",
-          pullQuote: generated.pullQuote ?? "",
-          body,
-          reportType: "working-paper",
-          publishDate: today,
-          estimatedReadTime: generated.estimatedReadTime ?? 10,
-          featured: false,
-        })
-      : writeClient.createOrReplace<Record<string, unknown>>({
-          _id: docId,
-          _type: "editorialInsight",
-          title: generated.title,
-          slug: { _type: "slug", current: slug },
-          subtitle: generated.subtitle ?? "",
-          excerpt: generated.excerpt ?? "",
-          pullQuote: generated.pullQuote ?? "",
-          body,
-          publishDate: today,
-          estimatedReadTime: generated.estimatedReadTime ?? 8,
-          featured: false,
-        }),
+    sanityWrite,
     generateHeroImage(generated.title, topic),
   ]);
 

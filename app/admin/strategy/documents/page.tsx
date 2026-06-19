@@ -20,6 +20,7 @@ interface DocEntry {
   filename: string;
   canView: boolean;
   notes: string;
+  inCloud: boolean;
 }
 
 interface MetaRow {
@@ -84,7 +85,6 @@ function guessCategory(ext: string): DocCategory {
 
 export default function DocumentLibraryPage() {
   const [docs, setDocs]           = useState<DocEntry[]>([]);
-  const [storageUrls, setStorageUrls] = useState<Record<string, string>>({});
   const [loadingDocs, setLoadingDocs] = useState(true);
   const [search, setSearch]       = useState("");
   const [category, setCategory]   = useState<DocCategory | "All">("All");
@@ -124,12 +124,10 @@ export default function DocumentLibraryPage() {
         fetch("/api/admin/documents"),
         fetch("/api/admin/documents/meta"),
       ]);
-      const { files } = await storageRes.json() as { files: Array<{ filename: string; signedUrl: string | null }> };
+      const { files } = await storageRes.json() as { files: Array<{ filename: string; inCloud: boolean }> };
       const { meta } = await metaRes.json() as { meta: Record<string, MetaRow> };
 
-      const urlMap: Record<string, string> = {};
       const docList: DocEntry[] = (files ?? []).map((f) => {
-        if (f.signedUrl) urlMap[f.filename] = f.signedUrl;
         const m = meta?.[f.filename];
         const ext = (f.filename.split(".").pop() ?? "").toUpperCase() || "FILE";
         return {
@@ -144,13 +142,13 @@ export default function DocumentLibraryPage() {
           filename: f.filename,
           canView: ["HTML", "PPTX", "DOCX", "XLSX"].includes(ext),
           notes: m?.notes ?? "",
+          inCloud: f.inCloud ?? true,
         };
       });
 
       // Deduplicate by filename in case storage returns the same file twice
       const docMap = new Map(docList.map((d) => [d.id, d]));
       setDocs(Array.from(docMap.values()));
-      setStorageUrls(urlMap);
     } catch {
       // non-fatal — show empty state
     } finally {
@@ -162,19 +160,13 @@ export default function DocumentLibraryPage() {
   useEffect(() => { loadDocs(); }, [loadDocs]);
 
   function getDocUrl(doc: DocEntry): string | null {
-    if (!storageUrls[doc.filename]) return null;
+    if (!doc.inCloud) return null;
     return `/api/admin/documents/download?filename=${encodeURIComponent(doc.filename)}`;
   }
 
   function getViewUrl(doc: DocEntry): string | null {
-    if (!doc.canView || !storageUrls[doc.filename]) return null;
-    if (doc.format === "HTML") {
-      return `/api/admin/documents/view?filename=${encodeURIComponent(doc.filename)}`;
-    }
-    if (["PPTX", "DOCX", "XLSX"].includes(doc.format)) {
-      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(storageUrls[doc.filename])}`;
-    }
-    return null;
+    if (!doc.canView || !doc.inCloud) return null;
+    return `/api/admin/documents/view?filename=${encodeURIComponent(doc.filename)}`;
   }
 
   const filtered = docs.filter((d) => {
@@ -195,7 +187,7 @@ export default function DocumentLibraryPage() {
     setDeleteError(null);
     try {
       // Remove from Supabase Storage if it's there
-      if (storageUrls[deletingDoc.filename]) {
+      if (deletingDoc.inCloud) {
         const res = await fetch(`/api/admin/documents?filename=${encodeURIComponent(deletingDoc.filename)}`, { method: "DELETE" });
         if (!res.ok) {
           const { error } = await res.json() as { error: string };
@@ -206,7 +198,6 @@ export default function DocumentLibraryPage() {
       await fetch(`/api/admin/documents/meta?filename=${encodeURIComponent(deletingDoc.filename)}`, { method: "DELETE" });
       // Always remove from state
       setDocs((prev) => prev.filter((d) => d.id !== deletingDoc.id));
-      setStorageUrls((prev) => { const next = { ...prev }; delete next[deletingDoc.filename]; return next; });
       setDeletingDoc(null);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : "Delete failed");
@@ -308,10 +299,7 @@ export default function DocumentLibraryPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ filename: editDoc.filename, content: aiPreviewHtml }),
       });
-      const { signedUrl } = await res.json() as { signedUrl: string | null };
-      if (signedUrl) {
-        setStorageUrls((prev) => ({ ...prev, [editDoc.filename]: signedUrl }));
-      }
+      await res.json();
       setAiSaved(true);
       setAiPreviewHtml("");
       setAiInstruction("");
@@ -384,8 +372,8 @@ export default function DocumentLibraryPage() {
   }
 
   function copyLink(doc: DocEntry) {
-    const url = storageUrls[doc.filename];
-    if (!url) return;
+    if (!doc.inCloud) return;
+    const url = `${window.location.origin}/api/admin/documents/download?filename=${encodeURIComponent(doc.filename)}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopiedId(doc.id);
       setTimeout(() => setCopiedId(null), 2500);
@@ -402,7 +390,7 @@ export default function DocumentLibraryPage() {
       const formData = new FormData();
       formData.append("file", file);
       const res = await fetch("/api/admin/documents", { method: "POST", body: formData });
-      const { filename, signedUrl, error } = await res.json() as { filename: string; signedUrl: string; error?: string };
+      const { filename, error } = await res.json() as { filename: string; error?: string };
       if (error) throw new Error(error);
       const ext = (file.name.split(".").pop() ?? "").toUpperCase() || "FILE";
       const cleanName = filenameToName(file.name);
@@ -436,6 +424,7 @@ export default function DocumentLibraryPage() {
         filename,
         canView: ["HTML", "PPTX", "DOCX", "XLSX"].includes(ext),
         notes: "",
+        inCloud: true,
       };
       // Replace if already present (re-upload), otherwise prepend
       setDocs((prev) =>
@@ -443,7 +432,6 @@ export default function DocumentLibraryPage() {
           ? prev.map((d) => (d.id === filename ? newDoc : d))
           : [newDoc, ...prev]
       );
-      if (signedUrl) setStorageUrls((prev) => ({ ...prev, [filename]: signedUrl }));
     } catch {
       // silent — user can retry
     } finally {
@@ -454,7 +442,7 @@ export default function DocumentLibraryPage() {
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
-  const cloudCount = Object.keys(storageUrls).length;
+  const cloudCount = docs.filter((d) => d.inCloud).length;
 
   return (
     <div className="flex flex-col gap-6 max-w-6xl">
@@ -570,8 +558,7 @@ export default function DocumentLibraryPage() {
               doc={doc}
               docUrl={getDocUrl(doc)}
               viewUrl={getViewUrl(doc)}
-              signedUrl={storageUrls[doc.filename] ?? null}
-              inCloud={!!storageUrls[doc.filename]}
+              inCloud={doc.inCloud}
               summary={summaries[doc.id]}
               isLoading={loadingId === doc.id}
               copied={copiedId === doc.id}
@@ -618,7 +605,7 @@ export default function DocumentLibraryPage() {
                   <td className="px-4 py-3 text-xs text-slate-500">{doc.version}</td>
                   <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">{doc.date}</td>
                   <td className="px-4 py-3">
-                    {storageUrls[doc.filename]
+                    {doc.inCloud
                       ? <span className="text-[10px] text-emerald-400"><i className="fa-solid fa-cloud text-[9px] mr-1" />Cloud</span>
                       : <span className="text-[10px] text-slate-600">Not synced</span>
                     }
@@ -627,7 +614,7 @@ export default function DocumentLibraryPage() {
                     <ListRowMenu
                       docUrl={getDocUrl(doc)}
                       viewUrl={getViewUrl(doc)}
-                      signedUrl={storageUrls[doc.filename] ?? null}
+                      inCloud={doc.inCloud}
                       filename={doc.filename}
                       canView={doc.canView}
                       aiLoading={loadingId === doc.id}
@@ -659,7 +646,7 @@ export default function DocumentLibraryPage() {
               </div>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed mb-2">
-              {storageUrls[deletingDoc.filename]
+              {deletingDoc.inCloud
                 ? "This will permanently remove the file from cloud storage and cannot be undone."
                 : "This will remove the document from the library."}
             </p>
@@ -696,7 +683,7 @@ export default function DocumentLibraryPage() {
       {copiedId && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-navy-700 border border-emerald-500/30 text-xs text-emerald-400 shadow-2xl pointer-events-none">
           <i className="fa-solid fa-check text-[10px]" />
-          Link copied — expires in 1 hour
+          Download link copied
         </div>
       )}
 
@@ -810,7 +797,7 @@ export default function DocumentLibraryPage() {
                   <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">File Info</p>
                   <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
                     <span>Format: <span className="text-white">{editDoc.format}</span></span>
-                    <span>Storage: <span className={storageUrls[editDoc.filename] ? "text-emerald-400" : "text-slate-500"}>{storageUrls[editDoc.filename] ? "Cloud" : "Not synced"}</span></span>
+                    <span>Storage: <span className={editDoc.inCloud ? "text-emerald-400" : "text-slate-500"}>{editDoc.inCloud ? "Cloud" : "Not synced"}</span></span>
                     <span className="col-span-2 truncate">File: <span className="text-white">{editDoc.filename}</span></span>
                   </div>
                 </div>
@@ -916,12 +903,11 @@ export default function DocumentLibraryPage() {
 // ── DocCard ───────────────────────────────────────────────────────────────────
 
 function DocCard({
-  doc, docUrl, viewUrl, signedUrl, inCloud, summary, isLoading, copied, onSummarise, onEdit, onDelete, onCopyLink,
+  doc, docUrl, viewUrl, inCloud, summary, isLoading, copied, onSummarise, onEdit, onDelete, onCopyLink,
 }: {
   doc: DocEntry;
   docUrl: string | null;
   viewUrl: string | null;
-  signedUrl: string | null;
   inCloud: boolean;
   summary?: string;
   isLoading: boolean;
@@ -1000,7 +986,7 @@ function DocCard({
                 <i className={`fa-solid fa-wand-magic-sparkles w-3.5 text-center text-gold-500/70 ${isLoading ? "animate-spin" : ""}`} />
                 {isLoading ? "Summarising…" : summary ? "Re-summarise" : "Summarise"}
               </button>
-              {signedUrl && (
+              {inCloud && (
                 <button
                   onClick={() => { onCopyLink(); setMenuOpen(false); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors"
@@ -1089,11 +1075,11 @@ function DocCard({
 // ── ListRowMenu ───────────────────────────────────────────────────────────────
 
 function ListRowMenu({
-  docUrl, viewUrl, signedUrl, filename, canView, aiLoading, copied, onSummarise, onEdit, onDelete, onCopyLink,
+  docUrl, viewUrl, inCloud, filename, canView, aiLoading, copied, onSummarise, onEdit, onDelete, onCopyLink,
 }: {
   docUrl: string | null;
   viewUrl: string | null;
-  signedUrl: string | null;
+  inCloud: boolean;
   filename: string;
   canView: boolean;
   aiLoading: boolean;
@@ -1147,7 +1133,7 @@ function ListRowMenu({
               <i className={`fa-solid fa-wand-magic-sparkles w-3 text-center text-gold-500/70 ${aiLoading ? "animate-spin" : ""}`} />
               {aiLoading ? "Working…" : "Summarise"}
             </button>
-            {signedUrl && (
+            {inCloud && (
               <button onClick={() => { onCopyLink(); setOpen(false); }}
                 className="w-full flex items-center gap-2 px-3 py-2 text-xs text-slate-300 hover:bg-navy-600 hover:text-white transition-colors">
                 <i className={`fa-solid ${copied ? "fa-check" : "fa-link"} w-3 text-center ${copied ? "text-emerald-400" : "text-slate-400"}`} />

@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 
-type ContentType = "editorialInsight" | "researchReport";
+type ContentType = "editorialInsight" | "researchReport" | "publication";
+
+type PublicationType = "op-ed" | "position-paper" | "technical-note" | "event-summary" | "press-release" | "commentary" | "interview";
 
 const TYPE_OPTIONS: { value: ContentType; label: string; desc: string; icon: string }[] = [
   {
@@ -18,6 +20,22 @@ const TYPE_OPTIONS: { value: ContentType; label: string; desc: string; icon: str
     desc: "Data-driven working paper or policy brief",
     icon: "fa-flask",
   },
+  {
+    value: "publication",
+    label: "Publication",
+    desc: "Op-ed, position paper, technical note, or press release",
+    icon: "fa-newspaper",
+  },
+];
+
+const PUB_TYPE_OPTIONS: { value: PublicationType; label: string }[] = [
+  { value: "op-ed",          label: "Op-Ed" },
+  { value: "position-paper", label: "Position Paper" },
+  { value: "technical-note", label: "Technical Note" },
+  { value: "event-summary",  label: "Event Summary" },
+  { value: "press-release",  label: "Press Release" },
+  { value: "commentary",     label: "Commentary" },
+  { value: "interview",      label: "Interview" },
 ];
 
 interface GenerateResult {
@@ -31,6 +49,7 @@ interface GenerateResult {
 
 export default function GenerateContentPage() {
   const [type, setType]           = useState<ContentType>("editorialInsight");
+  const [pubType, setPubType]     = useState<PublicationType>("op-ed");
   const [topic, setTopic]         = useState("");
   const [angle, setAngle]         = useState("");
   const [keyPoints, setKeyPoints] = useState("");
@@ -50,7 +69,14 @@ export default function GenerateContentPage() {
     const res = await fetch("/api/admin/generate-content", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, topic, angle, keyPoints, url: url.trim() || undefined }),
+      body: JSON.stringify({
+        type,
+        pubType: type === "publication" ? pubType : undefined,
+        topic,
+        angle,
+        keyPoints,
+        url: url.trim() || undefined,
+      }),
     });
 
     const data = await res.json();
@@ -132,7 +158,7 @@ export default function GenerateContentPage() {
                 Open Studio
               </a>
               <button
-                onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); setUrl(""); }}
+                onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); setUrl(""); setPubType("op-ed"); }}
                 className="px-4 py-2.5 border border-white/10 text-xs text-slate-400 hover:text-white hover:border-white/20 transition-colors"
               >
                 Generate Another
@@ -189,7 +215,7 @@ export default function GenerateContentPage() {
             <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-3">
               Content Type
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               {TYPE_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
@@ -212,6 +238,31 @@ export default function GenerateContentPage() {
               ))}
             </div>
           </div>
+
+          {/* Publication sub-type (only when Publication is selected) */}
+          {type === "publication" && (
+            <div>
+              <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
+                Publication Type <span className="text-red-400">*</span>
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {PUB_TYPE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setPubType(opt.value)}
+                    className={`px-3 py-1.5 border text-xs font-semibold transition-colors ${
+                      pubType === opt.value
+                        ? "bg-gold-500/15 border-gold-500/50 text-gold-400"
+                        : "bg-navy-800 border-white/10 text-slate-400 hover:text-white hover:border-white/20"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* URL input */}
           <div>

@@ -37,7 +37,5 @@ export async function PUT(req: NextRequest) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 
-  // Return a fresh signed URL so the client can update its view link immediately
-  const { data: urlData } = await admin.storage.from(BUCKET).createSignedUrl(filename, 3600);
-  return Response.json({ success: true, signedUrl: urlData?.signedUrl ?? null });
+  return Response.json({ success: true });
 }

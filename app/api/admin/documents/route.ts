@@ -31,18 +31,13 @@ export async function GET() {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 
-  const files = await Promise.all(
-    (data ?? [])
-      .filter((f) => f.name !== ".emptyFolderPlaceholder")
-      .map(async (f) => {
-        const { data: urlData } = await admin.storage.from(BUCKET).createSignedUrl(f.name, 3600);
-        return {
-          filename: f.name,
-          signedUrl: urlData?.signedUrl ?? null,
-          size: f.metadata?.size ?? 0,
-        };
-      })
-  );
+  const files = (data ?? [])
+    .filter((f) => f.name !== ".emptyFolderPlaceholder")
+    .map((f) => ({
+      filename: f.name,
+      inCloud: true,
+      size: f.metadata?.size ?? 0,
+    }));
 
   return Response.json({ files });
 }
@@ -72,8 +67,7 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 
-  const { data: urlData } = await admin.storage.from(BUCKET).createSignedUrl(file.name, 3600);
-  return Response.json({ filename: file.name, signedUrl: urlData?.signedUrl ?? null });
+  return Response.json({ filename: file.name });
 }
 
 /** DELETE — remove a file from storage (?filename=xxx) */
