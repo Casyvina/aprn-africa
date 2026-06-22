@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_research_suggestions: {
+        Row: {
+          created_at: string
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_context: string | null
+          status: string
+          suggested_data: Json
+          target_table: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_context?: string | null
+          status?: string
+          suggested_data: Json
+          target_table: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_context?: string | null
+          status?: string
+          suggested_data?: Json
+          target_table?: string
+        }
+        Relationships: []
+      }
       contractors_epc: {
         Row: {
           address: string | null
@@ -130,6 +163,98 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      outreach_campaigns: {
+        Row: {
+          body_template: string | null
+          campaign_type: string
+          created_at: string
+          created_by: string | null
+          goal: string
+          id: string
+          name: string
+          sent_at: string | null
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          body_template?: string | null
+          campaign_type?: string
+          created_at?: string
+          created_by?: string | null
+          goal: string
+          id?: string
+          name: string
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          body_template?: string | null
+          campaign_type?: string
+          created_at?: string
+          created_by?: string | null
+          goal?: string
+          id?: string
+          name?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      outreach_recipients: {
+        Row: {
+          campaign_id: string
+          id: string
+          notes: string | null
+          opened_at: string | null
+          personalized_body: string | null
+          recipient_email: string | null
+          recipient_id: string
+          recipient_name: string
+          recipient_type: string
+          resend_message_id: string | null
+          sent_at: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          personalized_body?: string | null
+          recipient_email?: string | null
+          recipient_id: string
+          recipient_name: string
+          recipient_type: string
+          resend_message_id?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          id?: string
+          notes?: string | null
+          opened_at?: string | null
+          personalized_body?: string | null
+          recipient_email?: string | null
+          recipient_id?: string
+          recipient_name?: string
+          recipient_type?: string
+          resend_message_id?: string | null
+          sent_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outreach_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "outreach_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payments: {
         Row: {
