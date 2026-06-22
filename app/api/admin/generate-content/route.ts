@@ -313,13 +313,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { type, pubType, topic, angle, keyPoints, url } = await req.json() as {
+  const { type, pubType, topic, angle, keyPoints, url, pastedText, screenshotBase64, screenshotMimeType } = await req.json() as {
     type: "editorialInsight" | "researchReport" | "publication";
     pubType?: string;
     topic: string;
     angle?: string;
     keyPoints?: string;
     url?: string;
+    pastedText?: string;
+    screenshotBase64?: string;
+    screenshotMimeType?: string;
   };
 
   if (!topic) return NextResponse.json({ error: "topic is required" }, { status: 400 });
@@ -327,25 +330,67 @@ export async function POST(req: Request) {
   const isResearch = type === "researchReport";
   const isPublication = type === "publication";
 
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
   let urlContextText = "";
   let urlContextUsed = false;
   let urlFetchWarning: string | undefined;
+  let contextSource: "url" | "paste" | "screenshot" | undefined;
 
   if (url) {
     const result = await fetchUrlContext(url);
     if (result.ok) {
       urlContextText = result.text;
       urlContextUsed = true;
+      contextSource = "url";
     } else {
       urlFetchWarning = result.reason;
+    }
+  }
+
+  if (!urlContextUsed && pastedText && pastedText.trim().length > 50) {
+    urlContextText = pastedText.trim().slice(0, 10_000);
+    urlContextUsed = true;
+    contextSource = "paste";
+  }
+
+  if (!urlContextUsed && screenshotBase64 && screenshotMimeType) {
+    try {
+      const extractMsg = await anthropic.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        messages: [{
+          role: "user",
+          content: [
+            {
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: screenshotMimeType as "image/jpeg" | "image/png" | "image/webp",
+                data: screenshotBase64,
+              },
+            },
+            {
+              type: "text",
+              text: "Extract all readable text from this screenshot. Return only the extracted text, preserving structure where possible. No commentary or labels.",
+            },
+          ],
+        }],
+      });
+      const extracted = extractMsg.content[0].type === "text" ? extractMsg.content[0].text : "";
+      if (extracted.trim().length > 100) {
+        urlContextText = extracted.trim().slice(0, 10_000);
+        urlContextUsed = true;
+        contextSource = "screenshot";
+      }
+    } catch {
+      // extraction failed — proceed without source context
     }
   }
 
   const prompt = isPublication
     ? buildPublicationPrompt({ pubType: pubType ?? "op-ed", topic, angle, keyPoints, urlContext: urlContextText })
     : buildPrompt({ isResearch, topic, angle, keyPoints, urlContext: urlContextText });
-
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
   const message = await anthropic.messages.create({
     model: "claude-opus-4-6",
@@ -427,5 +472,5 @@ export async function POST(req: Request) {
     generateHeroImage(generated.title, topic),
   ]);
 
-  return NextResponse.json({ docId, slug, title: generated.title, imageUrl, urlContextUsed, urlFetchWarning });
+  return NextResponse.json({ docId, slug, title: generated.title, imageUrl, urlContextUsed, urlFetchWarning, contextSource });
 }

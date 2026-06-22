@@ -4,28 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 
 type ContentType = "editorialInsight" | "researchReport" | "publication";
-
 type PublicationType = "op-ed" | "position-paper" | "technical-note" | "event-summary" | "press-release" | "commentary" | "interview";
+type InputMode = "url" | "paste" | "screenshot";
 
 const TYPE_OPTIONS: { value: ContentType; label: string; desc: string; icon: string }[] = [
-  {
-    value: "editorialInsight",
-    label: "Editorial Insight",
-    desc: "Thought leadership & strategic commentary",
-    icon: "fa-pen-nib",
-  },
-  {
-    value: "researchReport",
-    label: "Research Report",
-    desc: "Data-driven working paper or policy brief",
-    icon: "fa-flask",
-  },
-  {
-    value: "publication",
-    label: "Publication",
-    desc: "Op-ed, position paper, technical note, or press release",
-    icon: "fa-newspaper",
-  },
+  { value: "editorialInsight", label: "Editorial Insight", desc: "Thought leadership & strategic commentary", icon: "fa-pen-nib" },
+  { value: "researchReport",   label: "Research Report",  desc: "Data-driven working paper or policy brief", icon: "fa-flask" },
+  { value: "publication",      label: "Publication",      desc: "Op-ed, position paper, technical note, or press release", icon: "fa-newspaper" },
 ];
 
 const PUB_TYPE_OPTIONS: { value: PublicationType; label: string }[] = [
@@ -45,7 +30,14 @@ interface GenerateResult {
   imageUrl?: string | null;
   urlContextUsed?: boolean;
   urlFetchWarning?: string;
+  contextSource?: "url" | "paste" | "screenshot";
 }
+
+const SOURCE_SUCCESS: Record<string, string> = {
+  url:        "Reference URL scraped and used as primary source.",
+  paste:      "Pasted content used as primary source.",
+  screenshot: "Screenshot content extracted and used as primary source.",
+};
 
 export default function GenerateContentPage() {
   const [type, setType]           = useState<ContentType>("editorialInsight");
@@ -53,18 +45,51 @@ export default function GenerateContentPage() {
   const [topic, setTopic]         = useState("");
   const [angle, setAngle]         = useState("");
   const [keyPoints, setKeyPoints] = useState("");
+  const [inputMode, setInputMode] = useState<InputMode>("url");
   const [url, setUrl]             = useState("");
-  const [loading, setLoading]     = useState(false);
+  const [pastedText, setPastedText]           = useState("");
+  const [screenshotFile, setScreenshotFile]   = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState("");
+  const [loading, setLoading]         = useState(false);
   const [loadingStage, setLoadingStage] = useState("");
-  const [error, setError]         = useState("");
-  const [result, setResult]       = useState<GenerateResult | null>(null);
+  const [error, setError]             = useState("");
+  const [result, setResult]           = useState<GenerateResult | null>(null);
+
+  function resetSource() {
+    setUrl("");
+    setPastedText("");
+    setScreenshotFile(null);
+    setScreenshotPreview("");
+  }
 
   async function handleGenerate() {
     if (!topic.trim()) { setError("Topic is required."); return; }
     setLoading(true);
     setError("");
     setResult(null);
-    setLoadingStage(url.trim() ? "Scanning URL…" : "Claude is writing…");
+
+    const stageMap: Record<InputMode, string> = {
+      url:        url.trim() ? "Scanning URL…" : "Claude is writing…",
+      paste:      "Processing content…",
+      screenshot: "Reading screenshot…",
+    };
+    setLoadingStage(stageMap[inputMode]);
+
+    let screenshotBase64: string | undefined;
+    let screenshotMimeType: string | undefined;
+
+    if (inputMode === "screenshot" && screenshotFile) {
+      screenshotBase64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string;
+          resolve(dataUrl.split(",")[1]);
+        };
+        reader.readAsDataURL(screenshotFile);
+      });
+      screenshotMimeType = screenshotFile.type;
+      setLoadingStage("Extracting text from screenshot…");
+    }
 
     const res = await fetch("/api/admin/generate-content", {
       method: "POST",
@@ -75,7 +100,10 @@ export default function GenerateContentPage() {
         topic,
         angle,
         keyPoints,
-        url: url.trim() || undefined,
+        url:           inputMode === "url"        ? url.trim() || undefined         : undefined,
+        pastedText:    inputMode === "paste"       ? pastedText.trim() || undefined  : undefined,
+        screenshotBase64,
+        screenshotMimeType,
       }),
     });
 
@@ -103,10 +131,7 @@ export default function GenerateContentPage() {
           <span className="text-slate-700 text-xs">/</span>
           <span className="text-slate-400 text-xs">Generate Content</span>
         </div>
-        <h1
-          className="text-2xl font-bold text-white mt-3"
-          style={{ fontFamily: "var(--font-playfair), serif" }}
-        >
+        <h1 className="text-2xl font-bold text-white mt-3" style={{ fontFamily: "var(--font-playfair), serif" }}>
           AI Content Generator
         </h1>
         <p className="text-sm text-slate-400 mt-1">
@@ -128,11 +153,10 @@ export default function GenerateContentPage() {
               </div>
             </div>
 
-            {/* URL context status */}
-            {result.urlContextUsed && (
+            {result.urlContextUsed && result.contextSource && (
               <div className="flex items-center gap-2 text-xs text-emerald-400/80">
-                <i className="fa-solid fa-link text-[10px]" />
-                Reference URL was scraped and used as primary source material.
+                <i className="fa-solid fa-circle-check text-[10px]" />
+                {SOURCE_SUCCESS[result.contextSource] ?? "Source material used as primary context."}
               </div>
             )}
             {result.urlFetchWarning && (
@@ -158,7 +182,7 @@ export default function GenerateContentPage() {
                 Open Studio
               </a>
               <button
-                onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); setUrl(""); setPubType("op-ed"); }}
+                onClick={() => { setResult(null); setTopic(""); setAngle(""); setKeyPoints(""); resetSource(); setPubType("op-ed"); }}
                 className="px-4 py-2.5 border border-white/10 text-xs text-slate-400 hover:text-white hover:border-white/20 transition-colors"
               >
                 Generate Another
@@ -166,7 +190,6 @@ export default function GenerateContentPage() {
             </div>
           </div>
 
-          {/* Generated hero image */}
           {result.imageUrl && (
             <div className="bg-navy-800 border border-white/5 overflow-hidden">
               <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
@@ -183,11 +206,7 @@ export default function GenerateContentPage() {
                 </a>
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={result.imageUrl}
-                alt={result.title}
-                className="w-full aspect-video object-cover"
-              />
+              <img src={result.imageUrl} alt={result.title} className="w-full aspect-video object-cover" />
               <div className="px-5 py-3">
                 <p className="text-[11px] text-slate-500 leading-relaxed">
                   Download this image and upload it as the hero image in Sanity Studio. The URL expires after ~24 hours.
@@ -239,7 +258,7 @@ export default function GenerateContentPage() {
             </div>
           </div>
 
-          {/* Publication sub-type (only when Publication is selected) */}
+          {/* Publication sub-type */}
           {type === "publication" && (
             <div>
               <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
@@ -264,22 +283,107 @@ export default function GenerateContentPage() {
             </div>
           )}
 
-          {/* URL input */}
+          {/* Source input — URL / Paste / Screenshot */}
           <div>
-            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-2">
-              Reference URL
-              <span className="ml-2 text-slate-600 normal-case font-normal tracking-normal">— optional, scraped as research context</span>
+            <label className="block text-[10px] font-bold tracking-widest uppercase text-slate-400 mb-3">
+              Reference Source
+              <span className="ml-2 text-slate-600 normal-case font-normal tracking-normal">— optional, used as primary context</span>
             </label>
-            <div className="relative">
-              <i className="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-[10px]" />
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com/article-or-report"
-                className="w-full bg-navy-800 border border-white/10 pl-9 pr-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors"
-              />
+
+            <div className="flex border-b border-white/5 mb-4">
+              {(["url", "paste", "screenshot"] as const).map((mode) => {
+                const labels = { url: "URL", paste: "Paste Text", screenshot: "Screenshot" };
+                const icons  = { url: "fa-link", paste: "fa-clipboard", screenshot: "fa-image" };
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setInputMode(mode)}
+                    className={`flex items-center gap-1.5 px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors border-b-2 -mb-px ${
+                      inputMode === mode
+                        ? "border-gold-500 text-gold-400"
+                        : "border-transparent text-slate-500 hover:text-slate-300"
+                    }`}
+                  >
+                    <i className={`fa-solid ${icons[mode]} text-[9px]`} />
+                    {labels[mode]}
+                  </button>
+                );
+              })}
             </div>
+
+            {inputMode === "url" && (
+              <div className="relative">
+                <i className="fa-solid fa-link absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-[10px]" />
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://example.com/article-or-report"
+                  className="w-full bg-navy-800 border border-white/10 pl-9 pr-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors"
+                />
+              </div>
+            )}
+
+            {inputMode === "paste" && (
+              <textarea
+                value={pastedText}
+                onChange={(e) => setPastedText(e.target.value)}
+                rows={7}
+                placeholder="Paste the LinkedIn post, article text, or any source material you want Claude to base the content on…"
+                className="w-full bg-navy-800 border border-white/10 px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors resize-none"
+              />
+            )}
+
+            {inputMode === "screenshot" && (
+              <div>
+                <label
+                  htmlFor="screenshot-upload"
+                  className={`flex flex-col items-center justify-center gap-3 bg-navy-800 border border-dashed p-8 cursor-pointer transition-colors ${
+                    screenshotFile ? "border-gold-500/30" : "border-white/10 hover:border-gold-500/20"
+                  }`}
+                >
+                  {screenshotPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={screenshotPreview} alt="Screenshot preview" className="max-h-52 object-contain" />
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-image text-slate-600 text-2xl" />
+                      <div className="text-center">
+                        <p className="text-sm text-slate-400">Click to upload a screenshot</p>
+                        <p className="text-[11px] text-slate-600 mt-1">PNG, JPG — LinkedIn posts, article pages, reports</p>
+                      </div>
+                    </>
+                  )}
+                </label>
+                <input
+                  id="screenshot-upload"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setScreenshotFile(file);
+                    const reader = new FileReader();
+                    reader.onload = (ev) => setScreenshotPreview(ev.target?.result as string);
+                    reader.readAsDataURL(file);
+                  }}
+                />
+                {screenshotFile && (
+                  <div className="flex items-center justify-between mt-2 px-1">
+                    <p className="text-[11px] text-slate-500 truncate">{screenshotFile.name}</p>
+                    <button
+                      type="button"
+                      onClick={() => { setScreenshotFile(null); setScreenshotPreview(""); }}
+                      className="text-[11px] text-red-400/70 hover:text-red-400 transition-colors ml-3 shrink-0"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Topic */}
