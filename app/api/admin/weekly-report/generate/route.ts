@@ -43,19 +43,32 @@ async function fetchGitHubCommits(since: Date, until: Date) {
 
 async function fetchSanityActivity(since: Date, until: Date) {
   try {
-    const docs = await sanityClient.fetch<
-      { _type: string; title?: string; name?: string; _updatedAt: string }[]
-    >(
-      `*[_updatedAt >= $since && _updatedAt <= $until && !(_id in path("drafts.**"))] | order(_updatedAt desc) {
-        _type, _updatedAt, title, name
-      }`,
-      { since: since.toISOString(), until: until.toISOString() }
-    );
+    const [published, drafts] = await Promise.all([
+      sanityClient.fetch<{ _type: string; title?: string; name?: string; _updatedAt: string }[]>(
+        `*[_updatedAt >= $since && _updatedAt <= $until && !(_id in path("drafts.**"))] | order(_updatedAt desc) {
+          _type, _updatedAt, title, name
+        }`,
+        { since: since.toISOString(), until: until.toISOString() }
+      ),
+      sanityClient.fetch<{ _type: string; title?: string; name?: string; _updatedAt: string }[]>(
+        `*[_updatedAt >= $since && _updatedAt <= $until && _id in path("drafts.**")] | order(_updatedAt desc) {
+          _type, _updatedAt, title, name
+        }`,
+        { since: since.toISOString(), until: until.toISOString() }
+      ),
+    ]);
+
     const grouped: Record<string, number> = {};
-    for (const d of docs) {
+    for (const d of published) {
       grouped[d._type] = (grouped[d._type] ?? 0) + 1;
     }
-    return { total: docs.length, byType: grouped, items: docs.slice(0, 20) };
+    return {
+      publishedTotal: published.length,
+      draftsTotal: drafts.length,
+      byType: grouped,
+      publishedItems: published.slice(0, 30).map((d) => ({ type: d._type, title: d.title ?? d.name ?? "(untitled)", updatedAt: d._updatedAt })),
+      draftItems: drafts.slice(0, 10).map((d) => ({ type: d._type, title: d.title ?? d.name ?? "(untitled)" })),
+    };
   } catch {
     return null;
   }
@@ -108,6 +121,40 @@ export async function POST(req: NextRequest) {
 
   const rawData = { week: label, since, until, commits, sanity, supabase: supabaseData };
 
+  // Build a compact prose brief so Claude uses its budget on analysis, not parsing
+  const lines: string[] = [`WEEK: ${label}`];
+
+  if (commits && commits.length > 0) {
+    lines.push(`\nCODE COMMITS (${commits.length}):`);
+    commits.forEach((c) => lines.push(`- ${c.message}`));
+  } else {
+    lines.push("\nCODE COMMITS: None this week.");
+  }
+
+  if (sanity) {
+    lines.push(`\nSANITY CMS: ${sanity.publishedTotal} published, ${sanity.draftsTotal} drafts updated.`);
+    if (sanity.publishedItems.length > 0) {
+      lines.push("Published:");
+      sanity.publishedItems.forEach((d) => lines.push(`- [${d.type}] ${d.title}`));
+    }
+    if (sanity.draftItems.length > 0) {
+      lines.push("Drafts in progress:");
+      sanity.draftItems.forEach((d) => lines.push(`- [${d.type}] ${d.title}`));
+    }
+  }
+
+  if (supabaseData) {
+    const { newMembers, payments, totalRevenueNgn, database } = supabaseData;
+    lines.push(`\nPLATFORM:`);
+    lines.push(`- New members: ${newMembers.length}${newMembers.length > 0 ? " — " + newMembers.map((m: { full_name: string | null; membership_tier: string }) => `${m.full_name ?? "unnamed"} (${m.membership_tier})`).join(", ") : ""}`);
+    lines.push(`- Payments: ${payments.length} transaction(s), total ₦${totalRevenueNgn.toLocaleString()}`);
+    if (database.operators + database.contractors + database.engineers + database.regulators + database.researchSources > 0) {
+      lines.push(`- Database additions: ${database.operators} operators, ${database.contractors} contractors, ${database.engineers} engineers, ${database.regulators} regulators, ${database.researchSources} research sources`);
+    }
+  }
+
+  const dataBrief = lines.join("\n");
+
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
   const systemPrompt = `You are generating a weekly progress report for APRN Africa — a membership platform for African pipeline research and engineering professionals.
@@ -121,28 +168,26 @@ Structure your output in exactly this format (markdown):
 ## Week of ${label}
 
 ### What Shipped
-[Technical work delivered — features, fixes, infrastructure. Each bullet = one meaningful change. If no commits, skip this section or write "No deployments this week."]
+[Technical work delivered — features, fixes, infrastructure. Each bullet = one meaningful change. Use the commit messages to describe the actual feature or fix — no jargon, plain English. If no commits, write "No deployments this week."]
 
 ### Content & Intelligence
-[Sanity CMS activity — new documents published, updated. Group by type. If nothing, skip.]
+[CMS activity — list every published document by name and type. List any draft content in progress. If nothing, skip this section.]
 
 ### Platform Activity
-[New members joined, payments received (convert NGN to readable format like ₦25,000), database additions.]
+[New members with their tier, payments in ₦, any database additions. Every number should be stated explicitly.]
 
 ### Notes
-[Leave this section blank with just: "— Joseph to complete —"]
+— Joseph to complete —
 
-Do NOT add a "Coming Up Next" section. Do NOT add a sign-off. Do NOT mention this was AI-generated.`;
+Rules: Do NOT add a "Coming Up Next" section. Do NOT add a sign-off. Do NOT mention this was AI-generated. Do NOT truncate or summarise — include every item from the data.`;
 
-  const userPrompt = `Here is the raw data for the week of ${label}:
+  const userPrompt = `${dataBrief}
 
-${JSON.stringify(rawData, null, 2)}
-
-Generate the weekly report now.`;
+Generate the full weekly report now. Include every commit, every content item, every member.`;
 
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 1024,
+    max_tokens: 2048,
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
   });
