@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { error: emailError } = await resend.emails.send({
     from: "APRN Africa <noreply@aprn-africa.org>",
-    to: ["info@aprn-africa.org"],
+    to: ["info@aprn-africa.org", "olaghri@gmail.com"],
     cc: ["josephagwuh@gmail.com"],
     subject,
     html,
