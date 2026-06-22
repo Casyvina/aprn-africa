@@ -23,21 +23,28 @@ function weekRange(offsetWeeks = 0): { since: Date; until: Date; label: string }
   return { since: monday, until: sunday, label: `${fmt(monday)} – ${fmt(sunday)} ${sunday.getFullYear()}` };
 }
 
-async function fetchGitHubCommits(since: Date, until: Date) {
+async function fetchGitHubCommits(since: Date, until: Date): Promise<
+  { commits: { message: string; date: string }[]; error?: never } |
+  { commits?: never; error: string }
+> {
   const token = process.env.GITHUB_TOKEN;
-  if (!token) return null;
+  if (!token) return { error: "GITHUB_TOKEN not set" };
   try {
     const res = await fetch(
       `https://api.github.com/repos/Casyvina/aprn-africa/commits?since=${since.toISOString()}&until=${until.toISOString()}&per_page=50`,
       { headers: { Authorization: `Bearer ${token}`, "User-Agent": "aprn-africa" } }
     );
-    if (!res.ok) return null;
-    const commits = (await res.json()) as { sha: string; commit: { message: string; author: { date: string } } }[];
-    return commits
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      return { error: `GitHub API ${res.status}: ${body.slice(0, 200)}` };
+    }
+    const raw = (await res.json()) as { sha: string; commit: { message: string; author: { date: string } } }[];
+    const commits = raw
       .filter((c) => !c.commit.message.startsWith("Merge"))
       .map((c) => ({ message: c.commit.message.split("\n")[0], date: c.commit.author.date }));
-  } catch {
-    return null;
+    return { commits };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Fetch failed" };
   }
 }
 
@@ -113,22 +120,27 @@ export async function POST(req: NextRequest) {
   const offsetWeeks = Number(body.offsetWeeks ?? 0);
   const { since, until, label } = weekRange(offsetWeeks);
 
-  const [commits, sanity, supabaseData] = await Promise.all([
+  const [githubResult, sanity, supabaseData] = await Promise.all([
     fetchGitHubCommits(since, until),
     fetchSanityActivity(since, until),
     fetchSupabaseActivity(since, until),
   ]);
 
-  const rawData = { week: label, since, until, commits, sanity, supabase: supabaseData };
+  const commits = githubResult.commits ?? null;
+  const githubError = githubResult.error ?? null;
+
+  const rawData = { week: label, since, until, commits, githubError, sanity, supabase: supabaseData };
 
   // Build a compact prose brief so Claude uses its budget on analysis, not parsing
   const lines: string[] = [`WEEK: ${label}`];
 
-  if (commits && commits.length > 0) {
+  if (githubError) {
+    lines.push(`\nCODE COMMITS: Unable to fetch — ${githubError}`);
+  } else if (commits && commits.length > 0) {
     lines.push(`\nCODE COMMITS (${commits.length}):`);
     commits.forEach((c) => lines.push(`- ${c.message}`));
   } else {
-    lines.push("\nCODE COMMITS: None this week.");
+    lines.push("\nCODE COMMITS: None found for this date range.");
   }
 
   if (sanity) {
