@@ -3,6 +3,8 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AdminMobileNav from "@/components/AdminMobileNav";
+import AdminSidebarNav from "@/components/admin/AdminSidebarNav";
+import AdminContentTransition from "@/components/admin/AdminContentTransition";
 
 function isAdmin(email: string | undefined): boolean {
   if (!email) return false;
@@ -12,17 +14,6 @@ function isAdmin(email: string | undefined): boolean {
 
 const PERSONNEL_EMAILS = ["info@aprn-africa.org", "josephagwuh@gmail.com"];
 
-const adminNav = [
-  { href: "/admin",           icon: "fa-chart-line",          label: "Overview"  },
-  { href: "/admin/members",   icon: "fa-users",               label: "Members"   },
-  { href: "/admin/database",  icon: "fa-database",            label: "Database"  },
-  { href: "/admin/outreach",  icon: "fa-paper-plane",         label: "Outreach"  },
-  { href: "/admin/generate",  icon: "fa-wand-magic-sparkles", label: "Generate"  },
-  { href: "/admin/payments",       icon: "fa-credit-card",         label: "Payments"       },
-  { href: "/admin/weekly-report", icon: "fa-newspaper",           label: "Weekly Report"  },
-  { href: "/admin/sitemap",       icon: "fa-sitemap",             label: "Site Map"       },
-  { href: "/admin/guide",         icon: "fa-book-open",           label: "Admin Guide"    },
-];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -56,65 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </p>
         </div>
 
-        <nav className="flex-1 py-4 overflow-y-auto">
-          <p className="px-5 mb-2 text-[9px] font-bold tracking-widest text-slate-600 uppercase">
-            Management
-          </p>
-          {adminNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="mx-3 px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
-            >
-              <i className={`fa-solid ${item.icon} w-4 text-center text-[11px] text-slate-500`} />
-              {item.label}
-            </Link>
-          ))}
-
-          <p className="px-5 mt-6 mb-2 text-[9px] font-bold tracking-widest text-slate-600 uppercase">
-            Strategy &amp; Docs
-          </p>
-          {[
-            { href: "/admin/strategy/communication", icon: "fa-satellite-dish", label: "Comms Strategy" },
-            { href: "/admin/strategy/stakeholders",  icon: "fa-circle-nodes",   label: "Stakeholder Map" },
-            { href: "/admin/strategy/documents",     icon: "fa-folder-open",    label: "Document Library" },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="mx-3 px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
-            >
-              <i className={`fa-solid ${item.icon} w-4 text-center text-[11px] text-slate-500`} />
-              {item.label}
-            </Link>
-          ))}
-          {isPersonnelUser && (
-            <Link
-              href="/admin/personnel"
-              className="mx-3 px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
-            >
-              <i className="fa-solid fa-lock w-4 text-center text-[11px] text-slate-500" />
-              Personnel
-            </Link>
-          )}
-
-          <p className="px-5 mt-6 mb-2 text-[9px] font-bold tracking-widest text-slate-600 uppercase">
-            Content
-          </p>
-          {[
-            { href: "/admin/content-studio", icon: "fa-image",   label: "Content Studio" },
-            { href: "/studio",               icon: "fa-pen-nib", label: "Sanity Studio"  },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="mx-3 px-3 py-2.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-navy-800 flex items-center gap-3 transition-colors rounded-sm"
-            >
-              <i className={`fa-solid ${item.icon} w-4 text-center text-[11px] text-slate-500`} />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <AdminSidebarNav isPersonnelUser={isPersonnelUser} />
 
         <div className="px-5 py-4 border-t border-white/5 shrink-0">
           <p className="text-[10px] text-slate-500 truncate mb-3">{user.email}</p>
@@ -154,7 +87,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </header>
 
         <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          {children}
+          <AdminContentTransition>
+            {children}
+          </AdminContentTransition>
         </main>
       </div>
     </div>

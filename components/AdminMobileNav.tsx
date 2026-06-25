@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const adminNav = [
   { href: "/admin",          icon: "fa-chart-line",          label: "Overview"  },
@@ -37,6 +38,7 @@ export default function AdminMobileNav({
 }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   // Only render portal after hydration
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -50,17 +52,26 @@ export default function AdminMobileNav({
 
   const close = () => setOpen(false);
 
-  const navItem = (item: { href: string; icon: string; label: string }) => (
-    <Link
-      key={item.href}
-      href={item.href}
-      onClick={close}
-      className="flex items-center gap-3 mx-3 px-3 py-3 text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-    >
-      <i className={`fa-solid ${item.icon} text-[11px] text-slate-500 w-4 text-center`} />
-      {item.label}
-    </Link>
-  );
+  const navItem = (item: { href: string; icon: string; label: string }) => {
+    const isActive = item.href === "/admin"
+      ? pathname === "/admin"
+      : pathname === item.href || pathname.startsWith(item.href + "/");
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={close}
+        className={`flex items-center gap-3 mx-3 px-3 py-3 text-xs font-medium transition-colors border-l-2 ${
+          isActive
+            ? "text-white bg-navy-800 border-gold-500"
+            : "text-slate-400 hover:text-white hover:bg-white/5 border-transparent"
+        }`}
+      >
+        <i className={`fa-solid ${item.icon} text-[11px] w-4 text-center ${isActive ? "text-gold-500" : "text-slate-500"}`} />
+        {item.label}
+      </Link>
+    );
+  };
 
   const drawer = open && mounted && createPortal(
     <>

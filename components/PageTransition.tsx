@@ -8,7 +8,8 @@ export default function PageTransition({ children }: { children: React.ReactNode
   const pathname = usePathname()
   const reduced = useReducedMotion()
 
-  if (reduced) return <>{children}</>
+  // Admin uses its own AdminContentTransition — skip here so the sidebar doesn't flicker
+  if (reduced || pathname.startsWith("/admin")) return <>{children}</>
 
   return (
     <AnimatePresence mode="wait">
