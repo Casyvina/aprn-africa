@@ -138,6 +138,30 @@ export const RESEARCH_PAGE_QUERY = groq`
   }
 `
 
+export interface DashboardResearchCard {
+  _id: string
+  title: string
+  slug: string
+  reportType: string
+  publishDate: string
+  estimatedReadTime?: number
+  topics: { name: string }[]
+  authorName: string
+}
+
+export const DASHBOARD_RESEARCH_QUERY = groq`
+  *[_type == "researchReport"] | order(publishDate desc)[0...30] {
+    _id,
+    title,
+    "slug": slug.current,
+    reportType,
+    publishDate,
+    estimatedReadTime,
+    "topics": topics[]->{ name },
+    "authorName": coalesce(authors[0]->name, "APRN Research Team"),
+  }
+`
+
 export const HOMEPAGE_RESEARCH_QUERY = groq`
   {
     "featured": *[_type == "researchReport" && featured == true] | order(publishDate desc)[0] {
