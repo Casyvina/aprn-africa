@@ -192,7 +192,7 @@ export default function LeadershipPageClient({ persons, teamMembers = [], youthA
               <div className={`lg:col-span-5 relative ${i % 2 === 1 ? "lg:order-last" : ""}`}>
                 <div className="absolute inset-0 bg-gold-500/10 translate-x-4 translate-y-4 rounded-sm" />
                 <div className="relative rounded-sm overflow-hidden border border-gold-500/30 group">
-                  <div className="relative h-140 overflow-hidden bg-navy-800">
+                  <div className="relative h-80 md:h-140 overflow-hidden bg-navy-800">
                     <Image
                       src={photo}
                       alt={person.name}

@@ -224,7 +224,7 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
 
             {/* Avatar */}
             <div className="flex flex-col items-center gap-5">
-              <div className="w-48 h-48 bg-navy-900 border border-gold-500/30 flex items-center justify-center overflow-hidden relative">
+              <div className="w-32 h-32 sm:w-48 sm:h-48 bg-navy-900 border border-gold-500/30 flex items-center justify-center overflow-hidden relative">
                 {avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

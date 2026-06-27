@@ -178,7 +178,7 @@ export default function MapSection({
           </div>
         </div>
 
-        <div className="glass-panel rounded-sm p-2 w-full h-150">
+        <div className="glass-panel rounded-sm p-2 w-full h-72 md:h-100 lg:h-150">
           <PipelineMap />
         </div>
 

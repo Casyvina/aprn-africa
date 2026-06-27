@@ -112,7 +112,7 @@ export default function AboutPageClient({ persons }: Props) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 z-10 w-full items-end">
           {/* Main image */}
-          <div className="lg:col-span-8 h-125 relative overflow-hidden bg-navy-800">
+          <div className="lg:col-span-8 h-72 lg:h-125 relative overflow-hidden bg-navy-800">
             <Image
               src="/images/hero-pipeline.jpg"
               alt="Pipeline Infrastructure"
@@ -133,7 +133,7 @@ export default function AboutPageClient({ persons }: Props) {
           </div>
 
           {/* Side panel */}
-          <div className="lg:col-span-4 h-125 flex flex-col justify-between border-l border-white/10 pl-6">
+          <div className="lg:col-span-4 lg:h-125 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/10 pt-6 lg:pt-0 pl-0 lg:pl-6">
             <div>
               <h2
                 className="text-xl mb-4 text-gold-500 uppercase"
@@ -315,7 +315,7 @@ export default function AboutPageClient({ persons }: Props) {
                 className="border-r border-b border-white/10 group overflow-hidden"
               >
                 {/* Photo / Avatar */}
-                <div className="relative h-120 overflow-hidden bg-navy-800 flex items-center justify-center">
+                <div className="relative h-64 md:h-80 lg:h-120 overflow-hidden bg-navy-800 flex items-center justify-center">
                   {photo ? (
                     <Image
                       src={photo}
