@@ -34,7 +34,7 @@ export default async function DashboardPage() {
 
       {/* ── Welcome Banner + Stats ────────────────────────────── */}
       <section className="flex flex-col gap-5">
-        <div className="bg-navy-800 border border-white/5 border-l-4 border-l-gold-500 p-8 relative overflow-hidden">
+        <div className="bg-navy-800 border border-white/5 border-l-4 border-l-gold-500 p-5 sm:p-8 relative overflow-hidden">
           <div
             className="absolute top-0 right-0 w-64 h-full pointer-events-none"
             style={{ background: "linear-gradient(to left, rgba(212,160,23,0.05), transparent)" }}
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 relative z-10">
             <div>
               <h2
-                className="text-3xl font-bold text-white mb-2"
+                className="text-2xl sm:text-3xl font-bold text-white mb-2"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
               >
                 Welcome back, {firstName}
@@ -74,20 +74,20 @@ export default async function DashboardPage() {
           ].map((s) => (
             <div
               key={s.label}
-              className="bg-navy-800 border border-white/5 p-6 flex flex-col justify-between h-32 hover:border-gold-500/20 transition-colors cursor-pointer group relative overflow-hidden"
+              className="bg-navy-800 border border-white/5 p-4 sm:p-6 flex flex-col justify-between min-h-28 sm:h-32 hover:border-gold-500/20 transition-colors cursor-pointer group relative overflow-hidden"
             >
               {s.bar && <div className="absolute bottom-0 left-0 h-1 bg-gold-500/40 w-3/4" />}
               <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase group-hover:text-gold-500 transition-colors">
                 {s.label}
               </span>
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-1.5 min-w-0">
                 <span
-                  className="text-4xl font-bold text-white"
+                  className="text-2xl sm:text-4xl font-bold text-white truncate"
                   style={{ fontFamily: "var(--font-playfair), serif" }}
                 >
                   {s.value}
                 </span>
-                <span className="text-xs text-slate-400">{s.sub}</span>
+                <span className="text-[10px] sm:text-xs text-slate-400 shrink-0">{s.sub}</span>
               </div>
             </div>
           ))}

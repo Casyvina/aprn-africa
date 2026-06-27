@@ -80,7 +80,7 @@ export default function NetworkPageClient({
       >
         <motion.div variants={fadeUp}>
           <h2
-            className="text-3xl font-bold text-white"
+            className="text-2xl sm:text-3xl font-bold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             Engineer Network
@@ -117,13 +117,13 @@ export default function NetworkPageClient({
           <motion.div
             key={s.label}
             variants={fadeUp}
-            className="bg-navy-800 border border-white/5 p-5 flex items-center gap-4"
+            className="bg-navy-800 border border-white/5 p-3 sm:p-5 flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left"
           >
-            <div className="w-9 h-9 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-navy-900 border border-white/5 hidden sm:flex items-center justify-center shrink-0">
               <i className={`fa-solid ${s.icon} text-gold-500 text-xs`} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white leading-none" style={{ fontFamily: "var(--font-playfair), serif" }}>
+              <p className="text-xl sm:text-2xl font-bold text-white leading-none" style={{ fontFamily: "var(--font-playfair), serif" }}>
                 {s.value}
               </p>
               <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">{s.label}</p>

@@ -115,7 +115,7 @@ export default function ResearchPageClient({
       >
         <motion.div variants={fadeUp}>
           <h2
-            className="text-3xl font-bold text-white"
+            className="text-2xl sm:text-3xl font-bold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             My Research

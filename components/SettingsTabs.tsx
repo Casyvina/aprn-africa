@@ -187,19 +187,19 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
       <div className="border-b border-white/10 pb-0">
         <div className="mb-6">
           <h2
-            className="text-3xl font-bold text-white"
+            className="text-2xl sm:text-3xl font-bold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             Account Settings
           </h2>
           <div className="h-0.5 w-20 bg-gold-500 mt-2" />
         </div>
-        <div className="flex gap-0">
+        <div className="flex gap-0 overflow-x-auto">
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`px-5 py-3 text-sm font-medium transition-colors border-b-2 ${
+              className={`px-4 sm:px-5 py-3 text-sm font-medium transition-colors border-b-2 shrink-0 whitespace-nowrap ${
                 tab === t.key
                   ? "text-gold-500 border-gold-500"
                   : "text-slate-400 border-transparent hover:text-white"
@@ -213,14 +213,14 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
 
       {/* ── Profile ─────────────────────────────────────────────── */}
       {tab === "profile" && (
-        <div className="bg-navy-800 border border-white/5 p-8">
+        <div className="bg-navy-800 border border-white/5 p-5 sm:p-8">
           <h3
             className="text-lg font-semibold text-white mb-6"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             Profile Information
           </h3>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10">
 
             {/* Avatar */}
             <div className="flex flex-col items-center gap-5">
@@ -390,7 +390,7 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
       {/* ── Security ─────────────────────────────────────────────── */}
       {tab === "security" && (
         <div className="flex flex-col gap-6">
-          <div className="bg-navy-800 border border-white/5 p-8">
+          <div className="bg-navy-800 border border-white/5 p-5 sm:p-8">
             <h3
               className="text-lg font-semibold text-white mb-6"
               style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -459,7 +459,7 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
           </div>
 
           {/* Danger zone */}
-          <div className="bg-red-500/5 border border-red-500/30 p-8">
+          <div className="bg-red-500/5 border border-red-500/30 p-5 sm:p-8">
             <h3 className="text-base font-semibold text-red-400 mb-2">Danger Zone</h3>
             <p className="text-sm text-slate-400 mb-5 max-w-md">
               Permanently delete your account and all associated data. This cannot be undone.
@@ -505,7 +505,7 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
 
       {/* ── Notifications ────────────────────────────────────────── */}
       {tab === "notifications" && (
-        <div className="bg-navy-800 border border-white/5 p-8">
+        <div className="bg-navy-800 border border-white/5 p-5 sm:p-8">
           <h3
             className="text-lg font-semibold text-white mb-6"
             style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -591,7 +591,7 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
 
       {/* ── Billing ──────────────────────────────────────────────── */}
       {tab === "billing" && (
-        <div className="bg-navy-800 border border-white/5 p-8 flex flex-col gap-6">
+        <div className="bg-navy-800 border border-white/5 p-5 sm:p-8 flex flex-col gap-6">
           <h3
             className="text-lg font-semibold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}

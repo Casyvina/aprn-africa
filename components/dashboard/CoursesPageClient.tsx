@@ -49,7 +49,7 @@ export default function CoursesPageClient({ courses }: { courses: TrainingProgra
       >
         <motion.div variants={fadeUp}>
           <h2
-            className="text-3xl font-bold text-white"
+            className="text-2xl sm:text-3xl font-bold text-white"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             Training Catalogue
@@ -74,7 +74,7 @@ export default function CoursesPageClient({ courses }: { courses: TrainingProgra
 
       {/* Enrolment banner — static until enrolment tracking is built */}
       <motion.div
-        className="bg-navy-800 border border-white/5 border-dashed p-8 flex flex-col sm:flex-row items-center gap-6"
+        className="bg-navy-800 border border-white/5 border-dashed p-5 sm:p-8 flex flex-col sm:flex-row items-center gap-5 sm:gap-6"
         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
       >
