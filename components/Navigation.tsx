@@ -102,19 +102,21 @@ export default function Navigation() {
           </Link>
 
           {/* Join Network CTA */}
-          <a
+          <Link
             href="/membership"
             className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 rounded-sm transition-all duration-200 shadow-[0_0_16px_rgba(212,160,23,0.3)] hover:shadow-[0_0_24px_rgba(212,160,23,0.5)] hover:gap-3"
           >
             Join Network
             <i className="fa-solid fa-arrow-right text-xs" />
-          </a>
+          </Link>
 
           {/* Animated hamburger — mobile only */}
           <button
             className="md:hidden relative w-10 h-10 flex flex-col justify-center items-center gap-1.5 rounded-sm hover:bg-navy-700/50 transition-colors"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
+            aria-expanded={open}
+            aria-controls="mobile-nav-drawer"
           >
             <motion.span
               animate={open ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
@@ -139,6 +141,7 @@ export default function Navigation() {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="mobile-nav-drawer"
             className="md:hidden overflow-hidden"
             style={{ borderTop: "1px solid rgba(21, 50, 74, 0.6)" }}
             initial={{ height: 0 }}
@@ -208,13 +211,14 @@ export default function Navigation() {
                 >
                   Member Portal
                 </Link>
-                <a
+                <Link
                   href="/membership"
+                  onClick={() => setOpen(false)}
                   className="flex items-center justify-center gap-2 w-full px-5 py-3.5 text-sm font-semibold text-navy-900 bg-gold-500 hover:bg-gold-400 transition-colors rounded-sm shadow-[0_0_16px_rgba(212,160,23,0.3)]"
                 >
                   Join Network
                   <i className="fa-solid fa-arrow-right text-xs" />
-                </a>
+                </Link>
               </motion.div>
             </motion.div>
           </motion.div>

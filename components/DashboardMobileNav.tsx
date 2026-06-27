@@ -53,8 +53,10 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
       {/* Hamburger button */}
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden w-9 h-9 flex items-center justify-center rounded-sm text-slate-400 hover:text-white hover:bg-navy-800 transition-colors shrink-0"
+        className="md:hidden w-11 h-11 flex items-center justify-center rounded-sm text-slate-400 hover:text-white hover:bg-navy-800 transition-colors shrink-0"
         aria-label="Open menu"
+        aria-expanded={open}
+        aria-controls="dashboard-mobile-drawer"
       >
         <i className="fa-solid fa-bars text-sm" />
       </button>
@@ -80,6 +82,7 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", stiffness: 340, damping: 34, mass: 0.85 }}
+              id="dashboard-mobile-drawer"
               className="fixed top-0 left-0 h-dvh w-80 bg-navy-900 z-50 flex flex-col md:hidden overflow-hidden"
             >
               {/* Gold top accent line */}
@@ -99,7 +102,7 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
                 </Link>
                 <button
                   onClick={() => setOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-sm text-slate-500 hover:text-white hover:bg-navy-800 transition-colors"
+                  className="w-11 h-11 flex items-center justify-center rounded-sm text-slate-500 hover:text-white hover:bg-navy-800 transition-colors"
                   aria-label="Close menu"
                 >
                   <i className="fa-solid fa-xmark text-sm" />
@@ -244,7 +247,7 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
                   <form action="/api/auth/signout" method="post">
                     <button
                       formAction="/api/auth/signout"
-                      className="w-8 h-8 flex items-center justify-center rounded-sm text-slate-500 hover:text-red-400 hover:bg-navy-800 transition-colors"
+                      className="w-11 h-11 flex items-center justify-center rounded-sm text-slate-500 hover:text-red-400 hover:bg-navy-800 transition-colors"
                       title="Sign out"
                     >
                       <i className="fa-solid fa-arrow-right-from-bracket text-xs" />

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import type { SiteSettingsFooter, FooterLink } from "@/lib/queries/siteSettings";
 
@@ -33,12 +34,12 @@ function NavList({ items }: { items: FooterLink[] }) {
     <ul className="space-y-2 text-sm text-slate-400">
       {items.map((item) => (
         <li key={item.label}>
-          <a
+          <Link
             href={item.href}
-            className="inline-flex items-center gap-1.5 hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200 cursor-pointer"
+            className="inline-flex items-center gap-1.5 hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200"
           >
             {item.label}
-          </a>
+          </Link>
         </li>
       ))}
     </ul>
@@ -123,9 +124,9 @@ export default function Footer({ siteSettings }: FooterProps) {
             &copy; {new Date().getFullYear()} African Pipeline Resource Network. All rights reserved.
           </p>
           <div className="flex gap-6 text-xs text-slate-500">
-            <a href="/privacy" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Privacy Policy</a>
-            <a href="/terms"   className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Terms of Use</a>
-            <a href="/privacy" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Cookie Policy</a>
+            <Link href="/privacy" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Privacy Policy</Link>
+            <Link href="/terms"   className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Terms of Use</Link>
+            <Link href="/privacy" className="hover:text-gold-500 hover:translate-x-0.5 transition-all duration-200">Cookie Policy</Link>
           </div>
         </div>
       </div>
