@@ -110,7 +110,7 @@ export default async function InsightsPage() {
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Featured</p>
             <Link
               href={`/insights/${featured.slug}`}
-              className="group block lg:grid lg:grid-cols-12 gap-12 items-center"
+              className="group block lg:grid lg:grid-cols-12 gap-6 lg:gap-12 items-center"
             >
               <div
                 className="lg:col-span-7 aspect-video bg-cover bg-center rounded-sm overflow-hidden mb-8 lg:mb-0 relative"

@@ -108,7 +108,7 @@ export default function ContactPage() {
 
         {/* -- Contact Overview & Channels ------------------------- */}
         <section className="py-24 px-6 lg:px-12 bg-navy-900">
-          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-16">
+          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-8 lg:gap-16">
 
             <div className="lg:col-span-4">
               <h2
@@ -174,7 +174,7 @@ export default function ContactPage() {
               backgroundSize: "40px 40px",
             }}
           />
-          <div className="max-w-360 mx-auto relative z-10 grid lg:grid-cols-2 gap-16 items-start">
+          <div className="max-w-360 mx-auto relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
 
             <ContactForm />
 

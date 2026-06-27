@@ -189,7 +189,7 @@ export default async function PartnershipsPage() {
             </div>
 
             {/* SVG node map */}
-            <div className="relative h-145 w-full glass-panel rounded-sm overflow-hidden border border-navy-700">
+            <div className="relative h-80 md:h-145 w-full glass-panel rounded-sm overflow-hidden border border-navy-700">
               {/* Grid background */}
               <div
                 className="absolute inset-0"

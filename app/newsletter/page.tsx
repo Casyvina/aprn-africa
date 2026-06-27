@@ -118,10 +118,10 @@ export default async function NewsletterPage() {
               )}
             </div>
 
-            <div className="grid lg:grid-cols-5 gap-8">
+            <div className="grid lg:grid-cols-5 gap-5 lg:gap-8">
 
               {/* Lead story */}
-              <div className="lg:col-span-3 bg-navy-800 border border-navy-700 hover:border-gold-500/30 transition-colors p-8 flex flex-col gap-6">
+              <div className="lg:col-span-3 bg-navy-800 border border-navy-700 hover:border-gold-500/30 transition-colors p-5 lg:p-8 flex flex-col gap-6">
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-bold text-navy-900 bg-gold-500 px-2.5 py-1 uppercase tracking-widest">
                     {stories[0].tag}

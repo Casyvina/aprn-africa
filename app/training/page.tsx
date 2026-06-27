@@ -185,7 +185,7 @@ export default async function TrainingPage() {
                   of specialised engineering talent. An ageing workforce and rapid technological shifts
                   demand immediate, high-calibre capacity development.
                 </p>
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   {stats.map((s) => (
                     <div
                       key={s.value}
@@ -357,7 +357,7 @@ export default async function TrainingPage() {
                 <p className="text-slate-400 text-lg mb-8 leading-relaxed">
                   Structured online courses, video modules, and assessments — all built specifically for Africa&apos;s pipeline and energy sector. Learn at your own pace, earn credentials, and track progress in your dashboard.
                 </p>
-                <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   {[
                     { icon: "fa-play-circle",     label: "Video modules",        value: "Self-paced" },
                     { icon: "fa-check-circle",     label: "Structured assessments", value: "Graded" },

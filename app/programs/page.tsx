@@ -212,7 +212,7 @@ export default async function ProgramsPage() {
                   labs, international certification protocols, and rigorous practical training.
                 </p>
 
-                <div className="grid grid-cols-2 gap-8 mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10">
                   <div>
                     <div
                       className="text-3xl text-gold-500 mb-2"

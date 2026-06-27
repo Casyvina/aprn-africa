@@ -296,7 +296,7 @@ export default async function ResearchPage() {
                   construction, proposed routes, and regional capacity metrics across Africa.
                 </p>
 
-                <div className="grid grid-cols-2 gap-8 mb-12">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
                   {corridorStats.map((s) => (
                     <div key={s.label} className="border-l-2 border-gold-500 pl-6">
                       <div
@@ -329,7 +329,7 @@ export default async function ResearchPage() {
 
               {/* Map visual */}
               <div
-                className="relative h-125 w-full rounded-sm overflow-hidden flex items-center justify-center p-4"
+                className="relative h-80 md:h-125 w-full rounded-sm overflow-hidden flex items-center justify-center p-4"
                 style={{
                   background: "rgba(13,36,54,0.4)",
                   backdropFilter: "blur(12px)",
@@ -441,7 +441,7 @@ export default async function ResearchPage() {
               </div>
 
               {/* Partner logos */}
-              <div className="grid grid-cols-3 gap-8 opacity-50 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-8 opacity-50 hover:opacity-100 grayscale hover:grayscale-0 transition-all duration-500">
                 {partnerIcons.map((icon, i) => (
                   <div
                     key={i}

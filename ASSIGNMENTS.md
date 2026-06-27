@@ -72,10 +72,10 @@
 
 ## Backlog — Polish & Accessibility
 
-- [ ] Mobile layout fixes (10+ responsive issues across public pages)
-- [ ] `components/Footer.tsx` — replace `<a href>` with `next/link` for internal routes
-- [ ] Navigation — add `aria-expanded` to mobile hamburger
-- [ ] Dashboard mobile nav — increase touch target size on close and sign-out buttons
+- [x] Mobile layout fixes (10+ responsive issues across public pages) — done 2026-06-27 (Joseph)
+- [x] `components/Footer.tsx` — replace `<a href>` with `next/link` for internal routes — done 2026-06-27 (Joseph)
+- [x] Navigation — add `aria-expanded` to mobile hamburger — done 2026-06-27 (Joseph)
+- [x] Dashboard mobile nav — increase touch target size on close and sign-out buttons — done 2026-06-27 (Joseph)
 
 ---
 
