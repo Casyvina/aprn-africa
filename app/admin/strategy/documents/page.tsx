@@ -104,6 +104,7 @@ export default function DocumentLibraryPage() {
   const [editDraft, setEditDraft] = useState<Partial<DocEntry>>({});
   const [editTab,   setEditTab]   = useState<EditTab>("metadata");
   const [editSaving, setEditSaving] = useState(false);
+  const [editSaveError, setEditSaveError] = useState<string | null>(null);
 
   // AI Edit state
   const [aiInstruction, setAiInstruction] = useState("");
@@ -217,14 +218,16 @@ export default function DocumentLibraryPage() {
     setAiCharCount(0);
     setAiSaved(false);
     setEditSaving(false);
+    setEditSaveError(null);
   }
 
   async function saveEdit() {
     if (!editDoc) return;
     setEditSaving(true);
+    setEditSaveError(null);
     const updated = { ...editDoc, ...editDraft };
     try {
-      await fetch("/api/admin/documents/meta", {
+      const res = await fetch("/api/admin/documents/meta", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -237,12 +240,15 @@ export default function DocumentLibraryPage() {
           category: updated.category,
         }),
       });
+      if (!res.ok) {
+        const json = await res.json() as { error?: string };
+        setEditSaveError(json.error ?? "Failed to save. Please try again.");
+        return;
+      }
       setDocs((prev) => prev.map((d) => d.id === editDoc.id ? { ...d, ...editDraft } : d));
       setEditDoc(null);
     } catch {
-      // silent — local state still updated
-      setDocs((prev) => prev.map((d) => d.id === editDoc.id ? { ...d, ...editDraft } : d));
-      setEditDoc(null);
+      setEditSaveError("Network error. Check your connection and try again.");
     } finally {
       setEditSaving(false);
     }
@@ -801,6 +807,12 @@ export default function DocumentLibraryPage() {
                     <span className="col-span-2 truncate">File: <span className="text-white">{editDoc.filename}</span></span>
                   </div>
                 </div>
+                {editSaveError && (
+                  <div className="bg-red-500/10 border border-red-500/20 px-4 py-3 text-xs text-red-400 flex items-center gap-2">
+                    <i className="fa-solid fa-circle-exclamation shrink-0" />
+                    {editSaveError}
+                  </div>
+                )}
                 <div className="flex gap-3 mt-auto pt-2">
                   <button
                     onClick={saveEdit}

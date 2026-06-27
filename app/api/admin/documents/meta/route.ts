@@ -21,7 +21,7 @@ export async function GET() {
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
 
   const meta: Record<string, unknown> = {};
-  (data ?? []).forEach((row) => { meta[row.filename] = row; });
+  (data ?? []).forEach((row) => { meta[row.doc_id] = row; });
   return Response.json({ meta });
 }
 

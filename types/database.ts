@@ -706,6 +706,57 @@ export type Database = {
         }
         Relationships: []
       }
+      strategy_stakeholders: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          engagement_strategy: string | null
+          id: string
+          influence: string
+          interest: string
+          ix: number
+          iy: number
+          last_contact: string | null
+          name: string
+          org: string | null
+          relationship: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          engagement_strategy?: string | null
+          id?: string
+          influence?: string
+          interest?: string
+          ix?: number
+          iy?: number
+          last_contact?: string | null
+          name: string
+          org?: string | null
+          relationship?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          engagement_strategy?: string | null
+          id?: string
+          influence?: string
+          interest?: string
+          ix?: number
+          iy?: number
+          last_contact?: string | null
+          name?: string
+          org?: string | null
+          relationship?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       strategy_stakeholders_meta: {
         Row: {
           last_contact_date: string | null

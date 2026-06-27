@@ -66,9 +66,9 @@
 - [x] Build `/certification` page — template: `professional-certification.html` — done 2026-06-27 (Joseph)
 - [x] Settings — wire "Upload Photo" (file picker → Supabase Storage `aprn-documents` bucket → update `profiles.avatar_url`) — done 2026-06-27 (Joseph)
 - [x] Settings — wire "Delete Account" through a secure server route (delete auth user + profile row) — done 2026-06-27 (Joseph)
-- [ ] Document Library — persist metadata and upload registry across page refreshes
-- [ ] Stakeholder Map — add create/edit flows for new stakeholders
-- [ ] Communication calendar — edit and reorder existing calendar items
+- [x] Document Library — persist metadata and upload registry across page refreshes — done 2026-06-27 (Joseph)
+- [x] Stakeholder Map — add create/edit flows for new stakeholders — done 2026-06-27 (Joseph)
+- [x] Communication calendar — edit and reorder existing calendar items — done 2026-06-27 (Joseph)
 
 ## Backlog — Polish & Accessibility
 

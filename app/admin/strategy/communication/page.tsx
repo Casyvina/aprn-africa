@@ -124,6 +124,10 @@ export default function CommunicationStrategyPage() {
   const [newItem, setNewItem]           = useState({ item: "", owner: "" });
   const [deletingId, setDeletingId]     = useState<string | null>(null);
   const [addingItem, setAddingItem]     = useState(false);
+  const [editingCalId, setEditingCalId] = useState<string | null>(null);
+  const [editCalDraft, setEditCalDraft] = useState({ item: "", owner: "" });
+  const [savingCalId, setSavingCalId]   = useState<string | null>(null);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   // ── Load on mount ──────────────────────────────────────────────────────────
 
@@ -188,6 +192,64 @@ export default function CommunicationStrategyPage() {
       setCalItems((prev) => (prev ?? []).filter((i) => i.id !== id));
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  function startEditCalItem(calItem: CalItem) {
+    setEditingCalId(calItem.id);
+    setEditCalDraft({ item: calItem.item, owner: calItem.owner ?? "" });
+  }
+
+  async function saveCalEdit(id: string) {
+    if (!editCalDraft.item.trim()) return;
+    setSavingCalId(id);
+    try {
+      const res = await fetch("/api/admin/strategy/calendar", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, item: editCalDraft.item.trim(), owner: editCalDraft.owner.trim() }),
+      });
+      if (res.ok) {
+        setCalItems((prev) => (prev ?? []).map((i) =>
+          i.id === id ? { ...i, item: editCalDraft.item.trim(), owner: editCalDraft.owner.trim() } : i
+        ));
+        setEditingCalId(null);
+      }
+    } finally {
+      setSavingCalId(null);
+    }
+  }
+
+  async function moveCalItem(id: string, weekNum: number, direction: "up" | "down") {
+    if (useStaticCal || !calItems) return;
+    const weekItems = calItems.filter((i) => i.week_number === weekNum).sort((a, b) => a.sort_order - b.sort_order);
+    const idx = weekItems.findIndex((i) => i.id === id);
+    const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= weekItems.length) return;
+
+    const a = weekItems[idx];
+    const b = weekItems[swapIdx];
+    setReorderingId(id);
+    try {
+      await Promise.all([
+        fetch("/api/admin/strategy/calendar", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: a.id, sort_order: b.sort_order }),
+        }),
+        fetch("/api/admin/strategy/calendar", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: b.id, sort_order: a.sort_order }),
+        }),
+      ]);
+      setCalItems((prev) => (prev ?? []).map((i) => {
+        if (i.id === a.id) return { ...i, sort_order: b.sort_order };
+        if (i.id === b.id) return { ...i, sort_order: a.sort_order };
+        return i;
+      }));
+    } finally {
+      setReorderingId(null);
     }
   }
 
@@ -510,30 +572,90 @@ export default function CommunicationStrategyPage() {
                     )}
                   </div>
                   <ul className="space-y-2">
-                    {w.items.map((calItem) => (
-                      <li key={calItem.id} className="flex items-start justify-between gap-2 group/item">
-                        <div className="flex items-start gap-2 min-w-0">
-                          <i className="fa-solid fa-check text-[9px] mt-1 text-gold-500 shrink-0" />
-                          <span className="text-sm text-slate-300 truncate">{calItem.item}</span>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          {calItem.owner && (
-                            <span className="text-[10px] text-slate-600">{calItem.owner}</span>
-                          )}
-                          {!useStaticCal && (
-                            <button
-                              onClick={() => handleDeleteCalItem(calItem.id)}
-                              disabled={deletingId === calItem.id}
-                              className="opacity-0 group-hover/item:opacity-100 transition-opacity text-slate-600 hover:text-red-400 text-[10px] disabled:opacity-40"
-                              title="Remove item"
-                            >
-                              {deletingId === calItem.id
-                                ? <i className="fa-solid fa-spinner animate-spin" />
-                                : <i className="fa-solid fa-xmark" />
-                              }
-                            </button>
-                          )}
-                        </div>
+                    {w.items.map((calItem, itemIdx) => (
+                      <li key={calItem.id} className="group/item">
+                        {editingCalId === calItem.id ? (
+                          <div className="space-y-2">
+                            <input
+                              autoFocus
+                              value={editCalDraft.item}
+                              onChange={(e) => setEditCalDraft((p) => ({ ...p, item: e.target.value }))}
+                              onKeyDown={(e) => { if (e.key === "Enter") saveCalEdit(calItem.id); if (e.key === "Escape") setEditingCalId(null); }}
+                              className="w-full bg-navy-900 border border-gold-500/40 text-xs text-white px-3 py-2 focus:outline-none"
+                            />
+                            <div className="flex gap-2">
+                              <input
+                                value={editCalDraft.owner}
+                                onChange={(e) => setEditCalDraft((p) => ({ ...p, owner: e.target.value }))}
+                                placeholder="Owner"
+                                className="flex-1 bg-navy-900 border border-white/10 text-xs text-white px-3 py-1.5 placeholder-slate-600 focus:border-gold-500/50 focus:outline-none"
+                              />
+                              <button
+                                onClick={() => saveCalEdit(calItem.id)}
+                                disabled={savingCalId === calItem.id}
+                                className="px-3 py-1.5 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 text-navy-900 text-xs font-bold transition-colors"
+                              >
+                                {savingCalId === calItem.id ? <i className="fa-solid fa-spinner animate-spin" /> : "Save"}
+                              </button>
+                              <button
+                                onClick={() => setEditingCalId(null)}
+                                className="px-3 py-1.5 text-slate-500 hover:text-white text-xs border border-white/10 hover:border-white/20 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-start gap-2 min-w-0">
+                              <i className="fa-solid fa-check text-[9px] mt-1 text-gold-500 shrink-0" />
+                              <span className="text-sm text-slate-300 truncate">{calItem.item}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {calItem.owner && (
+                                <span className="text-[10px] text-slate-600">{calItem.owner}</span>
+                              )}
+                              {!useStaticCal && (
+                                <div className="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={() => moveCalItem(calItem.id, w.weekNum, "up")}
+                                    disabled={itemIdx === 0 || reorderingId === calItem.id}
+                                    className="text-slate-600 hover:text-slate-300 text-[9px] disabled:opacity-20"
+                                    title="Move up"
+                                  >
+                                    <i className="fa-solid fa-chevron-up" />
+                                  </button>
+                                  <button
+                                    onClick={() => moveCalItem(calItem.id, w.weekNum, "down")}
+                                    disabled={itemIdx === w.items.length - 1 || reorderingId === calItem.id}
+                                    className="text-slate-600 hover:text-slate-300 text-[9px] disabled:opacity-20"
+                                    title="Move down"
+                                  >
+                                    <i className="fa-solid fa-chevron-down" />
+                                  </button>
+                                  <button
+                                    onClick={() => startEditCalItem(calItem)}
+                                    className="text-slate-600 hover:text-gold-500 text-[10px]"
+                                    title="Edit item"
+                                  >
+                                    <i className="fa-solid fa-pen text-[9px]" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteCalItem(calItem.id)}
+                                    disabled={deletingId === calItem.id}
+                                    className="text-slate-600 hover:text-red-400 text-[10px] disabled:opacity-40"
+                                    title="Remove item"
+                                  >
+                                    {deletingId === calItem.id
+                                      ? <i className="fa-solid fa-spinner animate-spin" />
+                                      : <i className="fa-solid fa-xmark" />
+                                    }
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>

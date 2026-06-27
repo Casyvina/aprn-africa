@@ -57,6 +57,41 @@ export async function POST(req: NextRequest) {
   return Response.json({ item: data });
 }
 
+/** PUT — update a calendar item's text, owner, or sort_order */
+export async function PUT(req: NextRequest) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !isAdmin(user.email)) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+  }
+
+  const { id, item, owner, sort_order } = await req.json() as {
+    id: string;
+    item?: string;
+    owner?: string;
+    sort_order?: number;
+  };
+
+  if (!id) return new Response(JSON.stringify({ error: "id is required" }), { status: 400 });
+
+  const admin = createAdminClient();
+
+  const { data, error } = await admin
+    .from("strategy_calendar_items")
+    .update({
+      updated_at: new Date().toISOString(),
+      ...(item !== undefined ? { item } : {}),
+      ...(owner !== undefined ? { owner } : {}),
+      ...(sort_order !== undefined ? { sort_order } : {}),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+  return Response.json({ item: data });
+}
+
 /** DELETE — remove a calendar item by id (?id=uuid) */
 export async function DELETE(req: NextRequest) {
   const supabase = await createClient();

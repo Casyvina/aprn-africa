@@ -32,7 +32,7 @@ export async function GET() {
   }
 
   const files = (data ?? [])
-    .filter((f) => f.name !== ".emptyFolderPlaceholder")
+    .filter((f) => f.name !== ".emptyFolderPlaceholder" && f.metadata !== null)
     .map((f) => ({
       filename: f.name,
       inCloud: true,
