@@ -75,13 +75,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           >
             Secure Access to<br />
             <span
-              className="font-bold"
-              style={{
-                background: "linear-gradient(to right, #F5F7FA, #6B7280)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
+              className="font-bold bg-linear-to-r from-slate-100 to-slate-500 bg-clip-text text-transparent"
             >
               Infrastructure Intelligence
             </span>

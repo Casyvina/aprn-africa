@@ -30,8 +30,7 @@ export default function ForgotPasswordPage() {
   if (sent) {
     return (
       <div
-        className="w-full max-w-[440px] bg-navy-800 p-10 border border-white/5 text-center"
-        style={{ borderRadius: "24px", boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}
+        className="w-full max-w-[440px] bg-navy-800 p-10 border border-white/5 text-center shadow-2xl"
       >
         <div className="w-12 h-12 rounded-full border border-gold-500/40 bg-gold-500/10 flex items-center justify-center mx-auto mb-6">
           <i className="fa-solid fa-envelope-circle-check text-gold-500 text-xl" />
@@ -55,8 +54,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div
-      className="w-full max-w-[440px] bg-navy-800 p-10 border border-white/5"
-      style={{ borderRadius: "24px", boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}
+      className="w-full max-w-[440px] bg-navy-800 p-10 border border-white/5 shadow-2xl"
     >
       {/* Mobile logo */}
       <div className="flex lg:hidden items-center gap-3 mb-10 justify-center">
@@ -93,10 +91,7 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full text-navy-900 font-semibold py-4 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{ background: "linear-gradient(to right, #D4A017, #E5B83B)", borderRadius: "12px" }}
-          onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 0 20px rgba(212,160,23,0.3)")}
-          onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
+          className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold py-4 transition-colors hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? "Sending…" : "Send Reset Link"}
         </button>

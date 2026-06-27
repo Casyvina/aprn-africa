@@ -112,7 +112,6 @@ export default async function ResearchPage() {
               style={{
                 fontFamily: "var(--font-oswald), sans-serif",
                 fontSize: "clamp(3rem, 9vw, 110px)",
-                textShadow: "0 0 20px rgba(212,160,23,0.4)",
               }}
             >
               Africa&apos;s Pipeline<br />

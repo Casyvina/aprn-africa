@@ -52,12 +52,7 @@ function LoginForm() {
 
   return (
     <motion.div
-      className="w-full max-w-md bg-navy-800 border border-white/5"
-      style={{
-        borderRadius: "24px",
-        boxShadow: "0 24px 48px rgba(0,0,0,0.45)",
-        padding: "clamp(2rem, 5vw, 2.5rem)",
-      }}
+      className="w-full max-w-md bg-navy-800 border border-white/5 p-8 sm:p-10 shadow-2xl"
       initial={{ opacity: 0, y: 28 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -164,8 +159,7 @@ function LoginForm() {
               whileHover={!loading ? { y: -2, boxShadow: "0 0 28px rgba(212,160,23,0.4)" } : {}}
               whileTap={!loading ? { scale: 0.98 } : {}}
               transition={{ duration: 0.15 }}
-              className="w-full text-navy-900 font-semibold py-4 mt-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{ background: "linear-gradient(to right, #D4A017, #E5B83B)", borderRadius: "12px" }}
+              className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold py-4 mt-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? "Signing in…" : "Sign In"}
             </motion.button>
@@ -187,7 +181,6 @@ function LoginForm() {
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.15 }}
             className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-navy-900 border border-white/10 transition-colors text-sm font-medium text-white cursor-pointer"
-            style={{ borderRadius: "12px" }}
           >
             <i className="fa-brands fa-google text-[#EA4335]" />
             Continue with Google
