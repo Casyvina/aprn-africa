@@ -12,7 +12,7 @@ export default async function SettingsPage() {
   const [{ data: profile }, { data: notifPrefs }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("full_name, job_title, discipline, organisation, country, linkedin_url, bio, membership_tier")
+      .select("full_name, job_title, discipline, organisation, country, linkedin_url, bio, membership_tier, avatar_url")
       .eq("id", user.id)
       .single(),
     supabase

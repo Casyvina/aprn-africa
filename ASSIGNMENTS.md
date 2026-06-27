@@ -10,13 +10,13 @@
 
 ### Joseph — Engineering
 
-- [ ] Wire `/dashboard/research` to live Sanity data (replace hardcoded research list)
-- [ ] Wire `/dashboard/courses` to live Sanity training content
-- [ ] Wire `/dashboard/network` to live Supabase `profiles` data
-- [ ] Build Admin Payments page — pull live Paystack transaction history
-- [ ] Wire bookmark buttons on `/research` and `/insights` → `POST /api/dashboard/saved`
-- [ ] Connect dashboard filter tabs (courses, network, research) to state
-- [ ] Register Resend webhook in Resend dashboard (`/api/admin/outreach/webhooks/resend`)
+- [x] Wire `/dashboard/research` to live Sanity data (replace hardcoded research list)
+- [x] Wire `/dashboard/courses` to live Sanity training content
+- [x] Wire `/dashboard/network` to live Supabase `profiles` data
+- [x] Build Admin Payments page — pull live Paystack transaction history
+- [x] Wire bookmark buttons on `/research` and `/insights` → `POST /api/dashboard/saved`
+- [x] Connect dashboard filter tabs (courses, network, research) to state
+- [x] Register Resend webhook in Resend dashboard (`/api/admin/outreach/webhooks/resend`) — done 2026-06-27 (Joseph)
 
 ---
 
@@ -59,15 +59,19 @@
 
 ---
 
-## Backlog — Engineering (no deadline yet)
+## Next Up — Engineering (priority order)
 
-- [ ] Build `/programs` page (template: `programs-initiative.html`)
-- [ ] Build `/certification` page (template: `professional-certification.html`)
-- [ ] Settings — wire "Upload Photo" button (file picker + Supabase Storage upload)
-- [ ] Settings — wire "Delete Account" through a secure server route
+- [x] Build `/training` page — full template (`training-development.html`) — done 2026-06-27 (Joseph)
+- [x] Build `/programs` page — template: `programs-initiative.html` — done 2026-06-27 (Joseph)
+- [x] Build `/certification` page — template: `professional-certification.html` — done 2026-06-27 (Joseph)
+- [x] Settings — wire "Upload Photo" (file picker → Supabase Storage `aprn-documents` bucket → update `profiles.avatar_url`) — done 2026-06-27 (Joseph)
+- [x] Settings — wire "Delete Account" through a secure server route (delete auth user + profile row) — done 2026-06-27 (Joseph)
 - [ ] Document Library — persist metadata and upload registry across page refreshes
 - [ ] Stakeholder Map — add create/edit flows for new stakeholders
 - [ ] Communication calendar — edit and reorder existing calendar items
+
+## Backlog — Polish & Accessibility
+
 - [ ] Mobile layout fixes (10+ responsive issues across public pages)
 - [ ] `components/Footer.tsx` — replace `<a href>` with `next/link` for internal routes
 - [ ] Navigation — add `aria-expanded` to mobile hamburger
@@ -90,6 +94,9 @@
 - [x] Dashboard Saved Items — wired to Supabase `saved_items` — done 2026-06-18 (Joseph)
 - [x] Settings Notifications tab — wired to `notification_preferences` table — done 2026-06-18 (Joseph)
 - [x] Admin Database — 5 Supabase tables, CRUD, AI-assist, Excel export — done 2026-06-17 (Joseph)
+- [x] Wire `/dashboard/research` + `/dashboard/courses` + `/dashboard/network` to live data — done 2026-06-25 (Joseph)
+- [x] Admin Payments page — live Paystack transaction history — done 2026-06-27 (Joseph)
+- [x] Bookmark buttons on `/research` and `/insights` — already wired via SaveButton — confirmed 2026-06-27
 - [x] Tokunbo and Allison — Sanity Studio access confirmed active
 - [x] GitHub token — added to `.env.local` and Vercel — confirmed
 - [x] All 8 Vercel env vars live (ADMIN_EMAILS, ANTHROPIC_API_KEY, FAL_KEY, Paystack ×2, SANITY_WRITE_TOKEN, GITHUB_TOKEN, RESEND_API_KEY)

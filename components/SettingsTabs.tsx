@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/store/auth";
@@ -18,14 +18,15 @@ interface NotifPrefs {
 interface Props {
   user: { id: string; email: string };
   profile: {
-    full_name:    string | null;
-    job_title:    string | null;
-    discipline:   string | null;
-    organisation: string | null;
-    country:      string | null;
-    linkedin_url: string | null;
-    bio:          string | null;
+    full_name:       string | null;
+    job_title:       string | null;
+    discipline:      string | null;
+    organisation:    string | null;
+    country:         string | null;
+    linkedin_url:    string | null;
+    bio:             string | null;
     membership_tier: string | null;
+    avatar_url:      string | null;
   } | null;
   notifPrefs: NotifPrefs | null;
 }
@@ -44,12 +45,59 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
   const [saving,  setSaving]  = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
 
+  // Avatar upload
+  const [avatarUrl,    setAvatarUrl]    = useState(profile?.avatar_url ?? "");
+  const [avatarSaving, setAvatarSaving] = useState(false);
+  const [avatarMsg,    setAvatarMsg]    = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarSaving(true);
+    setAvatarMsg("");
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch("/api/dashboard/avatar", { method: "POST", body: form });
+    const json = await res.json() as { url?: string; error?: string };
+    setAvatarSaving(false);
+    if (!res.ok || !json.url) {
+      setAvatarMsg(json.error ?? "Upload failed. Try again.");
+      setTimeout(() => setAvatarMsg(""), 4000);
+    } else {
+      setAvatarUrl(json.url);
+      setAvatarMsg("Photo updated.");
+      updateProfile({ avatar_url: json.url });
+      setTimeout(() => setAvatarMsg(""), 3000);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   // Security form
   const [newPw,    setNewPw]    = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
   const [pwMsg,    setPwMsg]    = useState("");
   const [pwErrors, setPwErrors] = useState<string[]>([]);
+
+  // Delete account
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteMsg,     setDeleteMsg]     = useState("");
+  const [deleting,      setDeleting]      = useState(false);
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    setDeleteMsg("");
+    const res = await fetch("/api/dashboard/delete-account", { method: "DELETE" });
+    const json = await res.json() as { ok?: boolean; error?: string };
+    if (!res.ok || !json.ok) {
+      setDeleting(false);
+      setDeleteMsg(json.error ?? "Deletion failed. Try again.");
+      return;
+    }
+    // Redirect to home — account is gone
+    window.location.href = "/?deleted=1";
+  }
 
   // Notification toggles — seeded from DB, fallback to sensible defaults
   const [notifs, setNotifs] = useState({
@@ -176,20 +224,51 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
 
             {/* Avatar */}
             <div className="flex flex-col items-center gap-5">
-              <div className="w-48 h-48 bg-navy-900 border border-gold-500/30 flex items-center justify-center">
-                <span
-                  className="text-6xl font-bold text-gold-500"
-                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                >
-                  {initials}
-                </span>
+              <div className="w-48 h-48 bg-navy-900 border border-gold-500/30 flex items-center justify-center overflow-hidden relative">
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={avatarUrl}
+                    alt="Profile photo"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span
+                    className="text-6xl font-bold text-gold-500"
+                    style={{ fontFamily: "var(--font-playfair), serif" }}
+                  >
+                    {initials}
+                  </span>
+                )}
+                {avatarSaving && (
+                  <div className="absolute inset-0 bg-navy-900/70 flex items-center justify-center">
+                    <i className="fa-solid fa-spinner fa-spin text-gold-500 text-2xl" />
+                  </div>
+                )}
               </div>
-              <button className="px-6 py-2 border border-gold-500 text-gold-500 hover:bg-gold-500/10 transition-colors text-sm font-medium w-48">
-                Upload Photo
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={avatarSaving}
+                className="px-6 py-2 border border-gold-500 text-gold-500 hover:bg-gold-500/10 transition-colors text-sm font-medium w-48 disabled:opacity-50"
+              >
+                {avatarSaving ? "Uploading…" : "Upload Photo"}
               </button>
-              <p className="text-xs text-slate-500 text-center max-w-44">
-                JPG, PNG or SVG. Max 2 MB.
-              </p>
+              {avatarMsg ? (
+                <p className={`text-xs text-center max-w-44 ${avatarMsg.includes("failed") || avatarMsg.includes("Upload") ? "text-red-400" : "text-emerald-400"}`}>
+                  {avatarMsg}
+                </p>
+              ) : (
+                <p className="text-xs text-slate-500 text-center max-w-44">
+                  JPG, PNG or WebP. Max 2 MB.
+                </p>
+              )}
             </div>
 
             {/* Form */}
@@ -385,9 +464,41 @@ export default function SettingsTabs({ user, profile, notifPrefs }: Props) {
             <p className="text-sm text-slate-400 mb-5 max-w-md">
               Permanently delete your account and all associated data. This cannot be undone.
             </p>
-            <button className="px-6 py-2 border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white transition-colors text-sm font-medium">
-              Delete Account
-            </button>
+            {!deleteConfirm ? (
+              <button
+                onClick={() => setDeleteConfirm(true)}
+                className="px-6 py-2 border border-red-500/50 text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium"
+              >
+                Delete Account
+              </button>
+            ) : (
+              <div className="flex flex-col gap-4 max-w-md">
+                <div className="bg-red-500/10 border border-red-500/30 px-4 py-3">
+                  <p className="text-sm text-red-300 font-medium">
+                    Are you sure? This will permanently delete your profile, saved items, and membership data.
+                  </p>
+                </div>
+                {deleteMsg && (
+                  <p className="text-xs text-red-400">{deleteMsg}</p>
+                )}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white transition-colors text-sm font-bold disabled:opacity-50"
+                  >
+                    {deleting ? "Deleting…" : "Yes, Delete My Account"}
+                  </button>
+                  <button
+                    onClick={() => { setDeleteConfirm(false); setDeleteMsg(""); }}
+                    disabled={deleting}
+                    className="px-6 py-2 border border-white/10 text-slate-400 hover:text-white transition-colors text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
