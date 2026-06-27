@@ -91,7 +91,7 @@ export default async function TrainingPage() {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 mb-6">
                 <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
                 <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">
-                  World-Class Engineering Academy
+                  APRN Professional Academy
                 </span>
               </div>
 

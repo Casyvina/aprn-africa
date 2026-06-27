@@ -592,6 +592,33 @@ export type Database = {
         }
         Relationships: []
       }
+      strategy_approval_steps: {
+        Row: {
+          description: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string | null
+          who_handles: string
+        }
+        Insert: {
+          description: string
+          id: string
+          sort_order?: number
+          title: string
+          updated_at?: string | null
+          who_handles: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string | null
+          who_handles?: string
+        }
+        Relationships: []
+      }
       strategy_calendar_items: {
         Row: {
           created_at: string | null

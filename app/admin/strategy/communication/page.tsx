@@ -63,12 +63,20 @@ const CHANNELS = [
   { id: "webinars",   name: "Webinars",   freq: "Monthly", content: "Technical briefings, policy discussions, training",     audience: "Members, industry professionals", owner: "Lucy + Joseph" },
 ];
 
-const APPROVAL_FLOW = [
+const APPROVAL_FLOW_DEFAULT = [
   { step: "01", title: "Create",  who: "Tokunbo / Allison",  desc: "Draft content aligned with APRN brand and messaging guidelines" },
   { step: "02", title: "Review",  who: "Tokunbo + Joseph",   desc: "Content quality and brand check (Tokunbo); technical accuracy check (Joseph)" },
   { step: "03", title: "Approve", who: "Lucy Okeke",         desc: "Final sign-off on all public-facing and partner communications" },
   { step: "04", title: "Publish", who: "Tokunbo Khadijat",   desc: "Schedule and publish via appropriate channel (website, newsletter, social)" },
 ];
+
+interface ApprovalStep {
+  id: string;
+  title: string;
+  who_handles: string;
+  description: string;
+  sort_order: number;
+}
 
 const STATIC_CALENDAR = [
   { week: "Week 1", weekNum: 1, items: [
@@ -118,6 +126,12 @@ export default function CommunicationStrategyPage() {
   const [savingChannel, setSavingChannel]       = useState(false);
   const [channelSaved, setChannelSaved]         = useState(false);
 
+  // ── Approval steps ──
+  const [approvalSteps, setApprovalSteps]       = useState<ApprovalStep[] | null>(null);
+  const [editingStepId, setEditingStepId]       = useState<string | null>(null);
+  const [stepDraft, setStepDraft]               = useState({ who_handles: "", description: "" });
+  const [savingStepId, setSavingStepId]         = useState<string | null>(null);
+
   // ── Calendar ──
   const [calItems, setCalItems]         = useState<CalItem[] | null>(null); // null = loading
   const [addingToWeek, setAddingToWeek] = useState<number | null>(null);
@@ -133,9 +147,10 @@ export default function CommunicationStrategyPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [chRes, calRes] = await Promise.all([
+      const [chRes, calRes, approvalRes] = await Promise.all([
         fetch("/api/admin/strategy/channels"),
         fetch("/api/admin/strategy/calendar"),
+        fetch("/api/admin/strategy/approval"),
       ]);
       if (chRes.ok) {
         const { channels } = await chRes.json() as { channels: Record<string, DbChannel> };
@@ -147,8 +162,15 @@ export default function CommunicationStrategyPage() {
       } else {
         setCalItems([]);
       }
+      if (approvalRes.ok) {
+        const { steps } = await approvalRes.json() as { steps: ApprovalStep[] };
+        setApprovalSteps(steps ?? []);
+      } else {
+        setApprovalSteps([]);
+      }
     } catch {
       setCalItems([]);
+      setApprovalSteps([]);
     }
   }, []);
 
@@ -192,6 +214,30 @@ export default function CommunicationStrategyPage() {
       setCalItems((prev) => (prev ?? []).filter((i) => i.id !== id));
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  function startEditStep(step: ApprovalStep) {
+    setEditingStepId(step.id);
+    setStepDraft({ who_handles: step.who_handles, description: step.description });
+  }
+
+  async function saveStepEdit(id: string) {
+    setSavingStepId(id);
+    try {
+      const res = await fetch("/api/admin/strategy/approval", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, who_handles: stepDraft.who_handles, description: stepDraft.description }),
+      });
+      if (res.ok) {
+        setApprovalSteps((prev) => (prev ?? []).map((s) =>
+          s.id === id ? { ...s, who_handles: stepDraft.who_handles, description: stepDraft.description } : s
+        ));
+        setEditingStepId(null);
+      }
+    } finally {
+      setSavingStepId(null);
     }
   }
 
@@ -531,18 +577,68 @@ export default function CommunicationStrategyPage() {
           <section id="approval">
             <SectionHeader icon="fa-check-double" title="Content Approval Process" />
             <div className="grid md:grid-cols-4 gap-4">
-              {APPROVAL_FLOW.map((step, i) => (
-                <div key={step.step} className="relative">
-                  {i < APPROVAL_FLOW.length - 1 && (
-                    <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gold-500/20 z-10" style={{ left: "calc(100% - 1px)", width: "calc(100% - 0px)" }} />
+              {(approvalSteps ?? APPROVAL_FLOW_DEFAULT.map((s) => ({
+                id: s.step, title: s.title, who_handles: s.who, description: s.desc, sort_order: parseInt(s.step),
+              }))).map((step, i, arr) => (
+                <div key={step.id} className="relative group/step">
+                  {i < arr.length - 1 && (
+                    <div className="hidden md:block absolute top-6 left-full h-px bg-gold-500/20 z-10" style={{ left: "calc(100% - 1px)", width: "100%" }} />
                   )}
-                  <div className="bg-navy-800 border border-white/5 p-5 rounded-sm hover:border-gold-500/20 transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-500 font-bold text-sm mb-3">
-                      {step.step}
+                  <div className="bg-navy-800 border border-white/5 p-5 rounded-sm hover:border-gold-500/20 transition-colors h-full flex flex-col">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-500 font-bold text-sm shrink-0">
+                        {step.id}
+                      </div>
+                      {approvalSteps && editingStepId !== step.id && (
+                        <button
+                          onClick={() => startEditStep(step)}
+                          className="opacity-0 group-hover/step:opacity-100 transition-opacity text-slate-600 hover:text-gold-500 text-xs"
+                          title="Edit step"
+                        >
+                          <i className="fa-solid fa-pen" />
+                        </button>
+                      )}
                     </div>
                     <h3 className="text-sm font-bold text-white mb-1">{step.title}</h3>
-                    <p className="text-[11px] font-semibold text-gold-500 mb-2">{step.who}</p>
-                    <p className="text-xs text-slate-400 leading-relaxed">{step.desc}</p>
+
+                    {editingStepId === step.id ? (
+                      <div className="flex flex-col gap-2 mt-1 flex-1">
+                        <input
+                          autoFocus
+                          value={stepDraft.who_handles}
+                          onChange={(e) => setStepDraft((p) => ({ ...p, who_handles: e.target.value }))}
+                          placeholder="Who handles this step"
+                          className="w-full bg-navy-900 border border-gold-500/40 text-xs text-gold-400 px-2 py-1.5 focus:outline-none font-semibold"
+                        />
+                        <textarea
+                          value={stepDraft.description}
+                          onChange={(e) => setStepDraft((p) => ({ ...p, description: e.target.value }))}
+                          rows={3}
+                          placeholder="Step description"
+                          className="w-full bg-navy-900 border border-white/10 text-xs text-slate-300 px-2 py-1.5 focus:outline-none resize-none leading-relaxed"
+                        />
+                        <div className="flex gap-2 mt-auto">
+                          <button
+                            onClick={() => saveStepEdit(step.id)}
+                            disabled={savingStepId === step.id}
+                            className="flex-1 px-3 py-1.5 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 text-navy-900 text-xs font-bold transition-colors"
+                          >
+                            {savingStepId === step.id ? <i className="fa-solid fa-spinner animate-spin" /> : "Save"}
+                          </button>
+                          <button
+                            onClick={() => setEditingStepId(null)}
+                            className="px-3 py-1.5 text-slate-500 hover:text-white text-xs border border-white/10 hover:border-white/20 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-[11px] font-semibold text-gold-500 mb-2">{step.who_handles}</p>
+                        <p className="text-xs text-slate-400 leading-relaxed">{step.description}</p>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
