@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -153,6 +153,8 @@ export default function StakeholdersPage() {
   const [editNotes, setEditNotes] = useState("");
   const [savingMeta, setSavingMeta] = useState(false);
   const [metaSaved, setMetaSaved]   = useState(false);
+
+  const svgRef = useRef<SVGSVGElement>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -364,6 +366,68 @@ export default function StakeholdersPage() {
     }
   }
 
+  function exportCSV() {
+    const headers = ["Name", "Organisation", "Type", "Influence", "Interest", "Relationship", "Engagement Strategy", "Last Contact"];
+    const rows = ALL_STAKEHOLDERS.map((s) => [
+      s.name, s.org ?? "", s.type, s.influence, s.interest,
+      s.relationship, s.engagementStrategy, displayLastContact(s),
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aprn-stakeholder-map.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportSVG() {
+    if (!svgRef.current) return;
+    const NS = "http://www.w3.org/2000/svg";
+    const serializer = new XMLSerializer();
+    const clone = svgRef.current.cloneNode(true) as SVGSVGElement;
+
+    const bg = document.createElementNS(NS, "rect");
+    bg.setAttribute("x", "0"); bg.setAttribute("y", "0");
+    bg.setAttribute("width", "500"); bg.setAttribute("height", "450");
+    bg.setAttribute("fill", "#0D2436");
+    clone.insertBefore(bg, clone.firstChild);
+    clone.setAttribute("viewBox", "0 0 500 450");
+
+    const divider = document.createElementNS(NS, "line");
+    divider.setAttribute("x1", "20"); divider.setAttribute("y1", "408");
+    divider.setAttribute("x2", "480"); divider.setAttribute("y2", "408");
+    divider.setAttribute("stroke", "rgba(255,255,255,0.07)");
+    divider.setAttribute("stroke-width", "1");
+    clone.appendChild(divider);
+
+    Object.entries(TYPE_COLOR).forEach(([type, color], i) => {
+      const lx = 35 + (i % 4) * 115;
+      const ly = 422 + Math.floor(i / 4) * 16;
+      const circle = document.createElementNS(NS, "circle");
+      circle.setAttribute("cx", String(lx)); circle.setAttribute("cy", String(ly));
+      circle.setAttribute("r", "4"); circle.setAttribute("fill", color);
+      clone.appendChild(circle);
+      const text = document.createElementNS(NS, "text");
+      text.setAttribute("x", String(lx + 8)); text.setAttribute("y", String(ly + 3));
+      text.setAttribute("fill", "#94a3b8"); text.setAttribute("font-size", "8");
+      text.setAttribute("font-family", "sans-serif");
+      text.textContent = type;
+      clone.appendChild(text);
+    });
+
+    const blob = new Blob([serializer.serializeToString(clone)], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aprn-stakeholder-matrix.svg";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="flex flex-col gap-8 max-w-6xl">
 
@@ -378,13 +442,31 @@ export default function StakeholdersPage() {
             {ALL_STAKEHOLDERS.length} stakeholders across {FILTER_TABS.length - 1} categories
           </p>
         </div>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-900 text-xs font-bold uppercase tracking-widest transition-colors"
-        >
-          <i className="fa-solid fa-plus text-[10px]" />
-          New Stakeholder
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={exportCSV}
+            className="flex items-center gap-2 px-4 py-2.5 border border-white/10 hover:border-white/20 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+            title="Download full stakeholder table as CSV"
+          >
+            <i className="fa-solid fa-table text-[10px]" />
+            Export CSV
+          </button>
+          <button
+            onClick={exportSVG}
+            className="flex items-center gap-2 px-4 py-2.5 border border-white/10 hover:border-white/20 text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors"
+            title="Download influence × interest matrix as SVG"
+          >
+            <i className="fa-solid fa-image text-[10px]" />
+            Export Matrix
+          </button>
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-900 text-xs font-bold uppercase tracking-widest transition-colors"
+          >
+            <i className="fa-solid fa-plus text-[10px]" />
+            New Stakeholder
+          </button>
+        </div>
       </div>
 
       {/* Influence / Interest Matrix */}
@@ -394,7 +476,7 @@ export default function StakeholdersPage() {
           Influence × Interest Matrix
         </h2>
         <div className="bg-navy-800 border border-white/5 p-4 rounded-sm">
-          <svg viewBox="0 0 500 400" className="w-full max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+          <svg ref={svgRef} viewBox="0 0 500 400" className="w-full max-w-2xl mx-auto" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
             <rect x="0"   y="0"   width="250" height="200" fill="rgba(212,160,23,0.03)" />
             <rect x="250" y="0"   width="250" height="200" fill="rgba(212,160,23,0.07)" />
             <rect x="0"   y="200" width="250" height="200" fill="rgba(255,255,255,0.01)" />
