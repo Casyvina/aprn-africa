@@ -23,6 +23,13 @@ function weekRange(offsetWeeks = 0): { since: Date; until: Date; label: string }
   return { since: monday, until: sunday, label: `${fmt(monday)} – ${fmt(sunday)} ${sunday.getFullYear()}` };
 }
 
+function monthRange(year: number, month: number): { since: Date; until: Date; label: string } {
+  const since = new Date(year, month, 1, 0, 0, 0, 0);
+  const until = new Date(year, month + 1, 0, 23, 59, 59, 999);
+  const label = since.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  return { since, until, label };
+}
+
 async function fetchGitHubCommits(since: Date, until: Date): Promise<
   { commits: { message: string; date: string }[]; error?: never } |
   { commits?: never; error: string }
@@ -117,8 +124,11 @@ export async function POST(req: NextRequest) {
   if (!user || !isAdmin(user.email)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
-  const offsetWeeks = Number(body.offsetWeeks ?? 0);
-  const { since, until, label } = weekRange(offsetWeeks);
+  const mode: "week" | "month" = body.mode === "month" ? "month" : "week";
+  const { since, until, label } =
+    mode === "month"
+      ? monthRange(Number(body.year ?? new Date().getFullYear()), Number(body.month ?? new Date().getMonth()))
+      : weekRange(Number(body.offsetWeeks ?? 0));
 
   const [githubResult, sanity, supabaseData] = await Promise.all([
     fetchGitHubCommits(since, until),
@@ -129,10 +139,11 @@ export async function POST(req: NextRequest) {
   const commits = githubResult.commits ?? null;
   const githubError = githubResult.error ?? null;
 
-  const rawData = { week: label, since, until, commits, githubError, sanity, supabase: supabaseData };
+  const rawData = { mode, period: label, since, until, commits, githubError, sanity, supabase: supabaseData };
 
   // Build a compact prose brief so Claude uses its budget on analysis, not parsing
-  const lines: string[] = [`WEEK: ${label}`];
+  const periodKey = mode === "month" ? "MONTH" : "WEEK";
+  const lines: string[] = [`${periodKey}: ${label}`];
 
   if (githubError) {
     lines.push(`\nCODE COMMITS: Unable to fetch — ${githubError}`);
@@ -169,7 +180,11 @@ export async function POST(req: NextRequest) {
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const systemPrompt = `You are generating a weekly progress report for APRN Africa — a membership platform for African pipeline research and engineering professionals.
+  const isMonthly = mode === "month";
+  const reportTitle = isMonthly ? `${label}` : `Week of ${label}`;
+  const periodNoun = isMonthly ? "month" : "week";
+
+  const systemPrompt = `You are generating a ${periodNoun}ly progress report for APRN Africa — a membership platform for African pipeline research and engineering professionals.
 
 This report is from Joseph Agwuh (Director of Applied Engineering) to Lucy Okeke (Founder & Executive Director).
 
@@ -177,10 +192,10 @@ Tone: professional, direct, factual. No filler phrases. No "I'm pleased to repor
 
 Structure your output in exactly this format (markdown):
 
-## Week of ${label}
+## ${reportTitle}
 
 ### What Shipped
-[Technical work delivered — features, fixes, infrastructure. Each bullet = one meaningful change. Use the commit messages to describe the actual feature or fix — no jargon, plain English. If no commits, write "No deployments this week."]
+[Technical work delivered — features, fixes, infrastructure. Each bullet = one meaningful change. Use the commit messages to describe the actual feature or fix — no jargon, plain English. If no commits, write "No deployments this ${periodNoun}."]
 
 ### Content & Intelligence
 [CMS activity — list every published document by name and type. List any draft content in progress. If nothing, skip this section.]
@@ -195,11 +210,11 @@ Rules: Do NOT add a "Coming Up Next" section. Do NOT add a sign-off. Do NOT ment
 
   const userPrompt = `${dataBrief}
 
-Generate the full weekly report now. Include every commit, every content item, every member.`;
+Generate the full ${periodNoun}ly report now. Include every commit, every content item, every member.`;
 
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 2048,
+    max_tokens: isMonthly ? 4096 : 2048,
     system: systemPrompt,
     messages: [{ role: "user", content: userPrompt }],
   });

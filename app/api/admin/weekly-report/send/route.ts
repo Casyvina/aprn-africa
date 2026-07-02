@@ -28,8 +28,9 @@ function markdownToHtml(md: string): string {
     .replace(/^(?!<[h|u|l])(.*\S.*)$/gm, '<p style="color:#cbd5e1;font-size:13px;margin:6px 0;line-height:1.6;">$1</p>');
 }
 
-function buildEmailHtml(content: string, weekLabel: string): string {
+function buildEmailHtml(content: string, periodLabel: string, isMonthly: boolean): string {
   const body = markdownToHtml(content);
+  const reportTitle = isMonthly ? "Monthly Progress Report" : "Weekly Progress Report";
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -42,8 +43,8 @@ function buildEmailHtml(content: string, weekLabel: string): string {
         <tr>
           <td style="background:#071B2A;border-bottom:2px solid #D4A017;padding:28px 36px;">
             <div style="font-size:11px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;color:#D4A017;margin-bottom:4px;">APRN AFRICA</div>
-            <div style="font-size:20px;font-weight:bold;color:#ffffff;font-family:Georgia,serif;">Weekly Progress Report</div>
-            <div style="font-size:12px;color:#64748b;margin-top:4px;">${weekLabel}</div>
+            <div style="font-size:20px;font-weight:bold;color:#ffffff;font-family:Georgia,serif;">${reportTitle}</div>
+            <div style="font-size:12px;color:#64748b;margin-top:4px;">${periodLabel}</div>
           </td>
         </tr>
 
@@ -74,11 +75,12 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || !isAdmin(user.email)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { content, weekLabel, weekOf, rawData } = await req.json();
+  const { content, weekLabel, weekOf, rawData, mode } = await req.json();
   if (!content || !weekLabel || !weekOf) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
 
-  const subject = `APRN Weekly Report — ${weekLabel}`;
-  const html = buildEmailHtml(content, weekLabel);
+  const isMonthly = mode === "month";
+  const subject = isMonthly ? `APRN Monthly Report — ${weekLabel}` : `APRN Weekly Report — ${weekLabel}`;
+  const html = buildEmailHtml(content, weekLabel, isMonthly);
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const { error: emailError } = await resend.emails.send({
