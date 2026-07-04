@@ -87,6 +87,21 @@ export const newsletter = defineType({
 
     // ── Hero / Intro ──────────────────────────────────────────────────
     defineField({
+      name: 'heroImage',
+      title: 'Hero Image',
+      type: 'image',
+      group: 'content',
+      options: { hotspot: true },
+      description: 'Optional banner shown under the masthead in the email and on the web issue page. Landscape (16:9) recommended.',
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
       name: 'leadSummary',
       title: 'Lead Summary',
       type: 'text',
