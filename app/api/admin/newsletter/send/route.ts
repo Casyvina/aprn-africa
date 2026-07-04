@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       publishDate, leadSummary,
       "heroImageUrl": heroImage.asset->url,
       "heroImageAlt": coalesce(heroImage.alt, title),
-      stories[]{ tag, headline, summary, sourceUrl, "imageUrl": image.asset->url, "imageAlt": coalesce(image.alt, headline) },
+      stories[]{ tag, headline, summary, sourceUrl, "imageUrl": coalesce(image.asset->url, related->coverImage.asset->url, related->heroImage.asset->url), "imageAlt": coalesce(image.alt, headline) },
       editorAnalysis, pullQuote, status
     }`,
     { id: issueId },
