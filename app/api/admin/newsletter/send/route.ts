@@ -4,7 +4,7 @@ import { createClient as createSanityClient } from "next-sanity";
 import { Resend } from "resend";
 import { groq } from "next-sanity";
 import type { NewsletterIssue } from "@/lib/queries/newsletter";
-import { buildNewsletterHtml } from "@/lib/newsletter-email";
+import { buildNewsletterHtml, buildNewsletterText } from "@/lib/newsletter-email";
 
 function isAdmin(email: string | undefined): boolean {
   const allowed = (process.env.ADMIN_EMAILS ?? "").split(",").map((e) => e.trim().toLowerCase());
@@ -38,7 +38,9 @@ export async function POST(req: NextRequest) {
     groq`*[_type == "newsletter" && _id == $id][0] {
       _id, "slug": slug.current, title, volume, issueNumber,
       publishDate, leadSummary,
-      stories[]{ tag, headline, summary, sourceUrl },
+      "heroImageUrl": heroImage.asset->url,
+      "heroImageAlt": coalesce(heroImage.alt, title),
+      stories[]{ tag, headline, summary, sourceUrl, "imageUrl": image.asset->url, "imageAlt": coalesce(image.alt, headline) },
       editorAnalysis, pullQuote, status
     }`,
     { id: issueId },
@@ -66,6 +68,7 @@ export async function POST(req: NextRequest) {
 
   const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aprn-africa.org";
   const html       = buildNewsletterHtml(issue, siteUrl);
+  const text       = buildNewsletterText(issue, siteUrl);
   const issueLabel = `Vol. ${issue.volume}, Issue ${String(issue.issueNumber).padStart(3, "0")}`;
   const subject    = testOnly
     ? `[TEST] ${issueLabel} — ${issue.title}`
@@ -81,6 +84,8 @@ export async function POST(req: NextRequest) {
       to:   [email],
       subject,
       html,
+      text,
+      headers: { "List-Unsubscribe": "<mailto:info@aprn-africa.org?subject=Unsubscribe>" },
     }));
     const { error } = await resend.batch.send(batch);
     if (error) {
