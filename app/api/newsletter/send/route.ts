@@ -4,7 +4,7 @@ import { Resend } from "resend";
 import type { NewsletterIssue } from "@/lib/queries/newsletter";
 import { NEWSLETTER_APPROVED_QUERY } from "@/lib/queries/newsletter";
 import { groq } from "next-sanity";
-import { buildNewsletterHtml } from "@/lib/newsletter-email";
+import { buildNewsletterHtml, buildNewsletterText } from "@/lib/newsletter-email";
 
 // -- Sanity write client -------------------------------------------------------
 
@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
 
   const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aprn-africa.org";
   const html       = buildNewsletterHtml(issue, siteUrl);
+  const text       = buildNewsletterText(issue, siteUrl);
   const issueLabel = `Vol. ${issue.volume}, Issue ${String(issue.issueNumber).padStart(3, "0")}`;
   const resend     = new Resend(resendKey);
 
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
       to:      [email],
       subject: `${issueLabel} — ${issue.title}`,
       html,
+      text,
+      headers: { "List-Unsubscribe": "<mailto:info@aprn-africa.org?subject=Unsubscribe>" },
     }));
     const { error } = await resend.batch.send(batch);
     if (error) {
