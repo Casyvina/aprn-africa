@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import NewsletterSignupForm from "@/components/NewsletterSignupForm";
@@ -62,7 +63,7 @@ export default async function NewsletterIssuePage({
           {/* Pipeline image backdrop */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-15 mix-blend-luminosity"
-            style={{ backgroundImage: "url('/images/pipeline-aerial.png')" }}
+            style={{ backgroundImage: `url('${data.heroImageUrl ?? "/images/pipeline-aerial.png"}')` }}
           />
           {/* Gradient overlays */}
           <div className="absolute inset-0 bg-linear-to-t from-navy-900 via-navy-900/80 to-navy-900/40" />
@@ -134,28 +135,39 @@ export default async function NewsletterIssuePage({
               {data.stories.map((story, i) => (
                 <article
                   key={i}
-                  className="glass-panel border border-navy-700 hover:border-gold-500/30 transition-colors p-8 rounded-sm flex flex-col gap-4"
+                  className="glass-panel border border-navy-700 hover:border-gold-500/30 transition-colors rounded-sm flex flex-col overflow-hidden"
                 >
-                  <span className="text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2.5 py-1 border border-gold-500/30 bg-gold-500/10 rounded-full self-start">
-                    {story.tag}
-                  </span>
-                  <h2
-                    className="text-xl font-bold leading-snug text-white"
-                    style={{ fontFamily: "var(--font-playfair), serif" }}
-                  >
-                    {story.headline}
-                  </h2>
-                  <p className="text-sm text-slate-400 leading-relaxed flex-1">{story.summary}</p>
-                  {story.sourceUrl && (
-                    <a
-                      href={story.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[11px] text-gold-500 uppercase tracking-widest hover:underline self-start"
-                    >
-                      Source <i className="fa-solid fa-arrow-up-right-from-square text-[9px]" />
-                    </a>
+                  {story.imageUrl && (
+                    <Image
+                      src={story.imageUrl}
+                      alt={story.imageAlt ?? story.headline}
+                      width={800}
+                      height={450}
+                      className="w-full aspect-video object-cover"
+                    />
                   )}
+                  <div className="p-8 flex flex-col gap-4 flex-1">
+                    <span className="text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2.5 py-1 border border-gold-500/30 bg-gold-500/10 rounded-full self-start">
+                      {story.tag}
+                    </span>
+                    <h2
+                      className="text-xl font-bold leading-snug text-white"
+                      style={{ fontFamily: "var(--font-playfair), serif" }}
+                    >
+                      {story.headline}
+                    </h2>
+                    <p className="text-sm text-slate-400 leading-relaxed flex-1">{story.summary}</p>
+                    {story.sourceUrl && (
+                      <a
+                        href={story.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-[11px] text-gold-500 uppercase tracking-widest hover:underline self-start"
+                      >
+                        Source <i className="fa-solid fa-arrow-up-right-from-square text-[9px]" />
+                      </a>
+                    )}
+                  </div>
                 </article>
               ))}
             </div>
