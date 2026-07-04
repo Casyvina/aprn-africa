@@ -353,6 +353,18 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 
 Use PowerShell here-strings (`@'...'@`) for multi-line commit messages — bash heredocs fail in this environment.
 
+**Atomic commits are required.** Break every feature into one commit per layer — never bundle a full feature into a single commit. The standard split order:
+
+1. Shared utility / migration / schema
+2. API route(s) — one commit per route
+3. Server component / page
+4. Client component
+5. Nav wiring / integration
+
+This keeps the git history readable, makes rollbacks precise, and ensures the auto-generated engineering reports reflect the actual scope of work done.
+
+Use PowerShell here-strings (`@'...'@`) for multi-line commit messages — bash heredocs fail in this environment.
+
 ---
 
 ## 15. Current Build Priorities (in order)
