@@ -600,14 +600,21 @@ export default function AdminGuidePage() {
             rows={[
               ["See how many members we have", "/admin"],
               ["Change a member's tier", "/admin/members → click the member"],
+              ["Look up a pipeline company or engineer", "/admin/database"],
+              ["See payment history", "/admin/payments"],
+              ["Manually fix a tier after a payment issue", "/admin/members → find member → edit tier"],
               ["Write a draft article", "/admin/generate"],
               ["Generate a social image", "/admin/content-studio"],
-              ["Send a weekly email update", "/admin/weekly-report"],
+              ["Send a weekly or monthly report", "/admin/weekly-report"],
+              ["Send a newsletter to subscribers", "/admin/newsletter"],
               ["Create an outreach campaign", "/admin/outreach"],
               ["Find new contacts with AI", "/admin/outreach/research"],
-              ["Update stakeholder notes", "/admin/strategy/stakeholders"],
+              ["Export stakeholder data", "/admin/strategy/stakeholders → Export CSV or Export Matrix"],
+              ["Add a custom stakeholder", "/admin/strategy/stakeholders → New Stakeholder"],
+              ["Update stakeholder notes", "/admin/strategy/stakeholders → click the notes field"],
               ["Upload a strategy document", "/admin/strategy/documents"],
               ["Update the comms calendar", "/admin/strategy/communication"],
+              ["Edit the approval workflow steps", "/admin/strategy/communication → Approval Process tab"],
               ["Access personnel files", "/admin/personnel (Lucy & Joseph only)"],
             ]}
           />
@@ -643,6 +650,36 @@ export default function AdminGuidePage() {
 
           <H3>I want to change who receives the weekly report.</H3>
           <P>This is configured in the codebase. Ask Joseph to update the recipient list.</P>
+
+          <H3>I approved a newsletter in Sanity Studio but it still shows as Draft in /admin/newsletter.</H3>
+          <P>
+            The newsletter status field in Sanity Studio must be set to <strong className="text-white">Approved to Send</strong> — not just Published.
+            Open the issue in Studio, find the Status field, change it to Approved to Send, and save.
+            The /admin/newsletter page will reflect the change within a minute or two.
+          </P>
+
+          <H3>A member paid but their tier wasn&apos;t updated.</H3>
+          <P>
+            Go to /admin/payments and confirm the transaction shows as Successful. If it does,
+            go to /admin/members, find the member, click their row, and update the tier manually.
+            If the payment shows as Failed or Pending, the member may need to retry the payment.
+          </P>
+
+          <H3>I need to add a contact to the database but don&apos;t know which category to use.</H3>
+          <Bullets items={[
+            "A person who works at a pipeline operator company → Pipeline Engineers",
+            "The company they work for → Pipeline Operators",
+            "An independent contractor or engineering firm → EPC Contractors",
+            "A government body or industry association → Regulators & Associations",
+            "A journal, university, or research organisation → Research Sources",
+          ]} />
+
+          <H3>The stakeholder matrix export looks blank.</H3>
+          <P>
+            The SVG export captures the matrix as currently filtered. If a filter tab is active
+            that has no stakeholders, the export will be empty. Switch to All or a tab with data
+            before exporting.
+          </P>
         </div>
 
       </div>
