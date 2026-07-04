@@ -406,6 +406,51 @@ export default function AdminGuidePage() {
           </Note>
         </div>
 
+        {/* ── Newsletter ── */}
+        <div className="bg-navy-800 border border-white/5 p-6 mb-2">
+          <H2 id="newsletter">8. Newsletter</H2>
+          <p className="text-[10px] text-slate-500 mb-3">/admin/newsletter</p>
+          <P>
+            Controls distribution of published newsletter issues to Sanity subscribers. This is
+            the final step in the newsletter workflow — you create and edit issues in Sanity Studio,
+            then come here to send them.
+          </P>
+
+          <H3>The full workflow</H3>
+          <Steps items={[
+            "Write the newsletter issue in Sanity Studio — or use the Content Generator to produce a draft.",
+            "Set the issue status to Approved to Send in Sanity Studio once it is ready.",
+            "Go to /admin/newsletter and find the issue. It will show a gold Approved badge.",
+            "Click Test Send — this fires the email to admin accounts only, subject prefixed with [TEST]. Check it in your inbox.",
+            "If everything looks right, click Send to All subscribers and confirm. The email goes to everyone on the active subscriber list.",
+          ]} />
+
+          <H3>Status badges</H3>
+          <Table
+            headers={["Badge", "Meaning"]}
+            rows={[
+              ["Draft", "Being written. Cannot be sent yet."],
+              ["Under Review", "Awaiting approval. Cannot be sent yet."],
+              ["Approved", "Ready. Test Send and Send to All buttons appear."],
+              ["Sent", "Already dispatched. Shows date sent and recipient count."],
+            ]}
+          />
+
+          <H3>Stats at the top of the page</H3>
+          <Bullets items={[
+            "Active Subscribers — total Sanity subscribers with active status",
+            "Ready to Send — issues in Approved status awaiting dispatch",
+            "Issues Sent — total issues sent to date",
+            "Total Issues — all issues in the system regardless of status",
+          ]} />
+
+          <Note>
+            An issue can only be sent once. The Send to All button is disabled for issues that
+            have already been dispatched. Test Send can be repeated as many times as needed
+            before the final send.
+          </Note>
+        </div>
+
         {/* ── Outreach ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
           <H2 id="outreach">9. Outreach</H2>
