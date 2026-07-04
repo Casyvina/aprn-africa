@@ -520,6 +520,10 @@ export default function AdminGuidePage() {
             "Update last contact date — click the date field after any meeting or call.",
             "Add notes — click the notes field to record what was discussed.",
             "Generate Engagement Brief — click any stakeholder for a Claude-generated brief with recommended talking points.",
+            <><strong className="text-white">Add a custom stakeholder</strong> — click New Stakeholder in the header, fill in the name, type, category, influence and interest scores, and save. Custom stakeholders appear in the matrix and table immediately.</>,
+            <><strong className="text-white">Edit or delete custom stakeholders</strong> — hover over any custom stakeholder row to reveal the edit pencil and delete trash icons. Built-in stakeholders cannot be deleted.</>,
+            <><strong className="text-white">Export CSV</strong> — downloads the full stakeholder table as a spreadsheet, including all types and custom entries.</>,
+            <><strong className="text-white">Export Matrix</strong> — downloads the influence × interest scatter plot as an SVG image, including the legend. Useful for presentations and board reports.</>,
           ]} />
           <Note>Keep last contact dates current. It shows which relationships are going cold.</Note>
 
@@ -553,8 +557,8 @@ export default function AdminGuidePage() {
           <Bullets items={[
             "Channel Strategy — one card per channel (WhatsApp, LinkedIn, Website, Newsletter, Email, Webinars). Click any card to update frequency, content types, audience, and owner.",
             "WhatsApp Groups — tracked separately with group name, member count, manager, and last broadcast date.",
-            "Approval Process — the 4-step content flow: Create → Review → Approve → Publish.",
-            "Communication Calendar — a 4-week rolling plan. Add, edit, or delete items week by week. Changes save immediately.",
+            "Approval Process — the 4-step content flow: Create → Review → Approve → Publish. Each step is editable — click any step card to update the step name, owner, and SLA. Changes save immediately and persist across sessions.",
+            "Communication Calendar — a 4-week rolling plan. Add, edit, or delete items week by week. Drag to reorder items within a week. Changes save immediately.",
           ]} />
         </div>
 
