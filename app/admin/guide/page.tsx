@@ -368,22 +368,40 @@ export default function AdminGuidePage() {
           </Note>
         </div>
 
-        {/* ── Weekly Report ── */}
+        {/* ── Reports ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
-          <H2 id="weekly-report">5. Weekly Report</H2>
+          <H2 id="weekly-report">7. Reports</H2>
           <p className="text-[10px] text-slate-500 mb-3">/admin/weekly-report</p>
           <P>
-            Sends a weekly update email to members and stakeholders via Resend (the
-            platform&apos;s email provider).
+            Generates and sends engineering and platform activity reports to Lucy. Two modes:
+            weekly summaries and full monthly reports. Claude writes the content based on
+            recent GitHub commits, CMS activity, new members, and payments.
           </P>
+
+          <H3>Weekly mode</H3>
           <Bullets items={[
-            "The list shows past reports with subject line, send date, and who sent it.",
-            "Click to compose a new report — Claude generates the content based on recent platform activity.",
-            "Review and edit the generated content before sending.",
-            "Sent reports are logged and visible in the list.",
+            "Select this week, last week, or up to 3 weeks back using the offset control.",
+            "Click Generate to produce the report.",
+            "Review and edit the content before sending.",
+            "Click Send to dispatch the report to Lucy.",
           ]} />
+
+          <H3>Monthly mode</H3>
+          <Bullets items={[
+            "Switch to the Monthly tab in the report controls.",
+            "Select the month and year from the dropdowns.",
+            "Click Generate — the report covers the full calendar month and is longer than a weekly report.",
+            "Review and send as normal.",
+          ]} />
+
+          <H3>Archive</H3>
+          <P>
+            All sent reports appear in the left sidebar. Weekly reports show a gold Weekly badge;
+            monthly reports show a blue Monthly badge. Click any archived report to view it.
+          </P>
+
           <Note>
-            The recipient list is configured in the codebase. To change who receives the report,
+            The recipient list is configured in the codebase. To change who receives reports,
             ask Joseph.
           </Note>
         </div>
