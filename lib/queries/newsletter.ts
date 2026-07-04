@@ -7,6 +7,8 @@ export interface NewsletterStory {
   headline: string
   summary: string
   sourceUrl?: string
+  imageUrl?: string
+  imageAlt?: string
 }
 
 export interface NewsletterIssue {
@@ -17,6 +19,8 @@ export interface NewsletterIssue {
   issueNumber: number
   publishDate: string
   leadSummary: string
+  heroImageUrl?: string
+  heroImageAlt?: string
   stories: NewsletterStory[]
   editorAnalysis: string
   pullQuote?: string
@@ -35,6 +39,9 @@ export type NewsletterCard = Pick<
 // A newsletter is visible if it is published in Sanity (no drafts. prefix) regardless
 // of whether the status field was explicitly set. Tokun just needs to hit Publish.
 const PUBLISHED = `_type == "newsletter"`
+
+const STORIES = `stories[]{ tag, headline, summary, sourceUrl, "imageUrl": image.asset->url, "imageAlt": coalesce(image.alt, headline) }`
+const HERO    = `"heroImageUrl": heroImage.asset->url, "heroImageAlt": coalesce(heroImage.alt, title)`
 
 /** All published issues for the archive listing — newest first (capped at 24) */
 export const ALL_NEWSLETTERS_QUERY = groq`
@@ -61,7 +68,8 @@ export const LATEST_NEWSLETTER_QUERY = groq`
     issueNumber,
     publishDate,
     leadSummary,
-    stories[]{ tag, headline, summary, sourceUrl },
+    ${HERO},
+    ${STORIES},
     editorAnalysis,
     pullQuote,
     status,
@@ -80,7 +88,8 @@ export const NEWSLETTER_BY_SLUG_QUERY = groq`
     issueNumber,
     publishDate,
     leadSummary,
-    stories[]{ tag, headline, summary, sourceUrl },
+    ${HERO},
+    ${STORIES},
     editorAnalysis,
     pullQuote,
     status,
@@ -104,7 +113,8 @@ export const NEWSLETTER_APPROVED_QUERY = groq`
     issueNumber,
     publishDate,
     leadSummary,
-    stories[]{ tag, headline, summary },
+    ${HERO},
+    ${STORIES},
     editorAnalysis,
     pullQuote,
   }
