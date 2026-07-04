@@ -1,17 +1,20 @@
 export const metadata = { title: "Admin Guide — APRN Africa" };
 
 const sections = [
-  { id: "getting-in",        label: "Getting In"         },
-  { id: "dashboard",         label: "1. Dashboard"       },
-  { id: "members",           label: "2. Members"         },
-  { id: "generate",          label: "3. Content Generator" },
-  { id: "content-studio",    label: "4. Content Studio"  },
-  { id: "weekly-report",     label: "5. Weekly Report"   },
-  { id: "outreach",          label: "6. Outreach"        },
-  { id: "strategy",          label: "7. Strategy Portal" },
-  { id: "personnel",         label: "8. Personnel Docs"  },
-  { id: "quick-reference",   label: "Quick Reference"    },
-  { id: "faq",               label: "Common Questions"   },
+  { id: "getting-in",        label: "Getting In"           },
+  { id: "dashboard",         label: "1. Dashboard"         },
+  { id: "members",           label: "2. Members"           },
+  { id: "database",          label: "3. Database"          },
+  { id: "payments",          label: "4. Payments"          },
+  { id: "generate",          label: "5. Content Generator" },
+  { id: "content-studio",    label: "6. Content Studio"    },
+  { id: "weekly-report",     label: "7. Reports"           },
+  { id: "newsletter",        label: "8. Newsletter"        },
+  { id: "outreach",          label: "9. Outreach"          },
+  { id: "strategy",          label: "10. Strategy Portal"  },
+  { id: "personnel",         label: "11. Personnel Docs"   },
+  { id: "quick-reference",   label: "Quick Reference"      },
+  { id: "faq",               label: "Common Questions"     },
 ];
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -214,9 +217,77 @@ export default function AdminGuidePage() {
           ]} />
         </div>
 
+        {/* ── Database ── */}
+        <div className="bg-navy-800 border border-white/5 p-6 mb-2">
+          <H2 id="database">3. Database</H2>
+          <p className="text-[10px] text-slate-500 mb-3">/admin/database</p>
+          <P>
+            APRN&apos;s directory of pipeline industry contacts — the source list for outreach
+            campaigns. Five categories, each in its own tab.
+          </P>
+
+          <H3>Categories</H3>
+          <Table
+            headers={["Tab", "Who it contains"]}
+            rows={[
+              ["Pipeline Operators", "Oil and gas companies that own or operate pipelines"],
+              ["EPC Contractors", "Engineering, procurement and construction firms"],
+              ["Pipeline Engineers", "Individual professionals — engineers, technicians, consultants"],
+              ["Regulators & Associations", "Government regulators, industry bodies, standards organisations"],
+              ["Research Sources", "Universities, think tanks, publications used as research references"],
+            ]}
+          />
+
+          <H3>What you can do</H3>
+          <Bullets items={[
+            <><strong className="text-white">Search</strong> — the search bar filters by name, company, or country across all records in the active tab.</>,
+            <><strong className="text-white">Add a record</strong> — click New [type] in the top right, fill in the form, and save. Required fields depend on the category.</>,
+            <><strong className="text-white">Edit a record</strong> — click any row to open the edit drawer. Update any field and save.</>,
+            <><strong className="text-white">Delete a record</strong> — the trash icon on a row removes it permanently after confirmation.</>,
+            <><strong className="text-white">Export to Excel</strong> — downloads all records in the active tab as an <code className="text-gold-500 text-xs bg-white/5 px-1">.xlsx</code> file.</>,
+          ]} />
+
+          <Note>
+            The AI Research tool at /admin/outreach/research can suggest new contacts and add
+            them directly to any of these tables. Use it to grow the database faster than manual entry.
+          </Note>
+        </div>
+
+        {/* ── Payments ── */}
+        <div className="bg-navy-800 border border-white/5 p-6 mb-2">
+          <H2 id="payments">4. Payments</H2>
+          <p className="text-[10px] text-slate-500 mb-3">/admin/payments</p>
+          <P>
+            A read-only log of every membership payment processed through Paystack. Records appear
+            here automatically — nothing needs to be done manually when a member pays.
+          </P>
+
+          <H3>What each record shows</H3>
+          <Bullets items={[
+            "Paystack reference number — unique transaction ID",
+            "Member name and email",
+            "Amount paid in Naira",
+            "Membership tier the payment was for",
+            "Status: Successful, Failed, or Pending",
+            "Date and time of the transaction",
+          ]} />
+
+          <H3>Filtering</H3>
+          <P>
+            Filter the list by status using the tabs at the top: All, Successful, Failed, Pending.
+            Use the search field to find a specific member or reference number.
+          </P>
+
+          <Note>
+            Payments cannot be edited or deleted here. If a payment shows as Successful but the
+            member&apos;s tier was not updated, go to /admin/members, find the member, and update
+            their tier manually.
+          </Note>
+        </div>
+
         {/* ── Content Generator ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
-          <H2 id="generate">3. Content Generator</H2>
+          <H2 id="generate">5. Content Generator</H2>
           <p className="text-[10px] text-slate-500 mb-3">/admin/generate</p>
           <P>
             An AI writing tool that creates draft articles and reports for Sanity CMS. The content
@@ -261,7 +332,7 @@ export default function AdminGuidePage() {
 
         {/* ── Content Studio ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
-          <H2 id="content-studio">4. Content Studio</H2>
+          <H2 id="content-studio">6. Content Studio</H2>
           <p className="text-[10px] text-slate-500 mb-3">/admin/content-studio</p>
           <P>Generates branded visual assets for social media, newsletters, and events.</P>
 
@@ -319,7 +390,7 @@ export default function AdminGuidePage() {
 
         {/* ── Outreach ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
-          <H2 id="outreach">6. Outreach</H2>
+          <H2 id="outreach">9. Outreach</H2>
           <P>Two tools: Campaigns for sending emails, AI Research for finding contacts.</P>
 
           <H3 id="outreach-campaigns">Campaigns — /admin/outreach</H3>
@@ -373,7 +444,7 @@ export default function AdminGuidePage() {
 
         {/* ── Strategy Portal ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
-          <H2 id="strategy">7. Strategy Portal</H2>
+          <H2 id="strategy">10. Strategy Portal</H2>
           <P>Three tools for managing APRN&apos;s strategic operations.</P>
 
           <H3 id="strategy-stakeholders">Stakeholder Map — /admin/strategy/stakeholders</H3>
@@ -426,7 +497,7 @@ export default function AdminGuidePage() {
 
         {/* ── Personnel ── */}
         <div className="bg-navy-800 border border-white/5 p-6 mb-2">
-          <H2 id="personnel">8. Personnel Documents</H2>
+          <H2 id="personnel">11. Personnel Documents</H2>
           <p className="text-[10px] text-slate-500 mb-3">/admin/personnel</p>
           <div className="flex items-center gap-2 mb-4">
             <i className="fa-solid fa-lock text-[11px] text-gold-500" />
