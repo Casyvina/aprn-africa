@@ -40,7 +40,7 @@ export type NewsletterCard = Pick<
 // of whether the status field was explicitly set. Tokun just needs to hit Publish.
 const PUBLISHED = `_type == "newsletter"`
 
-const STORIES = `stories[]{ tag, headline, summary, sourceUrl, "imageUrl": image.asset->url, "imageAlt": coalesce(image.alt, headline) }`
+const STORIES = `stories[]{ tag, headline, summary, sourceUrl, "imageUrl": coalesce(image.asset->url, related->coverImage.asset->url, related->heroImage.asset->url), "imageAlt": coalesce(image.alt, headline) }`
 const HERO    = `"heroImageUrl": heroImage.asset->url, "heroImageAlt": coalesce(heroImage.alt, title)`
 
 /** All published issues for the archive listing — newest first (capped at 24) */
