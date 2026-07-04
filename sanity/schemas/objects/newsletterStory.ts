@@ -34,11 +34,24 @@ export const newsletterStory = defineType({
       description: 'Optional link to the original source.',
     }),
     defineField({
+      name: 'related',
+      title: 'Linked APRN Article',
+      type: 'reference',
+      to: [
+        { type: 'researchReport' },
+        { type: 'editorialInsight' },
+        { type: 'intelligenceUpdate' },
+        { type: 'event' },
+        { type: 'publication' },
+      ],
+      description: 'Optional. If set, the article’s cover image is used in the email and on the web when no Story Image is uploaded.',
+    }),
+    defineField({
       name: 'image',
       title: 'Story Image',
       type: 'image',
       options: { hotspot: true },
-      description: 'Optional. Shown in the email grid and on the web issue page. Landscape works best (16:9).',
+      description: 'Optional. Overrides the linked article’s image. Landscape works best (16:9).',
       fields: [
         defineField({
           name: 'alt',
