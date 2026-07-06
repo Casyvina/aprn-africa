@@ -7,6 +7,7 @@ import { after } from "next/server";
 import DashboardNav from "@/components/DashboardNav";
 import DashboardMobileNav from "@/components/DashboardMobileNav";
 import DashboardHydrator from "@/components/DashboardHydrator";
+import DashboardAvatar from "@/components/DashboardAvatar";
 
 function isAdmin(email: string | undefined): boolean {
   if (!email) return false;
@@ -91,9 +92,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         {/* User + sign out */}
         <div className="px-8 py-6 border-t border-white/5 shrink-0">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-9 h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center shrink-0">
-              <span className="text-xs font-bold text-gold-500">{initials}</span>
-            </div>
+            <DashboardAvatar initials={initials} className="w-9 h-9" />
             <div className="min-w-0">
               <p className="text-xs font-semibold text-white truncate">
                 {displayName.split(" ").slice(0, 2).join(" ")}
@@ -157,12 +156,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </button>
 
               <div className="flex items-center gap-2.5 pl-4 border-l border-white/5">
-                <div className="relative shrink-0">
-                  <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center">
-                    <span className="text-xs font-bold text-gold-500">{initials}</span>
-                  </div>
-                  <div className="absolute bottom-0 right-0 w-2 h-2 md:w-2.5 md:h-2.5 bg-emerald-400 border-2 border-navy-900 rounded-full" />
-                </div>
+                <DashboardAvatar initials={initials} className="w-8 h-8 md:w-9 md:h-9" showStatus />
                 <div className="hidden lg:block">
                   <p className="text-sm font-semibold text-white">{firstName}</p>
                   <p className="text-[10px] text-slate-400 uppercase tracking-widest">{tier}</p>
