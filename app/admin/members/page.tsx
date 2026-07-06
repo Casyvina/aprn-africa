@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminMembersTable from "@/components/AdminMembersTable";
 
 export const metadata = { title: "Members | APRN Admin" };
+export const dynamic = "force-dynamic";
 
 export default async function AdminMembersPage() {
   const admin = createAdminClient();
