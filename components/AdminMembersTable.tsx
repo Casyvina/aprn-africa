@@ -25,6 +25,7 @@ export interface Member {
   discipline:   string;
   organisation: string;
   topics:       string[];
+  avatarUrl:    string;
   joinedAt:     string;
   lastActiveAt: string;
   updatedAt:    string;
@@ -220,10 +221,17 @@ export default function AdminMembersTable({ members }: Props) {
                       {/* Name + email */}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-navy-900 border border-gold-500/20 flex items-center justify-center shrink-0">
-                            <span className="text-[9px] font-bold text-gold-500">
-                              {initials(m.fullName, m.email)}
-                            </span>
+                          <div className="w-8 h-8 shrink-0 overflow-hidden border border-gold-500/20">
+                            {m.avatarUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={m.avatarUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full bg-navy-900 flex items-center justify-center">
+                                <span className="text-[9px] font-bold text-gold-500">
+                                  {initials(m.fullName, m.email)}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="font-semibold text-white truncate max-w-36">
@@ -362,10 +370,17 @@ export default function AdminMembersTable({ members }: Props) {
 
               {/* Avatar + name */}
               <div className="flex flex-col items-center text-center gap-3">
-                <div className="w-20 h-20 bg-navy-900 border-2 border-gold-500/30 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-gold-500" style={{ fontFamily: "var(--font-playfair), serif" }}>
-                    {initials(selected.fullName, selected.email)}
-                  </span>
+                <div className="w-20 h-20 border-2 border-gold-500/30 overflow-hidden shrink-0">
+                  {selected.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={selected.avatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-navy-900 flex items-center justify-center">
+                      <span className="text-2xl font-bold text-gold-500" style={{ fontFamily: "var(--font-playfair), serif" }}>
+                        {initials(selected.fullName, selected.email)}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <p className="text-base font-bold text-white">
