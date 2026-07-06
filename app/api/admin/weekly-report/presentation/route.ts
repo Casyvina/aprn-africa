@@ -23,6 +23,10 @@ const H = 7.5;
 // ── Parse markdown sections ───────────────────────────────────────────────────
 interface Section { title: string; bullets: string[] }
 
+function sanitize(text: string): string {
+  return text.replace(/-->/g, "→").replace(/->/g, "→").replace(/--/g, "—").replace(/\s{2,}/g, " ").trim();
+}
+
 function parseSections(markdown: string): { reportTitle: string; sections: Section[] } {
   const lines = markdown.split("\n");
   let reportTitle = "APRN Engineering Report";
@@ -32,15 +36,15 @@ function parseSections(markdown: string): { reportTitle: string; sections: Secti
   for (const raw of lines) {
     const line = raw.trim();
     if (line.startsWith("## ")) {
-      reportTitle = line.replace(/^## /, "").trim();
+      reportTitle = sanitize(line.replace(/^## /, ""));
     } else if (line.startsWith("### ")) {
       if (current) sections.push(current);
-      current = { title: line.replace(/^### /, "").trim(), bullets: [] };
+      current = { title: sanitize(line.replace(/^### /, "")), bullets: [] };
     } else if ((line.startsWith("- ") || line.startsWith("* ")) && current) {
-      const text = line.replace(/^[-*] /, "").trim();
+      const text = sanitize(line.replace(/^[-*] /, ""));
       if (text) current.bullets.push(text);
     } else if (line.startsWith("— ") && current) {
-      current.bullets.push(line);
+      current.bullets.push(sanitize(line));
     }
   }
   if (current) sections.push(current);
