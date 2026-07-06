@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import DashboardAvatar from "@/components/DashboardAvatar";
 
 const mainNav = [
   { href: "/dashboard",               icon: "fa-chart-line",     label: "Overview" },
@@ -232,12 +233,12 @@ export default function DashboardMobileNav({ initials, tier, displayName }: Prop
                   transition={{ delay: 0.48, duration: 0.25 }}
                   className="px-4 py-4 flex items-center gap-3"
                 >
-                  <div className="relative shrink-0">
-                    <div className="w-9 h-9 rounded-full bg-gold-500/20 border border-gold-500/30 flex items-center justify-center">
-                      <span className="text-xs font-bold text-gold-500">{initials}</span>
-                    </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-navy-900 rounded-full" />
-                  </div>
+                  <DashboardAvatar
+                    initials={initials}
+                    className="w-9 h-9"
+                    showStatus
+                    statusClassName="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-navy-900 rounded-full"
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold text-white truncate leading-tight">
                       {displayName.split(" ").slice(0, 2).join(" ")}
