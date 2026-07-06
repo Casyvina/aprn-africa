@@ -47,6 +47,7 @@ export default function WeeklyReportClient({ pastReports }: Props) {
   const [rawData, setRawData] = useState<unknown>(null);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const [downloadingPptx, setDownloadingPptx] = useState(false);
   const [reports, setReports] = useState<PastReport[]>(pastReports);
 
   const currentYear = now.getFullYear();
@@ -83,6 +84,34 @@ export default function WeeklyReportClient({ pastReports }: Props) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setGenerating(false);
+    }
+  }
+
+  async function downloadPresentation() {
+    setDownloadingPptx(true);
+    try {
+      const res = await fetch("/api/admin/weekly-report/presentation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, periodLabel, mode }),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error((json as { error?: string }).error ?? "Failed to generate presentation");
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `APRN-Report-${periodLabel.replace(/[^a-zA-Z0-9]/g, "-")}.pptx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setDownloadingPptx(false);
     }
   }
 
@@ -267,25 +296,45 @@ export default function WeeklyReportClient({ pastReports }: Props) {
                 placeholder="Report content will appear here…"
               />
 
-              {!sent && (
+              <div className="flex flex-wrap items-center gap-3">
+                {!sent && (
+                  <button
+                    onClick={send}
+                    disabled={sending || !content.trim()}
+                    className="flex items-center gap-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 disabled:cursor-not-allowed text-navy-900 font-bold uppercase tracking-widest text-xs px-5 py-2.5 transition-colors"
+                  >
+                    {sending ? (
+                      <>
+                        <i className="fa-solid fa-circle-notch fa-spin text-[11px]" />
+                        Sending…
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-paper-plane text-[11px]" />
+                        Send to Lucy
+                      </>
+                    )}
+                  </button>
+                )}
+
                 <button
-                  onClick={send}
-                  disabled={sending || !content.trim()}
-                  className="flex items-center gap-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 disabled:cursor-not-allowed text-navy-900 font-bold uppercase tracking-widest text-xs px-5 py-2.5 transition-colors"
+                  onClick={downloadPresentation}
+                  disabled={downloadingPptx || !content.trim()}
+                  className="flex items-center gap-2 border border-gold-500/30 text-gold-500 hover:bg-gold-500/10 disabled:opacity-50 disabled:cursor-not-allowed font-bold uppercase tracking-widest text-xs px-5 py-2.5 transition-colors"
                 >
-                  {sending ? (
+                  {downloadingPptx ? (
                     <>
                       <i className="fa-solid fa-circle-notch fa-spin text-[11px]" />
-                      Sending…
+                      Building deck…
                     </>
                   ) : (
                     <>
-                      <i className="fa-solid fa-paper-plane text-[11px]" />
-                      Send to Lucy
+                      <i className="fa-solid fa-file-powerpoint text-[11px]" />
+                      Download Deck
                     </>
                   )}
                 </button>
-              )}
+              </div>
             </div>
           )}
 
