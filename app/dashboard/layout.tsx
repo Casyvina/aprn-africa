@@ -89,19 +89,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         )}
 
-        {/* User + sign out */}
-        <div className="px-8 py-6 border-t border-white/5 shrink-0">
-          <div className="flex items-center gap-3 mb-4">
-            <DashboardAvatar initials={initials} className="w-9 h-9" />
-            <div className="min-w-0">
-              <p className="text-xs font-semibold text-white truncate">
-                {displayName.split(" ").slice(0, 2).join(" ")}
-              </p>
-              <p className="text-[10px] text-slate-500 uppercase tracking-wider">
-                {tier} member
-              </p>
-            </div>
-          </div>
+        {/* Sign out */}
+        <div className="px-8 py-5 border-t border-white/5 shrink-0">
           <form action="/api/auth/signout" method="post">
             <button
               formAction="/api/auth/signout"
