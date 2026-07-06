@@ -28,9 +28,28 @@ function getMondayOfCurrentWeek(offsetWeeks = 0): string {
   return monday.toISOString().slice(0, 10);
 }
 
+function getNextMonday(): string {
+  const now = new Date();
+  const day = now.getDay();
+  // If today is Monday (1), use today; otherwise advance to next Monday
+  const daysUntilMonday = day === 1 ? 0 : (8 - day) % 7 || 7;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + daysUntilMonday);
+  return monday.toISOString().slice(0, 10);
+}
+
+const DECK_SECTIONS = [
+  { key: "priorities", title: "This Week's Priorities" },
+  { key: "inProgress", title: "Work in Progress" },
+  { key: "decisions", title: "Decisions & Discussion" },
+  { key: "lookingAhead", title: "Looking Ahead" },
+] as const;
+
+type DeckSectionKey = typeof DECK_SECTIONS[number]["key"];
+
 export default function WeeklyReportClient({ pastReports }: Props) {
   const now = new Date();
-  const [mode, setMode] = useState<"weekly" | "monthly">("weekly");
+  const [mode, setMode] = useState<"weekly" | "monthly" | "deck">("weekly");
 
   // Weekly state
   const [offsetWeeks, setOffsetWeeks] = useState(0);
@@ -49,6 +68,15 @@ export default function WeeklyReportClient({ pastReports }: Props) {
   const [sent, setSent] = useState(false);
   const [downloadingPptx, setDownloadingPptx] = useState(false);
   const [reports, setReports] = useState<PastReport[]>(pastReports);
+
+  // Monday deck state
+  const [deckDate, setDeckDate] = useState(getNextMonday());
+  const [deckTheme, setDeckTheme] = useState("");
+  const [deckSectionLines, setDeckSectionLines] = useState<Record<DeckSectionKey, string>>({
+    priorities: "", inProgress: "", decisions: "", lookingAhead: "",
+  });
+  const [buildingDeck, setBuildingDeck] = useState(false);
+  const [deckError, setDeckError] = useState("");
 
   const currentYear = now.getFullYear();
   const yearOptions = [currentYear - 1, currentYear, currentYear + 1];
@@ -112,6 +140,39 @@ export default function WeeklyReportClient({ pastReports }: Props) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setDownloadingPptx(false);
+    }
+  }
+
+  async function buildDeck() {
+    setBuildingDeck(true);
+    setDeckError("");
+    try {
+      const sections = DECK_SECTIONS.map((s) => ({
+        title: s.title,
+        lines: deckSectionLines[s.key],
+      }));
+      const res = await fetch("/api/admin/weekly-report/monday-deck", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ weekDate: deckDate, theme: deckTheme, sections }),
+      });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error((json as { error?: string }).error ?? "Failed to build deck");
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `APRN-Monday-${deckDate.replace(/-/g, "")}.pptx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setDeckError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setBuildingDeck(false);
     }
   }
 
@@ -179,90 +240,163 @@ export default function WeeklyReportClient({ pastReports }: Props) {
             {/* Mode toggle */}
             <div>
               <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-3">Report Type</p>
-              <div className="flex gap-2">
-                {(["weekly", "monthly"] as const).map((m) => (
+              <div className="flex flex-wrap gap-2">
+                {(["weekly", "monthly", "deck"] as const).map((m) => (
                   <button
                     key={m}
-                    onClick={() => { setMode(m); resetOutput(); }}
+                    onClick={() => { setMode(m); resetOutput(); setDeckError(""); }}
                     className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${
                       mode === m
                         ? "bg-gold-500 text-navy-900"
                         : "border border-white/10 text-slate-400 hover:text-white hover:border-white/20"
                     }`}
                   >
-                    {m === "weekly" ? "Weekly" : "Monthly"}
+                    {m === "weekly" ? "Weekly" : m === "monthly" ? "Monthly" : "Monday Deck"}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Period selector */}
-            <div>
-              <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-3">
-                {mode === "weekly" ? "Report Period" : "Select Month"}
-              </p>
+            {/* Period selector — weekly / monthly */}
+            {mode !== "deck" && (
+              <div>
+                <p className="text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-3">
+                  {mode === "weekly" ? "Report Period" : "Select Month"}
+                </p>
 
-              {mode === "weekly" ? (
-                <div className="flex flex-wrap gap-2">
-                  {weekLabels.map((label, i) => (
-                    <button
-                      key={i}
-                      onClick={() => { setOffsetWeeks(i); resetOutput(); }}
-                      className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
-                        offsetWeeks === i
-                          ? "bg-gold-500 text-navy-900"
-                          : "border border-white/10 text-slate-400 hover:text-white hover:border-white/20"
-                      }`}
+                {mode === "weekly" ? (
+                  <div className="flex flex-wrap gap-2">
+                    {weekLabels.map((label, i) => (
+                      <button
+                        key={i}
+                        onClick={() => { setOffsetWeeks(i); resetOutput(); }}
+                        className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
+                          offsetWeeks === i
+                            ? "bg-gold-500 text-navy-900"
+                            : "border border-white/10 text-slate-400 hover:text-white hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <select
+                      value={selectedMonth}
+                      onChange={(e) => { setSelectedMonth(Number(e.target.value)); resetOutput(); }}
+                      className="bg-navy-900 border border-white/10 text-white text-xs px-3 py-2 focus:border-gold-500/40 focus:outline-none"
                     >
-                      {label}
-                    </button>
+                      {MONTHS.map((name, i) => (
+                        <option key={i} value={i}>{name}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => { setSelectedYear(Number(e.target.value)); resetOutput(); }}
+                      className="bg-navy-900 border border-white/10 text-white text-xs px-3 py-2 focus:border-gold-500/40 focus:outline-none"
+                    >
+                      {yearOptions.map((y) => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
+                    <span className="text-xs text-slate-500">
+                      {MONTHS[selectedMonth]} {selectedYear}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Monday deck form */}
+            {mode === "deck" && (
+              <div className="space-y-5">
+                {/* Week date + theme */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-2">
+                      Meeting Date
+                    </label>
+                    <input
+                      type="date"
+                      value={deckDate}
+                      onChange={(e) => setDeckDate(e.target.value)}
+                      className="w-full bg-navy-900 border border-white/10 text-white text-xs px-3 py-2.5 focus:border-gold-500/40 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-2">
+                      Meeting Theme <span className="text-slate-600 normal-case tracking-normal font-normal">optional</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={deckTheme}
+                      onChange={(e) => setDeckTheme(e.target.value)}
+                      placeholder="e.g. Member Launch Preparation"
+                      className="w-full bg-navy-900 border border-white/10 text-white text-xs px-3 py-2.5 placeholder-slate-600 focus:border-gold-500/40 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Section inputs */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {DECK_SECTIONS.map((s) => (
+                    <div key={s.key}>
+                      <label className="block text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-2">
+                        {s.title}
+                        <span className="ml-1.5 text-slate-700 normal-case tracking-normal font-normal">one item per line</span>
+                      </label>
+                      <textarea
+                        value={deckSectionLines[s.key]}
+                        onChange={(e) => setDeckSectionLines((prev) => ({ ...prev, [s.key]: e.target.value }))}
+                        rows={5}
+                        placeholder={`- item one\n- item two`}
+                        className="w-full bg-navy-900 border border-white/10 text-slate-300 text-xs leading-relaxed p-3 resize-y focus:outline-none focus:border-gold-500/30 font-mono placeholder-slate-700"
+                      />
+                    </div>
                   ))}
                 </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <select
-                    value={selectedMonth}
-                    onChange={(e) => { setSelectedMonth(Number(e.target.value)); resetOutput(); }}
-                    className="bg-navy-900 border border-white/10 text-white text-xs px-3 py-2 focus:border-gold-500/40 focus:outline-none"
-                  >
-                    {MONTHS.map((name, i) => (
-                      <option key={i} value={i}>{name}</option>
-                    ))}
-                  </select>
-                  <select
-                    value={selectedYear}
-                    onChange={(e) => { setSelectedYear(Number(e.target.value)); resetOutput(); }}
-                    className="bg-navy-900 border border-white/10 text-white text-xs px-3 py-2 focus:border-gold-500/40 focus:outline-none"
-                  >
-                    {yearOptions.map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
-                  </select>
-                  <span className="text-xs text-slate-500">
-                    {MONTHS[selectedMonth]} {selectedYear}
-                  </span>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
 
-            {/* Generate button */}
-            <button
-              onClick={generate}
-              disabled={generating}
-              className="flex items-center gap-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 disabled:cursor-not-allowed text-navy-900 font-bold uppercase tracking-widest text-xs px-5 py-2.5 transition-colors"
-            >
-              {generating ? (
-                <>
-                  <i className="fa-solid fa-circle-notch fa-spin text-[11px]" />
-                  Pulling data & generating…
-                </>
-              ) : (
-                <>
-                  <i className="fa-solid fa-bolt text-[11px]" />
-                  Generate {mode === "monthly" ? "Monthly" : "Weekly"} Report
-                </>
-              )}
-            </button>
+            {/* Generate / build buttons */}
+            {mode !== "deck" ? (
+              <button
+                onClick={generate}
+                disabled={generating}
+                className="flex items-center gap-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 disabled:cursor-not-allowed text-navy-900 font-bold uppercase tracking-widest text-xs px-5 py-2.5 transition-colors"
+              >
+                {generating ? (
+                  <>
+                    <i className="fa-solid fa-circle-notch fa-spin text-[11px]" />
+                    Pulling data & generating…
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-bolt text-[11px]" />
+                    Generate {mode === "monthly" ? "Monthly" : "Weekly"} Report
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={buildDeck}
+                disabled={buildingDeck}
+                className="flex items-center gap-2 bg-gold-500 hover:bg-gold-400 disabled:opacity-50 disabled:cursor-not-allowed text-navy-900 font-bold uppercase tracking-widest text-xs px-5 py-2.5 transition-colors"
+              >
+                {buildingDeck ? (
+                  <>
+                    <i className="fa-solid fa-circle-notch fa-spin text-[11px]" />
+                    Building deck…
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-file-powerpoint text-[11px]" />
+                    Build &amp; Download Deck
+                  </>
+                )}
+              </button>
+            )}
 
             {error && (
               <p className="text-xs text-red-400 flex items-center gap-1.5">
@@ -270,10 +404,16 @@ export default function WeeklyReportClient({ pastReports }: Props) {
                 {error}
               </p>
             )}
+            {deckError && (
+              <p className="text-xs text-red-400 flex items-center gap-1.5">
+                <i className="fa-solid fa-triangle-exclamation text-[11px]" />
+                {deckError}
+              </p>
+            )}
           </div>
 
           {/* Generated report editor */}
-          {content && (
+          {content && mode !== "deck" && (
             <div className="bg-navy-800 border border-white/5 p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -339,7 +479,7 @@ export default function WeeklyReportClient({ pastReports }: Props) {
           )}
 
           {/* Empty state */}
-          {!content && !generating && (
+          {!content && !generating && mode !== "deck" && (
             <div className="bg-navy-800 border border-white/5 p-10 text-center">
               <i className="fa-regular fa-newspaper text-3xl text-slate-700 mb-3" />
               <p className="text-sm text-slate-500">
