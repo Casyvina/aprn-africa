@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About APRN — Africa's Pipeline Engineering Research Organisation",
+  description:
+    "Learn about the African Pipeline Resource Network — our mission to develop pipeline engineering capacity across Africa through research, training, policy collaboration, and professional development.",
+  openGraph: {
+    title: "About APRN — African Pipeline Resource Network",
+    description:
+      "APRN exists to build pipeline engineering capacity across Africa. Research, training, policy, and professional development for the continent's energy future.",
+    type: "website",
+    url: "https://aprn-africa.org/about",
+    images: [{ url: "/images/female-engineer.jpg", width: 1200, height: 630, alt: "APRN Africa — About Us" }],
+  },
+};
+
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import AboutPageClient from "@/components/AboutPageClient";

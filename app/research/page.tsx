@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Research Library — Pipeline Intelligence & Policy Reports",
+  description:
+    "Browse APRN's library of flagship research reports, policy briefs, working papers, and intelligence briefings on African pipeline infrastructure, CapEx flows, and energy transition.",
+  openGraph: {
+    title: "APRN Research Library — Africa's Pipeline Intelligence",
+    description:
+      "Flagship reports, policy briefs, and intelligence briefings on African pipeline infrastructure. Covering the NMGP, EACOP, and $42.5B in active CapEx.",
+    type: "website",
+    url: "https://aprn-africa.org/research",
+    images: [{ url: "/images/hero-pipeline.jpg", width: 1200, height: 630, alt: "APRN Research — Africa Pipeline Intelligence" }],
+  },
+};
+
 import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";

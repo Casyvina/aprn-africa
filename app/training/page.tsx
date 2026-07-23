@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Training & Development — Pipeline Engineering Programmes",
+  description:
+    "APRN's internationally aligned pipeline engineering training programmes — certifications, fellowships, and professional development courses designed for African energy professionals.",
+  openGraph: {
+    title: "APRN Training — Pipeline Engineering Programmes",
+    description:
+      "Internationally aligned pipeline engineering training: certifications, fellowships, and professional development for African energy professionals.",
+    type: "website",
+    url: "https://aprn-africa.org/training",
+    images: [{ url: "/images/female-engineer-training.png", width: 1200, height: 630, alt: "APRN Pipeline Engineering Training" }],
+  },
+};
+
 import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";

@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Partnerships — Strategic Partners & Collaborators",
+  description:
+    "APRN's network of strategic partners spanning international engineering bodies, energy operators, development finance institutions, and academic institutions across Africa.",
+  openGraph: {
+    title: "APRN Partnerships — Strategic Collaborators",
+    description:
+      "Our network of partners spanning international engineering bodies, energy operators, development finance institutions, and academic institutions.",
+    type: "website",
+    url: "https://aprn-africa.org/partnerships",
+    images: [{ url: "/images/hero-pipeline.jpg", width: 1200, height: 630, alt: "APRN Africa Partnerships" }],
+  },
+};
+
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";

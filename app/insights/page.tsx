@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Insights — Intelligence Briefs, Editorials & Publications",
+  description:
+    "APRN's intelligence stream: editorial insights, intelligence briefings, and research publications on African pipeline engineering, policy, and infrastructure investment.",
+  openGraph: {
+    title: "APRN Insights — Africa Pipeline Intelligence Stream",
+    description:
+      "Editorial insights, intelligence briefs, and publications covering African pipeline policy, engineering, and infrastructure investment.",
+    type: "website",
+    url: "https://aprn-africa.org/insights",
+    images: [{ url: "/images/hero-pipeline.jpg", width: 1200, height: 630, alt: "APRN Insights" }],
+  },
+};
+
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";

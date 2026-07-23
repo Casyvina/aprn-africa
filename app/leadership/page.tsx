@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Leadership — APRN Africa Team",
+  description:
+    "Meet the APRN Africa leadership team — engineers, researchers, and policy experts driving pipeline engineering development across the continent.",
+  openGraph: {
+    title: "APRN Leadership — Our Team",
+    description:
+      "The engineers, researchers, and policy experts behind the African Pipeline Resource Network.",
+    type: "website",
+    url: "https://aprn-africa.org/leadership",
+    images: [{ url: "/images/engineers-group1.png", width: 1200, height: 630, alt: "APRN Africa Leadership Team" }],
+  },
+};
+
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import LeadershipPageClient from "@/components/LeadershipPageClient";

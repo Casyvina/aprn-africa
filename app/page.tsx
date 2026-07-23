@@ -1,3 +1,19 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "African Pipeline Resource Network — Research, Training & Intelligence",
+  description:
+    "APRN is Africa's leading pipeline engineering research organisation. Access strategic intelligence, policy frameworks, training programmes, and infrastructure data covering 12,400km of active construction.",
+  openGraph: {
+    title: "APRN — African Pipeline Resource Network",
+    description:
+      "Africa's leading platform for pipeline engineering intelligence. Research, training, policy, and infrastructure data for energy professionals.",
+    type: "website",
+    url: "https://aprn-africa.org",
+    images: [{ url: "/images/hero-pipeline.jpg", width: 1200, height: 630, alt: "APRN Africa" }],
+  },
+};
+
 import Navigation from "@/components/Navigation";
 import IntelligenceStrip from "@/components/IntelligenceStrip";
 import HeroSection from "@/components/HeroSection";
@@ -50,8 +66,31 @@ export default async function Home() {
       ]
     : undefined;
 
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "African Pipeline Resource Network",
+    "alternateName": "APRN Africa",
+    "url": "https://aprn-africa.org",
+    "logo": "https://aprn-africa.org/images/logo.png",
+    "description": "Africa's leading pipeline engineering research organisation. Strategic intelligence, policy frameworks, training programmes, and infrastructure data for energy professionals.",
+    "email": "info@aprn-africa.org",
+    "foundingDate": "2024",
+    "areaServed": "Africa",
+    "sameAs": [],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "info@aprn-africa.org",
+      "contactType": "General Enquiries",
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+      />
       <Navigation />
       <IntelligenceStrip />
       <main className="flex flex-col flex-1">
