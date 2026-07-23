@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import AuthProvider from "@/components/AuthProvider";
 import PageTransition from "@/components/PageTransition";
 import "./globals.css";
@@ -95,6 +97,8 @@ export default function RootLayout({
           src="https://cdn.plot.ly/plotly-2.24.1.min.js"
           strategy="afterInteractive"
         />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
