@@ -8,24 +8,60 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://aprn-africa.org"),
   title: {
     default: "APRN — African Pipeline Resource Network",
-    template: "%s | APRN",
+    template: "%s | APRN Africa",
   },
   description:
-    "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure Africa's energy future.",
+    "Africa's leading pipeline engineering research organisation. Strategic intelligence, policy frameworks, training programmes, and infrastructure data for energy professionals across the continent.",
+  keywords: [
+    "African pipeline engineering",
+    "pipeline research Africa",
+    "energy infrastructure Africa",
+    "pipeline training Nigeria",
+    "APRN Africa",
+    "African Pipeline Resource Network",
+    "midstream Africa",
+    "pipeline policy Africa",
+    "energy transition Africa",
+    "NMGP",
+    "EACOP",
+    "pipeline engineering courses",
+  ],
+  authors: [{ name: "APRN Africa", url: "https://aprn-africa.org" }],
+  creator: "APRN Africa",
+  publisher: "African Pipeline Resource Network",
   openGraph: {
     title: "APRN — African Pipeline Resource Network",
     description:
-      "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure Africa's energy future.",
+      "Africa's leading pipeline engineering research organisation. Strategic intelligence, policy frameworks, training programmes, and infrastructure data for energy professionals.",
     url: "https://aprn-africa.org",
     siteName: "African Pipeline Resource Network",
     locale: "en_GB",
     type: "website",
+    images: [
+      {
+        url: "/images/hero-pipeline.jpg",
+        width: 1200,
+        height: 630,
+        alt: "APRN Africa — African Pipeline Resource Network",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "APRN — African Pipeline Resource Network",
     description:
-      "Research, engineering development, policy collaboration, and internationally aligned pipeline training to secure Africa's energy future.",
+      "Africa's leading pipeline engineering research organisation. Strategic intelligence, policy frameworks, training programmes, and infrastructure data.",
+    images: ["/images/hero-pipeline.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
