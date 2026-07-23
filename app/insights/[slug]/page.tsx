@@ -128,8 +128,36 @@ export default async function ArticlePage({
 
   const meta = categoryMeta[article.category];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.title,
+    "description": article.excerpt ?? "",
+    "datePublished": article.publishDate,
+    "author": {
+      "@type": "Organization",
+      "name": "APRN Africa",
+      "url": "https://aprn-africa.org",
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "African Pipeline Resource Network",
+      "url": "https://aprn-africa.org",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://aprn-africa.org/images/logo.png",
+      },
+    },
+    "url": `https://aprn-africa.org/insights/${slug}`,
+    ...(article.heroImage ? { "image": `${article.heroImage}?w=1200&h=630&fit=crop&auto=format` } : {}),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navigation />
       <main className="bg-navy-900 text-white" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
 

@@ -216,8 +216,36 @@ export default async function ResearchReportPage({
   const typeLabel = reportTypeLabel(report.reportType);
   const tocHeadings = extractHeadings(report.body ?? []);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": report.title,
+    "description": report.executiveSummary ?? "",
+    "datePublished": report.publishDate,
+    "author": {
+      "@type": "Person",
+      "name": report.authorName ?? "APRN Africa",
+      "jobTitle": report.authorRole ?? "",
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "African Pipeline Resource Network",
+      "url": "https://aprn-africa.org",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://aprn-africa.org/images/logo.png",
+      },
+    },
+    "url": `https://aprn-africa.org/research/${slug}`,
+    ...(report.coverImageUrl ? { "image": `${report.coverImageUrl}?w=1200&h=630&fit=crop&auto=format` } : {}),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navigation />
       <main style={{ backgroundColor: "#F5F7FA", fontFamily: "var(--font-inter), sans-serif" }}>
 
