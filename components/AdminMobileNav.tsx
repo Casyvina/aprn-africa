@@ -26,8 +26,9 @@ const strategyNav = [
 ];
 
 const contentNav = [
-  { href: "/admin/content-studio", icon: "fa-image",   label: "Content Studio", external: false },
-  { href: "/studio",               icon: "fa-pen-nib", label: "Sanity Studio",  external: true  },
+  { href: "/admin/content-studio", icon: "fa-image",       label: "Content Studio", external: false },
+  { href: "/admin/import",         icon: "fa-file-import", label: "Import Article", external: false },
+  { href: "/studio",               icon: "fa-pen-nib",     label: "Sanity Studio",  external: true  },
 ];
 
 export default function AdminMobileNav({
