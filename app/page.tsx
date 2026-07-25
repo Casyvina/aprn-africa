@@ -23,6 +23,7 @@ import PillarsSection from "@/components/PillarsSection";
 import PartnershipsSection from "@/components/PartnershipsSection";
 import MapSection from "@/components/MapSection";
 import ResearchSection from "@/components/ResearchSection";
+import LatestInsightsSection from "@/components/LatestInsightsSection";
 import RoadmapSection from "@/components/RoadmapSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
@@ -146,6 +147,7 @@ export default async function Home() {
           subtext={config?.researchSubtext}
           backgroundImageUrl={config?.researchBackgroundImageUrl}
         />
+        <LatestInsightsSection />
         <RoadmapSection
           heading={config?.roadmapHeading}
           milestones={config?.roadmapMilestones}
