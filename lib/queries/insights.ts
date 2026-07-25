@@ -33,16 +33,17 @@ const CARD_FIELDS = groq`
   _id,
   "slug": slug.current,
   "category": select(
-    _type == "editorialInsight" => "editorial",
-    _type == "publication"      => "publication",
-    reportType == "briefing"    => "intelligence",
+    _type == "editorialInsight"   => "editorial",
+    _type == "intelligenceUpdate" => "intelligence",
+    _type == "publication"        => "publication",
+    reportType == "briefing"      => "intelligence",
     "research"
   ),
   featured,
-  title,
+  "title": coalesce(title, headline),
   subtitle,
   "excerpt": coalesce(excerpt, executiveSummary, summary),
-  publishDate,
+  "publishDate": coalesce(publishDate, publishedAt),
   estimatedReadTime,
   "heroImage": coalesce(heroImage.asset->url, coverImage.asset->url),
   "authorName": coalesce(author->name, authors[0]->name, "APRN Intelligence Desk"),
@@ -55,22 +56,24 @@ const CARD_FIELDS = groq`
 export const PAGE_SIZE = 9
 
 /** Initial page of insights — featured (1) + grid (PAGE_SIZE) */
+const ALL_TYPES = `["researchReport", "editorialInsight", "intelligenceUpdate", "publication"]`
+
 export const ALL_INSIGHTS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight", "publication"]] | order(publishDate desc) [0...${PAGE_SIZE + 1}] {
+  *[_type in ${ALL_TYPES} && defined(slug.current)] | order(coalesce(publishDate, publishedAt) desc) [0...${PAGE_SIZE + 1}] {
     ${CARD_FIELDS}
   }
 `
 
 /** Load-more batch — called from server action with $start / $end */
 export const MORE_INSIGHTS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight", "publication"]] | order(publishDate desc) [$start...$end] {
+  *[_type in ${ALL_TYPES} && defined(slug.current)] | order(coalesce(publishDate, publishedAt) desc) [$start...$end] {
     ${CARD_FIELDS}
   }
 `
 
 /** Full article detail for /insights/[slug] */
 export const INSIGHT_BY_SLUG_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight", "publication"] && slug.current == $slug][0] {
+  *[_type in ${ALL_TYPES} && slug.current == $slug][0] {
     ${CARD_FIELDS}
     keyInsights[]{ value, label, icon },
     body,
@@ -80,13 +83,13 @@ export const INSIGHT_BY_SLUG_QUERY = groq`
 
 /** Static params — all slugs for generateStaticParams */
 export const INSIGHT_SLUGS_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight", "publication"]]{ "slug": slug.current }
+  *[_type in ${ALL_TYPES} && defined(slug.current)]{ "slug": slug.current }
 `
 
 /** Lightweight fetch for generateMetadata — no body */
 export const INSIGHT_META_QUERY = groq`
-  *[_type in ["researchReport", "editorialInsight", "publication"] && slug.current == $slug][0] {
-    title,
+  *[_type in ${ALL_TYPES} && slug.current == $slug][0] {
+    "title": coalesce(title, headline),
     "excerpt": coalesce(excerpt, executiveSummary, summary),
     "heroImage": coalesce(heroImage.asset->url, coverImage.asset->url),
   }
@@ -95,9 +98,10 @@ export const INSIGHT_META_QUERY = groq`
 /** Related articles for the sidebar (excludes current slug) */
 export const RELATED_INSIGHTS_QUERY = groq`
   *[
-    _type in ["researchReport", "editorialInsight", "publication"]
+    _type in ${ALL_TYPES}
+    && defined(slug.current)
     && slug.current != $slug
-  ] | order(publishDate desc) [0...3] {
+  ] | order(coalesce(publishDate, publishedAt) desc) [0...3] {
     ${CARD_FIELDS}
   }
 `
