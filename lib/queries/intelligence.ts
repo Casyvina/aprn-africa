@@ -5,6 +5,8 @@ export interface TickerItem {
   headline: string
   category: string
   corridorCode?: string
+  slug?: string | null
+  externalUrl?: string | null
 }
 
 export interface HomepageIntelCard {
@@ -17,11 +19,13 @@ export interface HomepageIntelCard {
 }
 
 export const INTELLIGENCE_TICKER_QUERY = groq`
-  *[_type in ["intelligenceUpdate", "editorialInsight"]] | order(coalesce(publishedAt, publishDate) desc)[0...10] {
+  *[_type in ["intelligenceUpdate", "editorialInsight"]] | order(coalesce(publishedAt, publishDate) desc)[0...12] {
     _id,
     "headline": coalesce(headline, title),
     "category": coalesce(category, "editorial"),
     "corridorCode": relatedCorridor->code,
+    "slug": slug.current,
+    externalUrl,
   }
 `
 
