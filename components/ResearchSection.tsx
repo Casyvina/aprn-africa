@@ -84,7 +84,11 @@ export default async function ResearchSection({
       HOMEPAGE_RESEARCH_QUERY, {}, ['researchReport']
     )
     if (result?.featured) featured = result.featured
-    if (result?.publications?.length) publications = result.publications
+    else if (result?.featuredFallback) featured = result.featuredFallback
+    // publications: exclude the featured item to avoid duplicate
+    const featuredId = featured?._id
+    const pubs = (result?.publications ?? []).filter((p) => p._id !== featuredId)
+    if (pubs.length) publications = pubs
   } catch {
     // use fallbacks
   }

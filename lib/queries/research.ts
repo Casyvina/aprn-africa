@@ -93,6 +93,7 @@ export interface HomepageResearchCard {
 
 export interface HomepageResearchResult {
   featured: HomepageResearchCard | null
+  featuredFallback: HomepageResearchCard | null
   publications: HomepageResearchCard[]
 }
 
@@ -174,7 +175,17 @@ export const HOMEPAGE_RESEARCH_QUERY = groq`
       estimatedReadTime,
       "topics": topics[]->{ name },
     },
-    "publications": *[_type == "researchReport" && !(featured == true)] | order(publishDate desc)[0...4] {
+    "featuredFallback": *[_type == "researchReport"] | order(publishDate desc)[0] {
+      _id,
+      title,
+      "slug": slug.current,
+      reportType,
+      publishDate,
+      executiveSummary,
+      estimatedReadTime,
+      "topics": topics[]->{ name },
+    },
+    "publications": *[_type == "researchReport"] | order(publishDate desc)[0...4] {
       _id,
       title,
       "slug": slug.current,
