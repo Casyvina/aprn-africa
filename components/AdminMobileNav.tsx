@@ -26,8 +26,8 @@ const strategyNav = [
 ];
 
 const contentNav = [
-  { href: "/admin/content-studio", icon: "fa-image",   label: "Content Studio" },
-  { href: "/studio",               icon: "fa-pen-nib", label: "Sanity Studio"  },
+  { href: "/admin/content-studio", icon: "fa-image",   label: "Content Studio", external: false },
+  { href: "/studio",               icon: "fa-pen-nib", label: "Sanity Studio",  external: true  },
 ];
 
 export default function AdminMobileNav({
@@ -53,22 +53,30 @@ export default function AdminMobileNav({
 
   const close = () => setOpen(false);
 
-  const navItem = (item: { href: string; icon: string; label: string }) => {
-    const isActive = item.href === "/admin"
+  const navItem = (item: { href: string; icon: string; label: string; external?: boolean }) => {
+    const isActive = !item.external && (item.href === "/admin"
       ? pathname === "/admin"
-      : pathname === item.href || pathname.startsWith(item.href + "/");
+      : pathname === item.href || pathname.startsWith(item.href + "/"));
+    const cls = `flex items-center gap-3 mx-3 px-3 py-3 text-xs font-medium transition-colors border-l-2 ${
+      isActive
+        ? "text-white bg-navy-800 border-gold-500"
+        : "text-slate-400 hover:text-white hover:bg-white/5 border-transparent"
+    }`;
+    const iconEl = <i className={`fa-solid ${item.icon} text-[11px] w-4 text-center ${isActive ? "text-gold-500" : "text-slate-500"}`} />;
+
+    if (item.external) {
+      return (
+        <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className={cls}>
+          {iconEl}
+          {item.label}
+          <i className="fa-solid fa-arrow-up-right-from-square text-[8px] text-slate-600 ml-auto" />
+        </a>
+      );
+    }
+
     return (
-      <Link
-        key={item.href}
-        href={item.href}
-        onClick={close}
-        className={`flex items-center gap-3 mx-3 px-3 py-3 text-xs font-medium transition-colors border-l-2 ${
-          isActive
-            ? "text-white bg-navy-800 border-gold-500"
-            : "text-slate-400 hover:text-white hover:bg-white/5 border-transparent"
-        }`}
-      >
-        <i className={`fa-solid ${item.icon} text-[11px] w-4 text-center ${isActive ? "text-gold-500" : "text-slate-500"}`} />
+      <Link key={item.href} href={item.href} onClick={close} className={cls}>
+        {iconEl}
         {item.label}
       </Link>
     );

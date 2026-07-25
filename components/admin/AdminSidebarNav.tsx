@@ -23,30 +23,39 @@ const strategyNav = [
 ]
 
 const contentNav = [
-  { href: "/admin/content-studio", icon: "fa-image",   label: "Content Studio" },
-  { href: "/studio",               icon: "fa-pen-nib", label: "Sanity Studio"  },
+  { href: "/admin/content-studio", icon: "fa-image",   label: "Content Studio", external: false },
+  { href: "/studio",               icon: "fa-pen-nib", label: "Sanity Studio",  external: true  },
 ]
 
-function NavItem({ href, icon, label }: { href: string; icon: string; label: string }) {
+function NavItem({ href, icon, label, external }: { href: string; icon: string; label: string; external?: boolean }) {
   const pathname = usePathname()
-  const isActive = href === "/admin"
+  const isActive = !external && (href === "/admin"
     ? pathname === "/admin"
-    : pathname === href || pathname.startsWith(href + "/")
+    : pathname === href || pathname.startsWith(href + "/"))
+
+  const cls = `mx-3 px-3 py-2.5 text-xs font-medium flex items-center gap-3 transition-colors border-l-2 ${
+    isActive
+      ? "text-white bg-navy-800 border-gold-500"
+      : "text-slate-400 hover:text-white hover:bg-navy-800 border-transparent"
+  }`
+
+  const iconEl = (
+    <i className={`fa-solid ${icon} w-4 text-center text-[11px] transition-colors ${isActive ? "text-gold-500" : "text-slate-500"}`} />
+  )
+
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+        {iconEl}
+        {label}
+        <i className="fa-solid fa-arrow-up-right-from-square text-[8px] text-slate-600 ml-auto" />
+      </a>
+    )
+  }
 
   return (
-    <Link
-      href={href}
-      className={`mx-3 px-3 py-2.5 text-xs font-medium flex items-center gap-3 transition-colors border-l-2 ${
-        isActive
-          ? "text-white bg-navy-800 border-gold-500"
-          : "text-slate-400 hover:text-white hover:bg-navy-800 border-transparent"
-      }`}
-    >
-      <i
-        className={`fa-solid ${icon} w-4 text-center text-[11px] transition-colors ${
-          isActive ? "text-gold-500" : "text-slate-500"
-        }`}
-      />
+    <Link href={href} className={cls}>
+      {iconEl}
       {label}
     </Link>
   )
