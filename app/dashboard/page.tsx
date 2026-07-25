@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { sanityFetch } from "@/lib/sanity/fetch";
+import {
+  DASHBOARD_OVERVIEW_RESEARCH_QUERY,
+  type DashboardOverviewResearchCard,
+} from "@/lib/queries/research";
 
 function lastSeenLabel(iso: string | null | undefined): string {
   if (!iso) return "";
@@ -13,21 +18,37 @@ function lastSeenLabel(iso: string | null | undefined): string {
   return `Last active ${days}d ago`;
 }
 
+function formatMonth(iso: string) {
+  return new Date(iso).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+}
+
+const REPORT_TYPE_LABEL: Record<string, string> = {
+  flagship:       "Flagship Report",
+  "policy-brief": "Policy Brief",
+  "working-paper":"Working Paper",
+  briefing:       "Intel Brief",
+  audit:          "Audit",
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const [profileRes, savedCountRes, recentResearch] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase.from("saved_items").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+    sanityFetch<DashboardOverviewResearchCard[]>(
+      DASHBOARD_OVERVIEW_RESEARCH_QUERY, {}, ["researchReport"]
+    ).catch(() => [] as DashboardOverviewResearchCard[]),
+  ]);
 
+  const profile   = profileRes.data;
+  const savedCount = savedCountRes.count ?? 0;
   const firstName = profile?.full_name?.split(" ")[0] ?? "there";
-  const tier = profile?.membership_tier ?? "free";
+  const tier      = profile?.membership_tier ?? "free";
   const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
-  const lastSeen = lastSeenLabel(profile?.last_seen_at);
+  const lastSeen  = lastSeenLabel(profile?.last_seen_at);
 
   return (
     <div className="flex flex-col gap-10 max-w-320">
@@ -67,10 +88,10 @@ export default async function DashboardPage() {
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Courses Enrolled", value: "0",  sub: "Active" },
-            { label: "Research Saved",   value: "0",  sub: "articles" },
-            { label: "Network",          value: "—",  sub: "Connections" },
-            { label: "Membership",       value: tierLabel, sub: "current plan", bar: true },
+            { label: "Courses Enrolled", value: "0",       sub: "Active" },
+            { label: "Research Saved",   value: String(savedCount), sub: savedCount === 1 ? "article" : "articles" },
+            { label: "Network",          value: "—",        sub: "Connections" },
+            { label: "Membership",       value: tierLabel,  sub: "current plan", bar: true },
           ].map((s) => (
             <div
               key={s.label}
@@ -117,7 +138,6 @@ export default async function DashboardPage() {
               </Link>
             </div>
 
-            {/* Empty state */}
             <div className="bg-navy-800 border border-white/5 border-dashed p-10 flex flex-col items-center justify-center text-center gap-3">
               <i className="fa-solid fa-graduation-cap text-slate-600 text-2xl" />
               <p className="text-sm text-slate-500">No courses enrolled yet.</p>
@@ -139,49 +159,51 @@ export default async function DashboardPage() {
               >
                 Recent Research
               </h3>
-              <div className="flex gap-2">
-                <button className="px-3 py-1 bg-navy-800 border border-white/10 text-xs text-white hover:border-gold-500/50 transition-colors">
-                  Latest
-                </button>
-                <button className="px-3 py-1 border border-transparent text-xs text-slate-400 hover:text-white transition-colors">
-                  Saved
-                </button>
-              </div>
+              <Link
+                href="/research"
+                className="text-[10px] font-bold tracking-widest text-gold-500 uppercase hover:text-gold-400 transition-colors flex items-center gap-1"
+              >
+                Full Archive <i className="fa-solid fa-arrow-right" />
+              </Link>
             </div>
 
-            <div className="flex flex-col gap-3">
-              {[
-                { tag: "Pipeline Integrity",   title: "Corrosion Metrics in High-Salinity Coastal Environments",    date: "May 2026" },
-                { tag: "Policy & Regulation",  title: "ECOWAS Tariff Harmonization Draft Analysis",                 date: "Apr 2026" },
-                { tag: "Renewable Integration",title: "Hydrogen Blending Capacity in Legacy Gas Infrastructure",    date: "Apr 2026" },
-              ].map((r) => (
-                <Link
-                  key={r.title}
-                  href="/research"
-                  className="bg-navy-800 border border-white/5 p-5 flex items-center justify-between group hover:bg-navy-700/50 transition-colors"
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-9 h-9 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
-                      <i className="fa-solid fa-file-lines text-slate-400 group-hover:text-gold-500 transition-colors text-xs" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="px-2 py-0.5 bg-navy-900 border border-white/5 text-[9px] font-bold tracking-widest text-gold-500 uppercase">
-                          {r.tag}
-                        </span>
-                        <span className="text-xs text-slate-400">{r.date}</span>
+            {recentResearch.length === 0 ? (
+              <div className="bg-navy-800 border border-white/5 border-dashed p-10 flex flex-col items-center justify-center text-center gap-3">
+                <i className="fa-solid fa-file-lines text-slate-600 text-2xl" />
+                <p className="text-sm text-slate-500">No research published yet.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {recentResearch.map((r) => {
+                  const tag = r.topics?.[0]?.name ?? REPORT_TYPE_LABEL[r.reportType] ?? "Research";
+                  return (
+                    <Link
+                      key={r._id}
+                      href={`/research/${r.slug}`}
+                      className="bg-navy-800 border border-white/5 p-5 flex items-center justify-between group hover:bg-navy-700/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-9 h-9 bg-navy-900 border border-white/5 flex items-center justify-center shrink-0">
+                          <i className="fa-solid fa-file-lines text-slate-400 group-hover:text-gold-500 transition-colors text-xs" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="px-2 py-0.5 bg-navy-900 border border-white/5 text-[9px] font-bold tracking-widest text-gold-500 uppercase">
+                              {tag}
+                            </span>
+                            <span className="text-xs text-slate-400">{formatMonth(r.publishDate)}</span>
+                          </div>
+                          <h4 className="text-sm font-semibold text-white group-hover:text-gold-400 transition-colors truncate">
+                            {r.title}
+                          </h4>
+                        </div>
                       </div>
-                      <h4 className="text-sm font-semibold text-white group-hover:text-gold-400 transition-colors truncate">
-                        {r.title}
-                      </h4>
-                    </div>
-                  </div>
-                  <button className="text-slate-500 hover:text-gold-500 transition-colors p-2 shrink-0">
-                    <i className="fa-regular fa-bookmark text-sm" />
-                  </button>
-                </Link>
-              ))}
-            </div>
+                      <i className="fa-solid fa-arrow-right text-slate-600 group-hover:text-gold-500 transition-colors text-xs shrink-0 ml-3" />
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
 
             <Link
               href="/research"
