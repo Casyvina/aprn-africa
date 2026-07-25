@@ -139,6 +139,15 @@ export const RESEARCH_PAGE_QUERY = groq`
   }
 `
 
+export interface DashboardOverviewResearchCard {
+  _id: string
+  title: string
+  slug: string
+  reportType: string
+  publishDate: string
+  topics: { name: string }[]
+}
+
 export interface DashboardResearchCard {
   _id: string
   title: string
@@ -149,6 +158,17 @@ export interface DashboardResearchCard {
   topics: { name: string }[]
   authorName: string
 }
+
+export const DASHBOARD_OVERVIEW_RESEARCH_QUERY = groq`
+  *[_type == "researchReport"] | order(publishDate desc)[0...3] {
+    _id,
+    title,
+    "slug": slug.current,
+    reportType,
+    publishDate,
+    "topics": topics[]->{ name },
+  }
+`
 
 export const DASHBOARD_RESEARCH_QUERY = groq`
   *[_type == "researchReport"] | order(publishDate desc)[0...30] {
