@@ -73,7 +73,7 @@ export async function generateMetadata({
   const article = await sanityFetch<{ title: string; excerpt?: string; heroImage?: string } | null>(
     INSIGHT_META_QUERY,
     { slug },
-    ["researchReport", "editorialInsight", "publication"],
+    ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
   );
   if (!article) return {};
 
@@ -115,12 +115,12 @@ export default async function ArticlePage({
     sanityFetch<InsightDetail | null>(
       INSIGHT_BY_SLUG_QUERY,
       { slug },
-      ["researchReport", "editorialInsight", "publication"],
+      ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
     ),
     sanityFetch<InsightCard[]>(
       RELATED_INSIGHTS_QUERY,
       { slug },
-      ["researchReport", "editorialInsight", "publication"],
+      ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
     ),
   ]);
 

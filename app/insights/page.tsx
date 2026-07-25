@@ -62,7 +62,7 @@ export default async function InsightsPage() {
   const allInsights = await sanityFetch<InsightCard[]>(
     ALL_INSIGHTS_QUERY,
     {},
-    ["researchReport", "editorialInsight", "publication"],
+    ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
   );
 
   const featured = allInsights.find((a) => a.featured) ?? allInsights[0];

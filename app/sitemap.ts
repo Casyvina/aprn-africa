@@ -50,7 +50,7 @@ type SlugRow = { slug: string; _updatedAt?: string };
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [research, insights, events, newsletters] = await Promise.all([
     sanityFetch<SlugRow[]>(RESEARCH_SLUGS_QUERY, {}, ["researchReport"]).catch(() => [] as SlugRow[]),
-    sanityFetch<SlugRow[]>(INSIGHT_SLUGS_QUERY, {}, ["editorialInsight"]).catch(() => [] as SlugRow[]),
+    sanityFetch<SlugRow[]>(INSIGHT_SLUGS_QUERY, {}, ["editorialInsight", "intelligenceUpdate"]).catch(() => [] as SlugRow[]),
     sanityFetch<SlugRow[]>(EVENT_SLUGS_QUERY, {}, ["event"]).catch(() => [] as SlugRow[]),
     sanityFetch<SlugRow[]>(NEWSLETTER_SLUGS_QUERY, {}, ["newsletter"]).catch(() => [] as SlugRow[]),
   ]);
