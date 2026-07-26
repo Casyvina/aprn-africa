@@ -2,26 +2,94 @@
 
 import { useState } from "react"
 
-type Mode = "import" | "patch"
+type Mode    = "import" | "patch"
+type DocType = "editorialInsight" | "researchReport" | "publication" | "intelligenceUpdate" | "policyFramework"
+
+const DOC_TYPE_LABELS: Record<DocType, string> = {
+  editorialInsight:  "Editorial Insight",
+  researchReport:    "Research Report",
+  publication:       "Publication",
+  intelligenceUpdate:"Intelligence Update",
+  policyFramework:   "Policy Framework",
+}
+
+const DOC_TYPE_FIELDS: Record<DocType, { key: string; value: string; note?: string }[]> = {
+  editorialInsight: [
+    { key: "# H1 line",                  value: "Title" },
+    { key: "**Subtitle:** …",            value: "Subtitle" },
+    { key: "**Summary:** …",             value: "Excerpt" },
+    { key: "**Publish Date:** …",        value: "Publish date" },
+    { key: "**Estimated Read Time:** …", value: "Read time (minutes)" },
+    { key: "**Pull Quote:** …",          value: "Pull quote" },
+    { key: "## H2 + paragraphs",         value: "Body (Portable Text)" },
+  ],
+  researchReport: [
+    { key: "# H1 line",                  value: "Title" },
+    { key: "**Subtitle:** …",            value: "Subtitle" },
+    { key: "**Summary:** …",             value: "Executive Summary" },
+    { key: "**Publish Date:** …",        value: "Publish date" },
+    { key: "**Estimated Read Time:** …", value: "Read time (minutes)" },
+    { key: "**Pull Quote:** …",          value: "Pull quote" },
+    { key: "## H2 + paragraphs",         value: "Body (Portable Text)" },
+  ],
+  publication: [
+    { key: "# H1 line",                  value: "Title" },
+    { key: "**Subtitle:** …",            value: "Subtitle" },
+    { key: "**Summary:** …",             value: "Summary" },
+    { key: "**Publication Type:** …",    value: "Type", note: "op-ed · position-paper · technical-note · event-summary · press-release · commentary · interview" },
+    { key: "**Publish Date:** …",        value: "Publish date" },
+    { key: "**Estimated Read Time:** …", value: "Read time (minutes)" },
+    { key: "**External URL:** …",        value: "External URL (optional)" },
+    { key: "## H2 + paragraphs",         value: "Body (Portable Text)" },
+  ],
+  intelligenceUpdate: [
+    { key: "# H1 line",                  value: "Headline" },
+    { key: "**Subtitle:** …",            value: "Subtitle" },
+    { key: "**Summary:** …",             value: "Summary" },
+    { key: "**Category:** …",            value: "Category", note: "market · project · policy · training · partnership · event · research" },
+    { key: "**Priority:** …",            value: "Priority", note: "normal · urgent · featured" },
+    { key: "**Publish Date:** …",        value: "Published at" },
+    { key: "**Estimated Read Time:** …", value: "Read time (minutes)" },
+    { key: "**Pull Quote:** …",          value: "Pull quote" },
+    { key: "**External URL:** …",        value: "External URL (optional)" },
+    { key: "## H2 + paragraphs",         value: "Body (Portable Text)" },
+  ],
+  policyFramework: [
+    { key: "# H1 line",                  value: "Title" },
+    { key: "**Summary:** …",             value: "Summary" },
+    { key: "**Framework Type:** …",      value: "Framework type", note: "AU · ECOWAS · EAC · SADC · COMESA · bilateral · national · industry" },
+    { key: "**Date Adopted:** …",        value: "Date adopted (YYYY-MM-DD)" },
+    { key: "**In Force:** yes/no",        value: "Currently in force" },
+    { key: "## H2 + paragraphs",         value: "Body / Full Analysis" },
+  ],
+}
+
+const STUDIO_SECTION: Record<DocType, string> = {
+  editorialInsight:   "Editorial Insights",
+  researchReport:     "Research Reports",
+  publication:        "Publications",
+  intelligenceUpdate: "Intelligence Updates",
+  policyFramework:    "Policy Frameworks",
+}
 
 export default function ImportArticlePage() {
-  const [mode, setMode]            = useState<Mode>("import")
+  const [mode, setMode] = useState<Mode>("import")
 
   // Import New state
-  const [markdown, setMarkdown]    = useState("")
-  const [docType, setDocType]      = useState<"editorialInsight" | "researchReport">("editorialInsight")
-  const [importLoading, setImportLoading] = useState(false)
-  const [importResult, setImportResult]   = useState<{ slug: string; studioUrl: string } | null>(null)
-  const [importError, setImportError]     = useState<string | null>(null)
+  const [markdown, setMarkdown]             = useState("")
+  const [docType, setDocType]               = useState<DocType>("editorialInsight")
+  const [importLoading, setImportLoading]   = useState(false)
+  const [importResult, setImportResult]     = useState<{ slug: string; studioUrl: string } | null>(null)
+  const [importError, setImportError]       = useState<string | null>(null)
 
   // Patch Existing state
-  const [patchSlug, setPatchSlug]       = useState("")
-  const [patchContent, setPatchContent] = useState("")
-  const [patchLoading, setPatchLoading] = useState(false)
-  const [patchResult, setPatchResult]   = useState<{
+  const [patchSlug, setPatchSlug]           = useState("")
+  const [patchContent, setPatchContent]     = useState("")
+  const [patchLoading, setPatchLoading]     = useState(false)
+  const [patchResult, setPatchResult]       = useState<{
     ok: boolean; documentId: string; slug: string; fieldsApplied: string[]; note: string
   } | null>(null)
-  const [patchError, setPatchError]     = useState<string | null>(null)
+  const [patchError, setPatchError]         = useState<string | null>(null)
 
   async function handleImport() {
     if (!markdown.trim()) return
@@ -29,7 +97,7 @@ export default function ImportArticlePage() {
     setImportError(null)
     setImportResult(null)
     try {
-      const res = await fetch("/api/admin/import-article", {
+      const res  = await fetch("/api/admin/import-article", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ markdown, docType }),
@@ -50,7 +118,7 @@ export default function ImportArticlePage() {
     setPatchError(null)
     setPatchResult(null)
     try {
-      const res = await fetch("/api/admin/patch-report", {
+      const res  = await fetch("/api/admin/patch-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ slug: patchSlug.trim(), content: patchContent }),
@@ -103,33 +171,40 @@ export default function ImportArticlePage() {
       {mode === "import" && (
         <>
           {/* Doc type */}
-          <div className="flex gap-3">
-            {(["editorialInsight", "researchReport"] as const).map((t) => (
+          <div className="flex flex-wrap gap-2">
+            {(Object.keys(DOC_TYPE_LABELS) as DocType[]).map((t) => (
               <button
                 key={t}
-                onClick={() => setDocType(t)}
+                onClick={() => { setDocType(t); setImportResult(null); setImportError(null) }}
                 className={`px-4 py-2 text-xs font-bold uppercase tracking-widest border transition-colors ${
                   docType === t
                     ? "bg-gold-500 text-navy-900 border-gold-500"
                     : "bg-transparent text-slate-400 border-white/10 hover:border-gold-500/40 hover:text-white"
                 }`}
               >
-                {t === "editorialInsight" ? "Editorial Insight" : "Research Report"}
+                {DOC_TYPE_LABELS[t]}
               </button>
             ))}
           </div>
 
-          {/* What gets parsed */}
+          {/* What gets parsed — type-specific */}
           <div className="bg-navy-800 border border-white/5 p-5 text-xs text-slate-400 flex flex-col gap-1.5">
-            <p className="text-[10px] font-bold text-gold-500 uppercase tracking-widest mb-2">What gets auto-filled</p>
-            <p><span className="text-slate-300 font-medium"># H1 line</span> → Title</p>
-            <p><span className="text-slate-300 font-medium">**Subtitle:** …</span> → Subtitle</p>
-            <p><span className="text-slate-300 font-medium">**Summary:** …</span> → Excerpt / Executive Summary</p>
-            <p><span className="text-slate-300 font-medium">**Publish Date:** …</span> → Publish date</p>
-            <p><span className="text-slate-300 font-medium">**Estimated Read Time:** …</span> → Read time</p>
-            <p><span className="text-slate-300 font-medium">**Pull Quote:** …</span> → Pull quote</p>
-            <p><span className="text-slate-300 font-medium">## H2 sections + paragraphs</span> → Body (Portable Text)</p>
-            <p className="mt-1 text-slate-500">Slug is auto-generated from the title. Hero image must be added in Studio after import.</p>
+            <p className="text-[10px] font-bold text-gold-500 uppercase tracking-widest mb-2">
+              What gets auto-filled — {DOC_TYPE_LABELS[docType]}
+            </p>
+            {DOC_TYPE_FIELDS[docType].map(({ key, value, note }) => (
+              <div key={key}>
+                <p>
+                  <span className="text-slate-300 font-medium font-mono">{key}</span>
+                  <span className="text-slate-600 mx-2">→</span>
+                  {value}
+                </p>
+                {note && <p className="text-slate-600 ml-4 mt-0.5">{note}</p>}
+              </div>
+            ))}
+            <p className="mt-2 text-slate-500">
+              Slug is auto-generated from the title / headline. Hero images and reference fields (authors, topics, corridors) must be added in Studio after import.
+            </p>
           </div>
 
           {/* Textarea */}
@@ -140,7 +215,15 @@ export default function ImportArticlePage() {
             <textarea
               value={markdown}
               onChange={(e) => setMarkdown(e.target.value)}
-              placeholder={`# Your Article Title\n\n**Subtitle:** One-line framing\n**Summary:** Summary paragraph...\n**Publish Date:** 2026-07-25\n**Estimated Read Time:** 10\n**Pull Quote:** The memorable line.\n\nIntroductory paragraph here...\n\n## First Section\n\nContent...`}
+              placeholder={
+                docType === "intelligenceUpdate"
+                  ? `# Intelligence Headline Here\n\n**Subtitle:** One-line framing\n**Summary:** Expanded summary for the feed...\n**Category:** project\n**Priority:** normal\n**Publish Date:** 2026-07-26\n**Estimated Read Time:** 5\n**Pull Quote:** The key strategic line.\n**External URL:** https://...\n\n## Background\n\nContent...`
+                  : docType === "policyFramework"
+                  ? `# Framework Title\n\n**Summary:** Concise overview of the framework...\n**Framework Type:** ECOWAS\n**Date Adopted:** 2022-06-01\n**In Force:** yes\n\n## Overview\n\nAnalysis...`
+                  : docType === "publication"
+                  ? `# Publication Title\n\n**Subtitle:** One-line framing\n**Summary:** Summary for the listing card...\n**Publication Type:** op-ed\n**Publish Date:** 2026-07-26\n**Estimated Read Time:** 8\n**External URL:** https://...\n\n## Introduction\n\nContent...`
+                  : `# Your Article Title\n\n**Subtitle:** One-line framing\n**Summary:** Summary paragraph...\n**Publish Date:** 2026-07-26\n**Estimated Read Time:** 10\n**Pull Quote:** The memorable line.\n\nIntroductory paragraph here...\n\n## First Section\n\nContent...`
+              }
               className="w-full h-96 bg-navy-900 border border-white/10 text-slate-300 text-xs font-mono p-4 resize-y focus:outline-none focus:border-gold-500/40 placeholder:text-slate-700"
               spellCheck={false}
             />
@@ -201,7 +284,7 @@ export default function ImportArticlePage() {
                 </button>
               </div>
               <p className="text-xs text-slate-500">
-                In Studio: find the draft under <span className="text-slate-300">Editorial Insights</span>, add a hero image, review the body, then hit Publish.
+                In Studio: find the draft under <span className="text-slate-300">{STUDIO_SECTION[docType]}</span>, add images, fill reference fields, then Publish.
               </p>
             </div>
           )}
@@ -211,7 +294,6 @@ export default function ImportArticlePage() {
       {/* ── Patch Existing ─────────────────────────────────────────────────── */}
       {mode === "patch" && (
         <>
-          {/* What this does */}
           <div className="bg-navy-800 border border-white/5 p-5 text-xs text-slate-400 flex flex-col gap-1.5">
             <p className="text-[10px] font-bold text-gold-500 uppercase tracking-widest mb-2">What gets patched</p>
             <p>Finds an existing <span className="text-slate-300 font-medium">researchReport</span> by slug and overwrites only the fields it can parse from the structured document.</p>
@@ -219,7 +301,6 @@ export default function ImportArticlePage() {
             <p className="mt-1 text-slate-500">Topics, authors, countries, corridors, and related reports require manual linking in Studio — they need existing document IDs that can&apos;t be resolved from text alone.</p>
           </div>
 
-          {/* Slug input */}
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Report Slug
@@ -235,7 +316,6 @@ export default function ImportArticlePage() {
             <p className="text-[10px] text-slate-600">The slug from the report&apos;s URL: aprn-africa.org/research/<span className="text-slate-500">slug-here</span></p>
           </div>
 
-          {/* Full-fields document */}
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Full-Fields Document
@@ -250,7 +330,6 @@ export default function ImportArticlePage() {
             <p className="text-[10px] text-slate-600">{patchContent.split("\n").length} lines · {patchContent.length} chars</p>
           </div>
 
-          {/* Submit */}
           <div className="flex items-center gap-4">
             <button
               onClick={handlePatch}
