@@ -128,35 +128,43 @@ export interface ResearchPageCard {
   executiveSummary: string
   estimatedReadTime?: number
   pageCount?: number
+  coverImageUrl?: string
   topics: { name: string }[]
 }
 
 export interface ResearchPageResult {
   featured: ResearchPageCard | null
+  featuredFallback: ResearchPageCard | null
   secondary: ResearchPageCard[]
+  allReports: ResearchPageCard[]
 }
+
+const RESEARCH_CARD_FIELDS = groq`
+  _id,
+  title,
+  "slug": slug.current,
+  reportType,
+  publishDate,
+  executiveSummary,
+  estimatedReadTime,
+  pageCount,
+  "coverImageUrl": coverImage.asset->url,
+  "topics": topics[]->{ name },
+`
 
 export const RESEARCH_PAGE_QUERY = groq`
   {
-    "featured": *[_type == "researchReport" && featured == true] | order(publishDate desc)[0] {
-      _id,
-      title,
-      "slug": slug.current,
-      reportType,
-      publishDate,
-      executiveSummary,
-      estimatedReadTime,
-      pageCount,
-      "topics": topics[]->{ name },
+    "featured": *[_type == "researchReport" && featured == true && defined(slug.current)] | order(publishDate desc)[0] {
+      ${RESEARCH_CARD_FIELDS}
     },
-    "secondary": *[_type == "researchReport" && !(featured == true)] | order(publishDate desc)[0...2] {
-      _id,
-      title,
-      "slug": slug.current,
-      reportType,
-      publishDate,
-      executiveSummary,
-      "topics": topics[]->{ name },
+    "featuredFallback": *[_type == "researchReport" && defined(slug.current)] | order(publishDate desc)[0] {
+      ${RESEARCH_CARD_FIELDS}
+    },
+    "secondary": *[_type == "researchReport" && !(featured == true) && defined(slug.current)] | order(publishDate desc)[0...2] {
+      ${RESEARCH_CARD_FIELDS}
+    },
+    "allReports": *[_type == "researchReport" && defined(slug.current)] | order(publishDate desc) {
+      ${RESEARCH_CARD_FIELDS}
     }
   }
 `
