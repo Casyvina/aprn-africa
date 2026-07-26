@@ -124,7 +124,7 @@ export default function NewsletterSignupForm() {
       </button>
 
       <p className="text-[11px] text-slate-600 text-center leading-relaxed">
-        Published every Wednesday. No spam. Unsubscribe at any time.
+        Published every Monday. No spam. Unsubscribe at any time.
       </p>
     </form>
   );

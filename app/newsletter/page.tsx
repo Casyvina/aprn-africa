@@ -93,7 +93,7 @@ export default async function NewsletterPage() {
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
-                <span className="text-xs font-bold text-gold-500 uppercase tracking-widest">Published Every Wednesday</span>
+                <span className="text-xs font-bold text-gold-500 uppercase tracking-widest">Published Every Monday</span>
               </div>
               <h1
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
@@ -249,7 +249,7 @@ export default async function NewsletterPage() {
                   Join the APRN Intelligence Network
                 </h2>
                 <p className="text-slate-400 leading-relaxed mb-8">
-                  Receive the APRN Intelligence Briefing every Wednesday — free for all subscribers. Engineers, policymakers, financiers, and researchers across Africa and its diaspora.
+                  Receive the APRN Intelligence Briefing every Monday — free for all subscribers. Engineers, policymakers, financiers, and researchers across Africa and its diaspora.
                 </p>
                 <div className="flex flex-col gap-3 text-sm text-slate-400">
                   {[
@@ -267,7 +267,7 @@ export default async function NewsletterPage() {
               </div>
               <div className="bg-navy-800 border border-navy-700 p-8">
                 <p className="text-sm font-bold text-white mb-1">Subscribe Free</p>
-                <p className="text-xs text-slate-500 mb-6">Every Wednesday. Unsubscribe anytime.</p>
+                <p className="text-xs text-slate-500 mb-6">Every Monday. Unsubscribe anytime.</p>
                 <NewsletterSignupForm />
               </div>
             </div>

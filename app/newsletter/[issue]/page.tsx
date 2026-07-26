@@ -223,7 +223,7 @@ export default async function NewsletterIssuePage({
                 className="text-3xl font-bold mb-4"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
               >
-                Subscribe Free — Every Wednesday
+                Subscribe Free — Every Monday
               </h2>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Join 2,400+ engineers, policymakers, and financiers following Africa&apos;s infrastructure story.

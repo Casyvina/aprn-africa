@@ -62,9 +62,9 @@ export const newsletter = defineType({
       title: 'Stories',
       type: 'array',
       group: 'content',
-      description: 'Between 4 and 12 stories. Claude generates these from live research.',
+      description: 'Between 2 and 12 stories. Claude generates these from live research.',
       of: [{ type: 'newsletterStory' }],
-      validation: (r) => r.min(4).max(12),
+      validation: (r) => r.min(2).max(12),
     }),
 
     // ── Editor Analysis ───────────────────────────────────────────────
