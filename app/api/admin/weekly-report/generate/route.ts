@@ -58,15 +58,15 @@ async function fetchGitHubCommits(since: Date, until: Date): Promise<
 async function fetchSanityActivity(since: Date, until: Date) {
   try {
     const [published, drafts] = await Promise.all([
-      sanityClient.fetch<{ _type: string; title?: string; name?: string; _updatedAt: string }[]>(
+      sanityClient.fetch<{ _type: string; title?: string; _updatedAt: string }[]>(
         `*[_updatedAt >= $since && _updatedAt <= $until && !(_id in path("drafts.**"))] | order(_updatedAt desc) {
-          _type, _updatedAt, title, name
+          _type, _updatedAt, "title": coalesce(title, name, headline)
         }`,
         { since: since.toISOString(), until: until.toISOString() }
       ),
-      sanityClient.fetch<{ _type: string; title?: string; name?: string; _updatedAt: string }[]>(
+      sanityClient.fetch<{ _type: string; title?: string; _updatedAt: string }[]>(
         `*[_updatedAt >= $since && _updatedAt <= $until && _id in path("drafts.**")] | order(_updatedAt desc) {
-          _type, _updatedAt, title, name
+          _type, _updatedAt, "title": coalesce(title, name, headline)
         }`,
         { since: since.toISOString(), until: until.toISOString() }
       ),
@@ -80,8 +80,8 @@ async function fetchSanityActivity(since: Date, until: Date) {
       publishedTotal: published.length,
       draftsTotal: drafts.length,
       byType: grouped,
-      publishedItems: published.slice(0, 30).map((d) => ({ type: d._type, title: d.title ?? d.name ?? "(untitled)", updatedAt: d._updatedAt })),
-      draftItems: drafts.slice(0, 10).map((d) => ({ type: d._type, title: d.title ?? d.name ?? "(untitled)" })),
+      publishedItems: published.slice(0, 30).map((d) => ({ type: d._type, title: d.title ?? "(untitled)", updatedAt: d._updatedAt })),
+      draftItems: drafts.slice(0, 10).map((d) => ({ type: d._type, title: d.title ?? "(untitled)" })),
     };
   } catch {
     return null;
