@@ -84,6 +84,10 @@ export const RESEARCH_META_QUERY = groq`
   }
 `
 
+export const RESEARCH_SLUG_EXISTS_QUERY = groq`
+  *[_type == "researchReport" && slug.current == $slug][0]{ "slug": slug.current }
+`
+
 export const RESEARCH_RECENT_FALLBACK_QUERY = groq`
   *[_type == "researchReport" && slug.current != $slug && defined(slug.current)] | order(publishDate desc)[0...3] {
     _id,

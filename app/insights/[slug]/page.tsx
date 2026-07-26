@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Navigation from "@/components/Navigation";
@@ -15,6 +15,7 @@ import {
   type InsightCard,
   type InsightCategory,
 } from "@/lib/queries/insights";
+import { RESEARCH_SLUG_EXISTS_QUERY } from "@/lib/queries/research";
 
 // -- Helpers -------------------------------------------------------------------
 
@@ -73,7 +74,7 @@ export async function generateMetadata({
   const article = await sanityFetch<{ title: string; excerpt?: string; heroImage?: string } | null>(
     INSIGHT_META_QUERY,
     { slug },
-    ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
+    ["editorialInsight", "intelligenceUpdate", "publication"],
   );
   if (!article) return {};
 
@@ -111,20 +112,22 @@ export default async function ArticlePage({
 }) {
   const { slug } = await params;
 
+  const INSIGHT_TAGS = ["editorialInsight", "intelligenceUpdate", "publication"];
+
   const [article, related] = await Promise.all([
-    sanityFetch<InsightDetail | null>(
-      INSIGHT_BY_SLUG_QUERY,
-      { slug },
-      ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
-    ),
-    sanityFetch<InsightCard[]>(
-      RELATED_INSIGHTS_QUERY,
-      { slug },
-      ["researchReport", "editorialInsight", "intelligenceUpdate", "publication"],
-    ),
+    sanityFetch<InsightDetail | null>(INSIGHT_BY_SLUG_QUERY, { slug }, INSIGHT_TAGS),
+    sanityFetch<InsightCard[]>(RELATED_INSIGHTS_QUERY, { slug }, INSIGHT_TAGS),
   ]);
 
-  if (!article) notFound();
+  if (!article) {
+    const isResearchReport = await sanityFetch<{ slug: string } | null>(
+      RESEARCH_SLUG_EXISTS_QUERY,
+      { slug },
+      ["researchReport"],
+    );
+    if (isResearchReport) permanentRedirect(`/research/${slug}`);
+    notFound();
+  }
 
   const meta = categoryMeta[article.category];
 

@@ -56,7 +56,7 @@ const CARD_FIELDS = groq`
 export const PAGE_SIZE = 9
 
 /** Initial page of insights — featured (1) + grid (PAGE_SIZE) */
-const ALL_TYPES = `["researchReport", "editorialInsight", "intelligenceUpdate", "publication"]`
+const ALL_TYPES = `["editorialInsight", "intelligenceUpdate", "publication"]`
 
 export const ALL_INSIGHTS_QUERY = groq`
   *[_type in ${ALL_TYPES} && defined(slug.current)] | order(coalesce(publishDate, publishedAt) desc) [0...${PAGE_SIZE + 1}] {
