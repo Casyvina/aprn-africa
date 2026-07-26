@@ -75,6 +75,24 @@ export const RESEARCH_META_QUERY = groq`
     title,
     executiveSummary,
     "coverImageUrl": coverImage.asset->url,
+    seo {
+      metaTitle,
+      metaDescription,
+      "ogImageUrl": ogImage.asset->url,
+      noIndex
+    }
+  }
+`
+
+export const RESEARCH_RECENT_FALLBACK_QUERY = groq`
+  *[_type == "researchReport" && slug.current != $slug && defined(slug.current)] | order(publishDate desc)[0...3] {
+    _id,
+    title,
+    "slug": slug.current,
+    reportType,
+    publishDate,
+    "coverImageUrl": coverImage.asset->url,
+    "authorName": coalesce(authors[0]->name, "APRN Research Team"),
   }
 `
 

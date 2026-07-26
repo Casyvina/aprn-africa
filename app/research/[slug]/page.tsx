@@ -13,6 +13,7 @@ import {
   RESEARCH_BY_SLUG_QUERY,
   RESEARCH_SLUGS_QUERY,
   RESEARCH_META_QUERY,
+  RESEARCH_RECENT_FALLBACK_QUERY,
   type ResearchReportDetail,
   type RelatedResearchCard,
 } from "@/lib/queries/research";
@@ -157,28 +158,44 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   }
 }
 
+type ResearchMetaResult = {
+  title: string
+  executiveSummary?: string
+  coverImageUrl?: string
+  seo?: {
+    metaTitle?: string
+    metaDescription?: string
+    ogImageUrl?: string
+    noIndex?: boolean
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const report = await sanityFetch<{ title: string; executiveSummary?: string; coverImageUrl?: string } | null>(
+  const report = await sanityFetch<ResearchMetaResult | null>(
     RESEARCH_META_QUERY,
     { slug },
     ["researchReport"],
   );
   if (!report) return {};
 
-  const title = report.title;
-  const description = report.executiveSummary?.slice(0, 160) ?? "Research report from APRN Africa.";
-  const imageUrl = report.coverImageUrl
-    ? `${report.coverImageUrl}?w=1200&h=630&fit=crop&auto=format`
+  const title = report.seo?.metaTitle ?? report.title;
+  const description = report.seo?.metaDescription
+    ?? report.executiveSummary?.slice(0, 160)
+    ?? "Research report from APRN Africa.";
+  const rawImageUrl = report.seo?.ogImageUrl ?? report.coverImageUrl;
+  const imageUrl = rawImageUrl
+    ? `${rawImageUrl}?w=1200&h=630&fit=crop&auto=format`
     : undefined;
 
   return {
     title,
     description,
+    ...(report.seo?.noIndex ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title,
       description,
@@ -204,15 +221,17 @@ export default async function ResearchReportPage({
 }) {
   const { slug } = await params;
 
-  const report = await sanityFetch<ResearchReportDetail | null>(
-    RESEARCH_BY_SLUG_QUERY,
-    { slug },
-    ["researchReport"],
-  );
+  const [report, recentFallback] = await Promise.all([
+    sanityFetch<ResearchReportDetail | null>(RESEARCH_BY_SLUG_QUERY, { slug }, ["researchReport"]),
+    sanityFetch<RelatedResearchCard[]>(RESEARCH_RECENT_FALLBACK_QUERY, { slug }, ["researchReport"]),
+  ]);
 
   if (!report) notFound();
 
-  const related: RelatedResearchCard[] = report.relatedReports ?? [];
+  const hasExplicitRelated = Boolean(report.relatedReports?.length)
+  const related: RelatedResearchCard[] = hasExplicitRelated
+    ? report.relatedReports!
+    : (recentFallback ?? []);
   const typeLabel = reportTypeLabel(report.reportType);
   const tocHeadings = extractHeadings(report.body ?? []);
 
@@ -345,8 +364,8 @@ export default async function ResearchReportPage({
                         className="flex items-center justify-center gap-2 w-full py-3 text-xs font-bold uppercase tracking-wider"
                         style={{ backgroundColor: "#D4A017", color: "#071B2A" }}
                       >
-                        <i className="fa-solid fa-lock text-xs" />
-                        Request Access
+                        <i className="fa-solid fa-envelope text-xs" />
+                        Contact APRN
                       </Link>
                     )}
                     <Link
@@ -565,7 +584,7 @@ export default async function ResearchReportPage({
                 className="text-[10px] font-semibold uppercase tracking-widest mb-10"
                 style={{ color: "#D4A017" }}
               >
-                Related Research
+                {hasExplicitRelated ? "Related Research" : "More Research"}
               </p>
               <div className="grid md:grid-cols-3 gap-8">
                 {related.map((rel) => (
