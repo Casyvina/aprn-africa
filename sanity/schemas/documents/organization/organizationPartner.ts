@@ -76,6 +76,13 @@ export const organizationPartner = defineType({
       rows: 3,
     }),
     defineField({
+      name: 'showOnPartnersPage',
+      title: 'Show on Partners Page',
+      type: 'boolean',
+      description: 'Only enable for organisations that are formal APRN partners. Leave off for operators, referenced companies, and other directory entries.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'featured',
       title: 'Featured on Homepage',
       type: 'boolean',

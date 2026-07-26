@@ -12,7 +12,7 @@ export interface PartnerCard {
 }
 
 export const FEATURED_PARTNERS_QUERY = groq`
-  *[_type == "organizationPartner" && featured == true] | order(tier asc, name asc) {
+  *[_type == "organizationPartner" && showOnPartnersPage == true && featured == true] | order(tier asc, name asc) {
     _id,
     name,
     "slug": slug.current,
@@ -25,7 +25,7 @@ export const FEATURED_PARTNERS_QUERY = groq`
 `
 
 export const ALL_PARTNERS_QUERY = groq`
-  *[_type == "organizationPartner"] | order(tier asc, name asc) {
+  *[_type == "organizationPartner" && showOnPartnersPage == true] | order(tier asc, name asc) {
     _id,
     name,
     "slug": slug.current,
