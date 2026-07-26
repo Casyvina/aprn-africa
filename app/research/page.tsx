@@ -236,9 +236,9 @@ export default async function ResearchPage() {
             </div>
 
             {featured ? (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Main feature */}
-                <div className="lg:col-span-8 relative group overflow-hidden bg-navy-800">
+              <div className={`grid grid-cols-1 gap-8 ${secondary.length > 0 ? "lg:grid-cols-12" : ""}`}>
+                {/* Main feature — full width when no secondary reports exist */}
+                <div className={`${secondary.length > 0 ? "lg:col-span-8" : ""} relative group overflow-hidden bg-navy-800`}>
                   <Link href={`/research/${featured.slug}`} className="block cursor-pointer">
                     <div className="h-80 sm:h-110 lg:h-150 w-full relative">
                       {featured.coverImageUrl ? (
@@ -246,7 +246,7 @@ export default async function ResearchPage() {
                           src={featured.coverImageUrl}
                           alt={featured.title}
                           fill
-                          sizes="(max-width: 1024px) 100vw, 66vw"
+                          sizes="100vw"
                           className="object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700"
                         />
                       ) : (
@@ -299,9 +299,9 @@ export default async function ResearchPage() {
                   />
                 </div>
 
-                {/* Secondary column */}
-                <div className="lg:col-span-4 flex flex-col gap-8">
-                  {secondary.length > 0 ? secondary.map((card) => (
+                {/* Secondary column — only renders when there are secondary reports */}
+                {secondary.length > 0 && <div className="lg:col-span-4 flex flex-col gap-8">
+                  {secondary.map((card) => (
                     <div
                       key={card._id}
                       className="flex-1 relative group flex flex-col overflow-hidden border border-gold-500/10 hover:border-gold-500/40 transition-colors"
@@ -346,31 +346,8 @@ export default async function ResearchPage() {
                         className="absolute top-4 right-4 z-10"
                       />
                     </div>
-                  )) : (
-                    /* CTA panel when no secondary reports yet */
-                    <div
-                      className="flex-1 flex flex-col justify-center p-8 border border-gold-500/10"
-                      style={{ background: "linear-gradient(to bottom, #0D2436, #071B2A)" }}
-                    >
-                      <i className="fa-solid fa-flask text-gold-500/30 text-4xl mb-6" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-gold-500 mb-3"
-                        style={{ fontFamily: "var(--font-inter), sans-serif" }}>
-                        More Reports Coming
-                      </p>
-                      <p className="text-slate-500 text-sm italic mb-6"
-                        style={{ fontFamily: "var(--font-playfair), serif" }}>
-                        APRN publishes policy briefs, technical assessments, and flagship reports quarterly.
-                      </p>
-                      <Link
-                        href="/newsletter"
-                        className="text-xs font-bold uppercase tracking-widest text-gold-500 hover:text-gold-400 transition-colors border-b border-gold-500/30 pb-1 self-start"
-                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
-                      >
-                        Subscribe for Updates →
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                  ))}
+                </div>}
               </div>
             ) : (
               /* Empty state — no reports published yet */
