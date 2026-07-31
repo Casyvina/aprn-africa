@@ -26,7 +26,7 @@ import {
   type NewsletterCard,
 } from "@/lib/queries/newsletter";
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {

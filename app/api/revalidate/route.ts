@@ -2,22 +2,27 @@ import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
 
-// Maps Sanity document types → Next.js cache tags
+// Maps Sanity document types → Next.js cache tags.
+// Include BOTH the specific document-type tag (used in detail page fetches)
+// AND the broader category tag (used in listing page fetches) so the webhook
+// invalidates every affected cache layer simultaneously.
 const TYPE_TO_TAGS: Record<string, string[]> = {
-  newsletter:          ["newsletter"],
-  subscriber:          ["newsletter"],
-  researchReport:      ["insights"],
-  editorialInsight:    ["insights"],
-  intelligenceUpdate:  ["intelligence", "insights"],
-  pipelineCorridor:    ["infrastructure"],
-  infrastructureProject: ["infrastructure"],
-  trainingProgram:     ["training"],
-  organizationPartner: ["partnerships"],
-  person:              ["leadership"],
-  homepageConfig:      ["homepage"],
-  siteSettings:        ["site"],
-  topic:               ["insights", "newsletter"],
-  country:             ["infrastructure"],
+  newsletter:             ["newsletter"],
+  subscriber:             ["newsletter"],
+  researchReport:         ["researchReport", "insights"],
+  editorialInsight:       ["editorialInsight", "insights"],
+  intelligenceUpdate:     ["intelligenceUpdate", "intelligence", "insights"],
+  publication:            ["publication", "insights"],
+  policyFramework:        ["insights"],
+  pipelineCorridor:       ["infrastructure"],
+  infrastructureProject:  ["infrastructure"],
+  trainingProgram:        ["training"],
+  organizationPartner:    ["partnerships"],
+  person:                 ["leadership"],
+  homepageConfig:         ["homepage"],
+  siteSettings:           ["site"],
+  topic:                  ["insights", "newsletter"],
+  country:                ["infrastructure"],
 };
 
 function verifySignature(rawBody: string, signatureHeader: string, secret: string): boolean {

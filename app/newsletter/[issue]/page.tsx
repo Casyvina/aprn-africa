@@ -11,8 +11,7 @@ import {
   type NewsletterIssue,
 } from "@/lib/queries/newsletter";
 
-// Revalidate every 10 minutes; allow slugs not known at build time
-export const revalidate = 600;
+export const revalidate = 60;
 export const dynamicParams = true;
 
 // -- Helpers -------------------------------------------------------------------
