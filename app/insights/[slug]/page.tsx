@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { PortableTextRenderer } from "@/components/PortableTextRenderer";
 import NewsletterReadPrompt from "@/components/NewsletterReadPrompt";
+import SaveButton from "@/components/SaveButton";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import {
   INSIGHT_BY_SLUG_QUERY,
@@ -237,7 +238,7 @@ export default async function ArticlePage({
               )}
 
               {/* Author row */}
-              <div className="flex items-center gap-3 pt-6 border-t border-white/10">
+              <div className="flex items-center justify-between gap-3 pt-6 border-t border-white/10">
                 <div className="w-10 h-10 rounded-full bg-navy-700 border border-gold-500/30 overflow-hidden shrink-0 flex items-center justify-center">
                   {article.authorImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -254,6 +255,12 @@ export default async function ArticlePage({
                   <div className="text-sm font-semibold text-white">{article.authorName}</div>
                   <div className="text-xs text-slate-400">{article.authorRole}</div>
                 </div>
+                <SaveButton
+                  itemId={article._id}
+                  itemType={article.category}
+                  itemSlug={article.slug}
+                  itemTitle={article.title}
+                />
               </div>
             </div>
           </div>

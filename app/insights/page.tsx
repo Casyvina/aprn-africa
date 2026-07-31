@@ -18,6 +18,7 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import InsightGrid from "@/components/InsightGrid";
+import SaveButton from "@/components/SaveButton";
 import { sanityFetch } from "@/lib/sanity/fetch";
 import { ALL_INSIGHTS_QUERY, PAGE_SIZE, type InsightCard, type InsightCategory } from "@/lib/queries/insights";
 
@@ -139,6 +140,13 @@ export default async function InsightsPage() {
                     {categoryMeta[featured.category].label}
                   </span>
                 </div>
+                <SaveButton
+                  itemId={featured._id}
+                  itemType={featured.category}
+                  itemSlug={featured.slug}
+                  itemTitle={featured.title}
+                  className="absolute top-4 right-4 z-10"
+                />
               </div>
               <div className="lg:col-span-5">
                 <h2
