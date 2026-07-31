@@ -484,7 +484,7 @@ export default async function TrainingPage() {
                         </span>
                       )}
                     </div>
-                    <h3 className="font-display text-xl font-bold text-white group-hover:text-gold-500 transition-colors leading-snug">{p.name}</h3>
+                    <h3 className="font-display text-xl font-bold text-white group-hover:text-gold-500 transition-colors leading-snug">{p.title}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed flex-1">{p.description}</p>
                     <Link href="/contact" className="text-gold-500 text-sm font-semibold flex items-center gap-2 group-hover:gap-3 transition-all mt-2">
                       Apply or Enquire <i className="fa-solid fa-arrow-right text-xs" />

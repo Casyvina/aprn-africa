@@ -33,7 +33,7 @@ export default function CoursesPageClient({ courses }: { courses: TrainingProgra
     }
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter((c) => c.name.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q));
+      list = list.filter((c) => c.title.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q));
     }
     return list;
   }, [courses, activeFilter, search]);
@@ -161,7 +161,7 @@ export default function CoursesPageClient({ courses }: { courses: TrainingProgra
                       )}
                     </div>
                     <h4 className="text-sm font-semibold text-white group-hover:text-gold-400 transition-colors leading-snug">
-                      {course.name}
+                      {course.title}
                     </h4>
                   </div>
                 </div>

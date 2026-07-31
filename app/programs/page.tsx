@@ -395,7 +395,7 @@ export default async function ProgramsPage() {
                       className="text-xl font-bold text-white group-hover:text-gold-500 transition-colors leading-snug"
                       style={{ fontFamily: "var(--font-playfair), serif" }}
                     >
-                      {p.name}
+                      {p.title}
                     </h3>
                     <p className="text-sm text-slate-400 leading-relaxed flex-1">{p.description}</p>
                     <Link
