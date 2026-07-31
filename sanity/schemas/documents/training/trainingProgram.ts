@@ -83,12 +83,36 @@ export const trainingProgram = defineType({
       initialValue: false,
     }),
 
+    defineField({
+      name: 'programCode',
+      title: 'Program Code',
+      type: 'string',
+      group: 'overview',
+      description: 'e.g. APC-101',
+    }),
+
     // ── Details ──────────────────────────────────────────────────────
+    defineField({
+      name: 'learningOutcomes',
+      title: 'Learning Outcomes',
+      type: 'array',
+      group: 'details',
+      description: 'What graduates will be able to do upon completion.',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'targetAudience',
+      title: 'Who Should Attend',
+      type: 'array',
+      group: 'details',
+      of: [{ type: 'string' }],
+    }),
     defineField({
       name: 'curriculum',
       title: 'Curriculum',
       type: 'richText',
       group: 'details',
+      description: 'Use headings for weeks/modules and bullet lists for topics.',
     }),
     defineField({
       name: 'instructors',
@@ -96,6 +120,14 @@ export const trainingProgram = defineType({
       type: 'array',
       group: 'details',
       of: [{ type: 'reference', to: [{ type: 'person' }] }],
+    }),
+    defineField({
+      name: 'relatedPrograms',
+      title: 'Related Programs',
+      type: 'array',
+      group: 'details',
+      of: [{ type: 'reference', to: [{ type: 'trainingProgram' }] }],
+      validation: (r) => r.max(4),
     }),
     defineField({
       name: 'topics',
@@ -112,6 +144,19 @@ export const trainingProgram = defineType({
       type: 'number',
       group: 'logistics',
       validation: (r) => r.min(1),
+    }),
+    defineField({
+      name: 'effortPerWeek',
+      title: 'Weekly Effort',
+      type: 'string',
+      group: 'logistics',
+      description: 'e.g. "6–8 hrs/week"',
+    }),
+    defineField({
+      name: 'moduleCount',
+      title: 'Number of Modules',
+      type: 'number',
+      group: 'logistics',
     }),
     defineField({
       name: 'deliveryMode',
