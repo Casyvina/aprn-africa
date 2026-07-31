@@ -69,6 +69,29 @@ export default function AdminPaymentsClient({ payments }: { payments: PaymentRow
     setTimeout(() => setCopied(null), 1500);
   }
 
+  function exportCsv() {
+    const headers = ["Member", "Tier", "Amount (NGN)", "Type", "Status", "Date", "Reference"];
+    const rows = filtered.map((p) => [
+      p.full_name ?? "",
+      p.membership_tier ?? "",
+      String(p.amount_ngn / 100),
+      fmtType(p.payment_type),
+      p.status,
+      fmtDate(p.paid_at ?? p.created_at),
+      p.paystack_ref,
+    ]);
+    const csv = [headers, ...rows]
+      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `aprn-payments-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="flex flex-col gap-8 max-w-360">
 
@@ -125,15 +148,25 @@ export default function AdminPaymentsClient({ payments }: { payments: PaymentRow
             </button>
           ))}
         </div>
-        <div className="relative sm:ml-auto">
-          <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, ref, type..."
-            className="bg-navy-800 border border-white/10 pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors w-64"
-          />
+        <div className="flex items-center gap-3 sm:ml-auto">
+          <div className="relative">
+            <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search name, ref, type..."
+              className="bg-navy-800 border border-white/10 pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-gold-500/40 transition-colors w-64"
+            />
+          </div>
+          <button
+            onClick={exportCsv}
+            disabled={filtered.length === 0}
+            className="flex items-center gap-2 px-4 py-2.5 border border-white/10 text-xs font-semibold text-slate-400 hover:text-white hover:border-gold-500/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+          >
+            <i className="fa-solid fa-download text-[10px]" />
+            Export CSV
+          </button>
         </div>
       </div>
 
