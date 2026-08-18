@@ -24,7 +24,7 @@ const regularPlans = [
     note: "Valid student ID required",
     color: "text-emerald-400",
     featured: false,
-    features: ["Monthly APRN newsletter", "Bi-monthly webinars", "WIMEE Africa programme", "Digital Africa Pipeline Report"],
+    features: ["Monthly APRN newsletter", "Monthly webinars", "WIMEE Africa programme", "Digital Africa Pipeline Report"],
     paystack: true,
   },
   {
@@ -36,7 +36,7 @@ const regularPlans = [
     note: "NSC/NYSC certificate required",
     color: "text-blue-400",
     featured: false,
-    features: ["Monthly APRN newsletter", "Bi-monthly webinars", "Industry database access", "Africa Pipeline Report", "10% EITEP training discount"],
+    features: ["Monthly APRN newsletter", "Monthly webinars", "Industry database access", "Africa Pipeline Report", "10% EITEP training discount"],
     paystack: true,
   },
   {
@@ -49,7 +49,7 @@ const regularPlans = [
     color: "text-gold-500",
     featured: true,
     badge: "Most Popular",
-    features: ["Monthly APRN newsletter", "Bi-monthly webinars", "Industry database access", "Africa Pipeline Report", "APLS summit (discounted)", "10% EITEP training discount"],
+    features: ["Monthly APRN newsletter", "Monthly webinars", "Industry database access", "Africa Pipeline Report", "APLS summit (discounted)", "10% EITEP training discount"],
     paystack: true,
   },
   {
@@ -61,7 +61,7 @@ const regularPlans = [
     note: "Non-engineers in the sector",
     color: "text-purple-400",
     featured: false,
-    features: ["Monthly APRN newsletter", "Bi-monthly webinars", "Industry database access", "Africa Pipeline Report", "20% EITEP training discount"],
+    features: ["Monthly APRN newsletter", "Monthly webinars", "Industry database access", "Africa Pipeline Report", "20% EITEP training discount"],
     paystack: true,
   },
   {
@@ -79,13 +79,13 @@ const regularPlans = [
   {
     key: "international",
     name: "International Member",
-    naira: "$50 USD",
-    usd: "$50",
+    naira: "$100 USD",
+    usd: "$100",
     tagline: "Africa diaspora & global allies",
     note: "LemonSqueezy · PayPal",
     color: "text-slate-300",
     featured: false,
-    features: ["Monthly APRN newsletter", "Bi-monthly webinars", "Industry database access", "Africa Pipeline Report", "10% EITEP training discount"],
+    features: ["Monthly APRN newsletter", "Monthly webinars", "Industry database access", "Africa Pipeline Report", "10% EITEP training discount"],
     paystack: false,
   },
 ];
@@ -100,43 +100,27 @@ const foundingPlans = [
     perks: "Name in inaugural report · 50% off renewals for life",
   },
   {
-    key: "founding-individual",
-    name: "Founding Individual",
-    naira: "₦100,000",
-    usd: "~$60",
-    featured: false,
-    perks: "Name on APRN website · Free APLS summit ticket · 50% off renewals",
-  },
-  {
     key: "founding-professional",
-    name: "Founding Professional",
-    naira: "₦200,000",
-    usd: "~$120",
+    name: "Founding Professional Member",
+    naira: "₦1,000,000",
+    usd: "~$590",
     featured: true,
-    perks: "Featured in APRN publications · Free APLS + training webinars · 50% off renewals",
+    perks: "Lifetime faculty member · Subject to Board approval",
   },
   {
-    key: "founding-corporate",
-    name: "Founding Corporate",
-    naira: "₦2,000,000",
-    usd: "~$1,200",
-    featured: false,
-    perks: "Logo on website & summit banners · 10 staff passes · Board advisory invitation",
-  },
-  {
-    key: "founding-patron",
-    name: "Founding Patron",
+    key: "founding-organisation",
+    name: "Founding Organisation",
     naira: "₦5,000,000",
-    usd: "~$3,000",
+    usd: "~$2,950",
     featured: false,
-    perks: "Named sponsor of APRN program · Permanent recognition · Full board access",
+    perks: "Free adverts on APRN website for one year · 50% discounted membership fee for employees · Offer ends May 2027",
   },
 ];
 
 const comparison = [
   { benefit: "APRN Membership Card",     student: "✓", individual: "✓ Gold", corporate: "✓ Gold", founding: "✓ Gold Edition" },
   { benefit: "Monthly Newsletter",       student: "✓", individual: "✓",      corporate: "✓",      founding: "✓" },
-  { benefit: "Bi-monthly Webinars",      student: "✓", individual: "✓",      corporate: "✓ + Speaker slot", founding: "✓ + Speaker slot" },
+  { benefit: "Monthly Webinars",          student: "✓", individual: "✓",      corporate: "✓ + Speaker slot", founding: "✓ + Speaker slot" },
   { benefit: "Industry Database",        student: "—", individual: "✓",      corporate: "✓ Full", founding: "✓ Full" },
   { benefit: "Africa Pipeline Report",   student: "Digital", individual: "✓", corporate: "✓ Printed", founding: "✓ Printed" },
   { benefit: "APLS Morocco Summit",      student: "—", individual: "Discounted", corporate: "✓ Free", founding: "✓ Free" },
@@ -216,7 +200,7 @@ export default async function MembershipPage({
           </div>
           <div className="flex-1">
             <p className="text-[10px] font-bold tracking-widest text-gold-500 uppercase mb-1">
-              Founding Member Window — 2026 Only
+              Founding Member Window — June 2026 – June 2027
             </p>
             <p className="text-sm text-white font-semibold mb-1">
               Be part of building Africa&apos;s pipeline future from the ground up.
@@ -332,7 +316,7 @@ export default async function MembershipPage({
               Founding Membership
             </h3>
             <span className="px-2 py-0.5 bg-gold-500/10 border border-gold-500/30 text-[9px] font-bold tracking-widest text-gold-500 uppercase">
-              2026 Only
+              June 2026 – June 2027
             </span>
           </div>
           <p className="text-sm text-slate-400">
@@ -399,7 +383,7 @@ export default async function MembershipPage({
         </div>
 
         <p className="text-[11px] text-slate-500 text-center">
-          Founding window open throughout 2026 · Closes when founding slots fill ·{" "}
+          Founding window: June 2026 – June 2027 · Closes when slots fill ·{" "}
           <a href="mailto:info@aprn-africa.org" className="text-gold-500 hover:text-gold-400 transition-colors">
             info@aprn-africa.org
           </a>

@@ -15,12 +15,12 @@ const plans = [
   { name: "Professional", naira: "₦50,000", usd: "~$30", tagline: "Practising pipeline engineers", note: "COREN registration preferred", color: "text-gold-500", featured: true },
   { name: "Associate", naira: "₦35,000", usd: "~$20", tagline: "Regulators, consultants & lawyers", note: "Non-engineers in the sector", color: "text-purple-400" },
   { name: "Corporate", naira: "₦500,000", usd: "~$300", tagline: "Companies & organisations", note: "Up to 5 staff passes", color: "text-copper-500" },
-  { name: "International", naira: "$50 USD", usd: "$50", tagline: "Africa diaspora & global allies", note: "PayPal / LemonSqueezy", color: "text-slate-300" },
+  { name: "International", naira: "$100 USD", usd: "$100", tagline: "Africa diaspora & global allies", note: "PayPal / LemonSqueezy", color: "text-slate-300" },
 ];
 
 const benefits = [
   { icon: "fa-newspaper", title: "Monthly Intelligence Digest", desc: "The Africa Pipeline Report — the continent's leading pipeline industry publication, delivered monthly." },
-  { icon: "fa-chalkboard-user", title: "Bi-monthly Webinars", desc: "Access to expert-led sessions on pipeline integrity, policy, renewable integration, and project finance." },
+  { icon: "fa-chalkboard-user", title: "Monthly Webinars", desc: "Access to expert-led sessions on pipeline integrity, policy, renewable integration, and project finance." },
   { icon: "fa-database", title: "Industry Database", desc: "Full access to APRN's research archive — 400+ technical papers, policy briefs, and industry reports." },
   { icon: "fa-network-wired", title: "Engineer Network", desc: "Connect with pipeline professionals across Nigeria, West Africa, and the continent's diaspora." },
   { icon: "fa-graduation-cap", title: "Training Discounts", desc: "10–30% off EITEP-certified pipeline training programmes and APRN workshops." },
@@ -47,7 +47,7 @@ export default function MembershipPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-gold-500/8 mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
               <span className="text-[11px] font-bold text-gold-500 uppercase tracking-widest">
-                Founding Window Open · 2026
+                Founding Window Open · June 2026 – June 2027
               </span>
             </div>
 
@@ -136,7 +136,7 @@ export default function MembershipPage() {
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-3">
                 <i className="fa-solid fa-star text-gold-500" />
-                <p className="text-[11px] font-bold tracking-widest text-gold-500 uppercase">Founding Membership · 2026 Window Only</p>
+                <p className="text-[11px] font-bold tracking-widest text-gold-500 uppercase">Founding Membership · June 2026 – June 2027</p>
               </div>
               <h2
                 className="text-3xl md:text-4xl font-bold text-white mb-4"
@@ -146,18 +146,16 @@ export default function MembershipPage() {
               </h2>
               <p className="text-slate-400 max-w-2xl text-sm leading-relaxed">
                 A once-in-a-generation opportunity. Founding members pay a one-time fee in exchange for
-                permanent recognition, lifetime 50% renewal discounts, and premium access that standard
-                membership will never offer. This window closes when founding slots fill.
+                permanent recognition and premium access that standard membership will never offer.
+                This window is open June 2026 – June 2027 and closes when founding slots fill.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
                 { name: "Founding Student", naira: "₦25,000", usd: "~$15", perks: "Name in inaugural report · 50% off renewals for life" },
-                { name: "Founding Individual", naira: "₦100,000", usd: "~$60", perks: "Name on APRN website · Free APLS summit ticket · 50% off renewals" },
-                { name: "Founding Professional", naira: "₦200,000", usd: "~$120", perks: "Featured in APRN publications · Free APLS + training webinars · 50% off renewals", featured: true },
-                { name: "Founding Corporate", naira: "₦2,000,000", usd: "~$1,200", perks: "Logo on website & summit banners · 10 staff passes · Board advisory invitation" },
-                { name: "Founding Patron", naira: "₦5,000,000", usd: "~$3,000", perks: "Named sponsor of APRN program · Permanent recognition · Full board access" },
+                { name: "Founding Professional Member", naira: "₦1,000,000", usd: "~$590", perks: "Lifetime faculty member · Subject to Board approval", featured: true },
+                { name: "Founding Organisation", naira: "₦5,000,000", usd: "~$2,950", perks: "Free adverts on APRN website for one year · 50% discounted membership fee for employees · Offer ends May 2027" },
               ].map((fp) => (
                 <div
                   key={fp.name}
