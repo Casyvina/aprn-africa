@@ -48,6 +48,8 @@ Desktop.ini
 *.swp
 *.swo
 *.suo
+.vscode/settings.json
+.vscode/settings.local.json
 
 # certificates / keys
 *.pem
