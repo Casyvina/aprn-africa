@@ -15,8 +15,8 @@ const navLinks = [
   { href: "/partnerships", label: "Partnerships" },
   { href: "/research", label: "Research" },
   { href: "/insights", label: "Insights" },
+  { href: "/intelligence/pipelines", label: "Intelligence" },
   { href: "/events", label: "Events" },
-  { href: "/newsletter", label: "Newsletter" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -66,7 +66,7 @@ export default function Navigation() {
         {/* Desktop links — with sliding active indicator + hover underline */}
         <div className="hidden md:flex items-center gap-6 text-sm font-medium tracking-wide">
           {navLinks.map((l) => {
-            const isActive = pathname === l.href;
+            const isActive = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
             return (
               <Link
                 key={l.href}
@@ -161,7 +161,7 @@ export default function Navigation() {
             >
               {/* Nav links */}
               {navLinks.map((l) => {
-                const isActive = pathname === l.href;
+                const isActive = pathname === l.href || (l.href !== "/" && pathname.startsWith(l.href));
                 return (
                   <MotionLink
                     key={l.href}

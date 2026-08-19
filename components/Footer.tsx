@@ -3,10 +3,11 @@ import Image from "next/image";
 import type { SiteSettingsFooter, FooterLink } from "@/lib/queries/siteSettings";
 
 const DEFAULT_INITIATIVES: FooterLink[] = [
-  { label: "Engineering Academy", href: "/training" },
-  { label: "Policy Think-Tank",   href: "/insights" },
-  { label: "Data Observatory",    href: "/research" },
-  { label: "Research Grants",     href: "/contact" },
+  { label: "Engineering Academy",   href: "/training" },
+  { label: "Policy Think-Tank",     href: "/insights" },
+  { label: "Data Observatory",      href: "/research" },
+  { label: "Pipeline Intelligence", href: "/intelligence/pipelines" },
+  { label: "Research Grants",       href: "/contact" },
 ];
 
 const DEFAULT_ORGANISATION: FooterLink[] = [
@@ -18,11 +19,12 @@ const DEFAULT_ORGANISATION: FooterLink[] = [
 ];
 
 const DEFAULT_RESOURCES: FooterLink[] = [
-  { label: "Pipeline Database",  href: "/research" },
-  { label: "Research Library",   href: "/research" },
-  { label: "Standards & Codes",  href: "/research" },
-  { label: "Training Calendar",  href: "/training" },
-  { label: "Contact Us",         href: "/contact" },
+  { label: "Pipeline Directory",  href: "/intelligence/pipelines" },
+  { label: "Research Library",    href: "/research" },
+  { label: "Standards & Codes",   href: "/research" },
+  { label: "Training Calendar",   href: "/training" },
+  { label: "Newsletter",          href: "/newsletter" },
+  { label: "Contact Us",          href: "/contact" },
 ];
 
 interface FooterProps {
