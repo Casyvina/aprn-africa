@@ -249,6 +249,31 @@ export default function LeadershipPageClient({ persons, teamMembers = [], youthA
                     ))}
                   </div>
                 )}
+
+                {(person.linkedIn || person.email) && (
+                  <div className={`flex items-center gap-4 pt-6 border-t border-white/5 ${highlights.length > 0 ? "mt-0" : "mt-6"}`}>
+                    {person.linkedIn && (
+                      <a
+                        href={person.linkedIn}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-slate-400 hover:text-gold-500 transition-colors"
+                      >
+                        <i className="fa-brands fa-linkedin text-base" />
+                        LinkedIn
+                      </a>
+                    )}
+                    {person.email && (
+                      <a
+                        href={`mailto:${person.email}`}
+                        className="flex items-center gap-2 text-sm text-slate-400 hover:text-gold-500 transition-colors"
+                      >
+                        <i className="fa-solid fa-envelope text-sm" />
+                        Email
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </motion.section>
