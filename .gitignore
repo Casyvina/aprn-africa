@@ -73,3 +73,10 @@ supabase/.temp/
 
 # internal planning (stays local)
 PLAN.md
+
+# GEM data archive + extracted datasets (large, third-party CC-BY data)
+/gem-data
+/gem-data.zip
+
+# research reports (generated locally, not source)
+/research-reports
