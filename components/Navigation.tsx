@@ -47,7 +47,7 @@ export default function Navigation() {
       }}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" as const }}
+      transition={{ duration: 0.25, ease: "easeOut" as const }}
     >
       <div className="max-w-360 mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
 
