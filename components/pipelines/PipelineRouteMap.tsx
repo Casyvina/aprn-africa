@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Map, { Source, Layer, Marker, NavigationControl } from "react-map-gl/mapbox";
+import "mapbox-gl/dist/mapbox-gl.css";
 import type { PipelineStatus } from "@/lib/pipelines/data";
 
-interface PlotlyStatic {
-  newPlot: (el: HTMLElement, data: unknown[], layout: unknown, config?: unknown) => Promise<HTMLElement>;
-  purge: (el: HTMLElement) => void;
-}
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const STATUS_COLOR: Record<PipelineStatus, string> = {
   operating:    "#D4A017",
@@ -26,118 +24,10 @@ interface Props {
 }
 
 export default function PipelineRouteMap({ routeCoords, name, status, fromCountry, toCountry }: Props) {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = mapRef.current;
-    if (!el || !routeCoords || routeCoords.length < 2) return;
-    let mounted = true;
-
-    const render = () => {
-      if (!mounted || !el || !window.Plotly) return;
-      const Plotly = window.Plotly as unknown as PlotlyStatic;
-
-      const lons = routeCoords.map((c) => c[0]);
-      const lats = routeCoords.map((c) => c[1]);
-
-      // Bounding box with 15% padding
-      const minLon = Math.min(...lons), maxLon = Math.max(...lons);
-      const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-      const padLon = Math.max((maxLon - minLon) * 0.15, 2);
-      const padLat = Math.max((maxLat - minLat) * 0.15, 2);
-
-      const color = STATUS_COLOR[status];
-
-      const route = {
-        type: "scattergeo",
-        lon: lons,
-        lat: lats,
-        mode: "lines",
-        name,
-        line: { width: 3, color },
-        hovertemplate: `<b>${name}</b><extra></extra>`,
-        showlegend: false,
-      };
-
-      const startMarker = {
-        type: "scattergeo",
-        lon: [lons[0]],
-        lat: [lats[0]],
-        mode: "markers+text",
-        text: [fromCountry],
-        textposition: "top center",
-        textfont: { size: 11, color: "#c4ced6", family: "Inter, sans-serif" },
-        marker: { size: 8, color, symbol: "circle", line: { color: "#071B2A", width: 2 } },
-        hoverinfo: "skip",
-        showlegend: false,
-      };
-
-      const endMarker = {
-        type: "scattergeo",
-        lon: [lons[lons.length - 1]],
-        lat: [lats[lats.length - 1]],
-        mode: "markers+text",
-        text: [toCountry !== fromCountry ? toCountry : ""],
-        textposition: "top center",
-        textfont: { size: 11, color: "#c4ced6", family: "Inter, sans-serif" },
-        marker: { size: 8, color: "#e8edf1", symbol: "circle", line: { color: "#071B2A", width: 2 } },
-        hoverinfo: "skip",
-        showlegend: false,
-      };
-
-      const layout = {
-        geo: {
-          showland: true,
-          landcolor: "#0a2035",
-          showocean: true,
-          oceancolor: "#071B2A",
-          showlakes: true,
-          lakecolor: "#071B2A",
-          showcountries: true,
-          countrycolor: "#1E3D56",
-          countrywidth: 0.6,
-          showcoastlines: true,
-          coastlinecolor: "#1E3D56",
-          bgcolor: "#071B2A",
-          projection: { type: "mercator" },
-          lonaxis: { range: [minLon - padLon, maxLon + padLon] },
-          lataxis: { range: [minLat - padLat, maxLat + padLat] },
-        },
-        paper_bgcolor: "#071B2A",
-        plot_bgcolor: "#071B2A",
-        margin: { l: 0, r: 0, t: 0, b: 0 },
-        showlegend: false,
-        hoverlabel: {
-          bgcolor: "#0D2436",
-          bordercolor: color,
-          font: { color: "#ffffff", size: 13, family: "Inter, sans-serif" },
-        },
-        dragmode: false,
-      };
-
-      void Plotly.newPlot(el, [route, startMarker, endMarker], layout, {
-        responsive: true,
-        displayModeBar: false,
-        scrollZoom: false,
-      });
-    };
-
-    const poll = () => {
-      if (!mounted) return;
-      window.Plotly ? render() : setTimeout(poll, 150);
-    };
-    poll();
-
-    return () => {
-      mounted = false;
-      if (el && window.Plotly) (window.Plotly as unknown as PlotlyStatic).purge(el);
-    };
-  }, [routeCoords, name, status, fromCountry, toCountry]);
-
   if (!routeCoords || routeCoords.length < 2) {
     return (
       <div style={{
-        height: 260, border: "1px solid rgba(255,255,255,.08)", background: "#0D2436",
+        height: 300, border: "1px solid rgba(255,255,255,.08)", background: "#0D2436",
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
         gap: 8, color: "#7c8b98",
       }}>
@@ -149,11 +39,113 @@ export default function PipelineRouteMap({ routeCoords, name, status, fromCountr
     );
   }
 
+  if (!MAPBOX_TOKEN) {
+    return (
+      <div style={{
+        height: 300, border: "1px solid rgba(255,255,255,.08)", background: "#0D2436",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "#7c8b98", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase",
+      }}>
+        Map token not configured
+      </div>
+    );
+  }
+
+  const lons = routeCoords.map((c) => c[0]);
+  const lats = routeCoords.map((c) => c[1]);
+  const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const padLon = Math.max((maxLon - minLon) * 0.18, 1.5);
+  const padLat = Math.max((maxLat - minLat) * 0.18, 1.5);
+
+  const color = STATUS_COLOR[status];
+
+  const geojson = {
+    type: "FeatureCollection" as const,
+    features: [{
+      type: "Feature" as const,
+      geometry: { type: "LineString" as const, coordinates: routeCoords },
+      properties: { name },
+    }],
+  };
+
+  const lineLayer = {
+    id: "pipeline-route",
+    type: "line" as const,
+    paint: {
+      "line-color": color,
+      "line-width": 3.5,
+      "line-opacity": 0.95,
+    },
+    layout: { "line-cap": "round" as const, "line-join": "round" as const },
+  };
+
+  const casingLayer = {
+    id: "pipeline-route-casing",
+    type: "line" as const,
+    paint: {
+      "line-color": "#000000",
+      "line-width": 6,
+      "line-opacity": 0.35,
+    },
+    layout: { "line-cap": "round" as const, "line-join": "round" as const },
+  };
+
   return (
-    <div
-      ref={mapRef}
-      className="w-full"
-      style={{ height: 300, border: "1px solid rgba(255,255,255,.08)" }}
-    />
+    <div style={{ height: 320, border: "1px solid rgba(255,255,255,.08)", position: "relative" }}>
+      <Map
+        mapboxAccessToken={MAPBOX_TOKEN}
+        initialViewState={{
+          bounds: [[minLon - padLon, minLat - padLat], [maxLon + padLon, maxLat + padLat]],
+          fitBoundsOptions: { padding: 40 },
+        }}
+        mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+        style={{ width: "100%", height: "100%" }}
+        scrollZoom={false}
+      >
+        <NavigationControl position="top-right" />
+
+        <Source id="pipeline" type="geojson" data={geojson}>
+          <Layer {...casingLayer} />
+          <Layer {...lineLayer} />
+        </Source>
+
+        {/* Start terminal */}
+        <Marker longitude={lons[0]} latitude={lats[0]} anchor="center">
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+            <div style={{
+              width: 11, height: 11, background: color, border: "2px solid #fff",
+              borderRadius: "50%", boxShadow: "0 0 0 3px rgba(0,0,0,.4)",
+            }} />
+            <span style={{
+              fontSize: 9, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase",
+              color: "#fff", background: "rgba(0,0,0,.65)", padding: "2px 6px",
+              whiteSpace: "nowrap",
+            }}>
+              {fromCountry}
+            </span>
+          </div>
+        </Marker>
+
+        {/* End terminal — only label if different country */}
+        {toCountry !== fromCountry && (
+          <Marker longitude={lons[lons.length - 1]} latitude={lats[lats.length - 1]} anchor="center">
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <div style={{
+                width: 11, height: 11, background: "#e8edf1", border: "2px solid #fff",
+                borderRadius: "50%", boxShadow: "0 0 0 3px rgba(0,0,0,.4)",
+              }} />
+              <span style={{
+                fontSize: 9, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase",
+                color: "#fff", background: "rgba(0,0,0,.65)", padding: "2px 6px",
+                whiteSpace: "nowrap",
+              }}>
+                {toCountry}
+              </span>
+            </div>
+          </Marker>
+        )}
+      </Map>
+    </div>
   );
 }
