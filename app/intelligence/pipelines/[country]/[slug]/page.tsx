@@ -84,8 +84,11 @@ export default async function PipelineDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Key facts strip */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 1, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.06)", margin: "30px 0" }}>
+          {/* Key facts strip — 2 cols mobile → 3 tablet → 5 desktop */}
+          <div
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+            style={{ gap: 1, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.06)", margin: "30px 0" }}
+          >
             {[
               ["Length",     pipeline.lengthKm ? `${pipeline.lengthKm.toLocaleString()} km` : "—"],
               ["Capacity",   pipeline.capacityValue ? `${pipeline.capacityValue} ${pipeline.capacityUnit ?? ""}` : "—"],
@@ -100,8 +103,8 @@ export default async function PipelineDetailPage({ params }: Props) {
             ))}
           </div>
 
-          {/* Body */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 50, paddingBottom: 80 }}>
+          {/* Body — stacks on mobile, sidebar beside content on lg+ */}
+          <div className="flex flex-col lg:grid lg:gap-x-12" style={{ gridTemplateColumns: "1fr 300px", paddingBottom: 80 }}>
             <div>
 
               {/* Editorial */}
@@ -127,7 +130,8 @@ export default async function PipelineDetailPage({ params }: Props) {
                   <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2.2px", color: "#D4A017", textTransform: "uppercase", marginBottom: 16 }}>
                     Route &amp; segments
                   </p>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                  <table style={{ width: "100%", minWidth: 480, borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr>
                         {["Segment", "From → To", "Length", "Status"].map((h) => (
@@ -146,6 +150,7 @@ export default async function PipelineDetailPage({ params }: Props) {
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </div>
               )}
 
