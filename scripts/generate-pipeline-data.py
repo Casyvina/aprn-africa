@@ -1,8 +1,8 @@
 """
-Extracts African pipeline data from GEM XLSX files and writes lib/pipelines/data.ts
+Extracts African pipeline data from GEM XLSX + GeoJSON files and writes lib/pipelines/data.ts
 Run from project root: python scripts/generate-pipeline-data.py
 """
-import openpyxl, re, sys, json
+import openpyxl, re, sys, json, io, zipfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -47,7 +47,6 @@ def to_slug(name, fuel=None):
 def parse_countries(val):
     if not val: return []
     raw = str(val)
-    # GEM uses comma-separated or semicolon-separated country lists
     sep = ";" if ";" in raw else ","
     return [c.strip() for c in raw.split(sep) if c.strip() and c.strip() != "--"]
 
@@ -71,7 +70,88 @@ def ts_num(v):
 def ts_arr(items):
     return "[" + ", ".join(ts_str(i) for i in items) + "]"
 
-# ── Load gas pipelines ────────────────────────────────────────────────────────
+def simplify_coords(coords, max_pts=50):
+    """Evenly sample coords to at most max_pts points, always keeping first and last."""
+    if len(coords) <= max_pts:
+        return coords
+    step = (len(coords) - 1) / (max_pts - 1)
+    indices = set([0, len(coords) - 1])
+    for i in range(1, max_pts - 1):
+        indices.add(round(i * step))
+    return [coords[i] for i in sorted(indices)]
+
+# ── Load GeoJSON route coordinates ───────────────────────────────────────────
+# Build: pipeline_name → list of coord arrays (one per segment)
+route_lookup: dict[str, list[list]] = defaultdict(list)
+
+def load_geojson_from_zip(outer_zip, inner_zip_name, geojson_name):
+    with zipfile.ZipFile(outer_zip) as oz:
+        with oz.open(inner_zip_name) as f:
+            with zipfile.ZipFile(io.BytesIO(f.read())) as iz:
+                with iz.open(geojson_name) as gf:
+                    return json.loads(gf.read())
+
+try:
+    gas_geo = load_geojson_from_zip(
+        "gem-data.zip",
+        "GEM-GGIT-Gas-Pipelines-2025-11.zip",
+        "GEM-GGIT-Gas-Pipelines-2025-11.geojson",
+    )
+    for feat in gas_geo["features"]:
+        props = feat.get("properties", {})
+        geom = feat.get("geometry")
+        if not geom or not geom.get("coordinates"): continue
+        countries = parse_countries(props.get("CountriesOrAreas", ""))
+        if not is_african(countries): continue
+        name = props.get("PipelineName", "")
+        if not name: continue
+        coords = geom["coordinates"]
+        # Normalize: LineString → [pts], MultiLineString → flatten all rings
+        if geom["type"] == "MultiLineString":
+            for ring in coords:
+                route_lookup[name].append(ring)
+        else:
+            route_lookup[name].append(coords)
+    print(f"Gas GeoJSON: {len(gas_geo['features'])} features loaded", file=sys.stderr)
+except Exception as e:
+    print(f"Warning: could not load gas GeoJSON: {e}", file=sys.stderr)
+
+try:
+    oil_geo = load_geojson_from_zip(
+        "gem-download.zip",
+        "GEM-GOIT-Oil-NGL-Pipelines-2026-06-corrected.zip",
+        "GEM-GOIT-Oil-NGL-Pipelines-2026-07-21.geojson",
+    )
+    for feat in oil_geo["features"]:
+        props = feat.get("properties", {})
+        geom = feat.get("geometry")
+        if not geom or not geom.get("coordinates"): continue
+        countries = parse_countries(props.get("CountriesOrAreas", ""))
+        if not is_african(countries): continue
+        name = props.get("PipelineName", "")
+        if not name: continue
+        coords = geom["coordinates"]
+        if geom["type"] == "MultiLineString":
+            for ring in coords:
+                route_lookup[name].append(ring)
+        else:
+            route_lookup[name].append(coords)
+    print(f"Oil GeoJSON: {len(oil_geo['features'])} features loaded", file=sys.stderr)
+except Exception as e:
+    print(f"Warning: could not load oil GeoJSON: {e}", file=sys.stderr)
+
+def get_route_coords(name):
+    """Merge all segment coordinate arrays for a pipeline into one array."""
+    segs = route_lookup.get(name, [])
+    if not segs: return None
+    merged = []
+    for seg_coords in segs:
+        merged.extend(seg_coords)
+    return simplify_coords(merged, max_pts=50)
+
+print(f"Pipelines with route data: {len(route_lookup)}", file=sys.stderr)
+
+# ── Load gas pipelines (XLSX) ─────────────────────────────────────────────────
 wb = openpyxl.load_workbook("gem-data/GEM-GGIT-Gas-Pipelines-2025-11.xlsx", read_only=True, data_only=True)
 ws = wb["Pipelines"]
 all_rows = list(ws.iter_rows(values_only=True))
@@ -83,7 +163,7 @@ for r in all_rows[1:]:
     if is_african(countries):
         gas_groups[str(r[GH["PipelineName"]] or "")].append(r)
 
-# ── Load oil/NGL pipelines ────────────────────────────────────────────────────
+# ── Load oil/NGL pipelines (XLSX) ─────────────────────────────────────────────
 wb2 = openpyxl.load_workbook("gem-data/GEM-GOIT-Oil-NGL-Pipelines-2026-06.xlsx", read_only=True, data_only=True)
 ws2 = wb2["Data"]
 all_rows2 = list(ws2.iter_rows(values_only=True))
@@ -104,7 +184,6 @@ def make_slug(name, fuel=None):
     if slug not in used_slugs:
         used_slugs.add(slug)
         return slug
-    # deduplicate
     i = 2
     while f"{slug}-{i}" in used_slugs:
         i += 1
@@ -116,7 +195,7 @@ def process_gas(name, segs):
     countries_all = []
     for s in segs:
         countries_all += parse_countries(s[GH["CountriesOrAreas"]])
-    countries = list(dict.fromkeys(c for c in countries_all if c))  # unique, ordered
+    countries = list(dict.fromkeys(c for c in countries_all if c))
 
     statuses = [norm_status(s[GH["Status"]]) for s in segs]
     status = best_status(statuses)
@@ -124,7 +203,6 @@ def process_gas(name, segs):
     lengths = [to_num(s[GH["LengthMergedKm"]]) for s in segs]
     total_len = sum(x for x in lengths if x) or None
 
-    # Build segments (only if >1 segment, or if SegmentName differs from PipelineName)
     seg_objs = []
     for s in segs:
         seg_name = s[GH["SegmentName"]] or name
@@ -157,6 +235,7 @@ def process_gas(name, segs):
         "tracker": "Gas (GGIT)",
         "gemWikiUrl": str(first[GH["Wiki"]]) if first[GH["Wiki"]] else None,
         "segments": seg_objs,
+        "routeCoords": get_route_coords(name),
         "significance": None,
         "relatedInsights": [],
         "sourceRelease": "GGIT 2025-11",
@@ -209,6 +288,7 @@ def process_oil(name, segs):
         "tracker": "Oil/NGL (GOIT)",
         "gemWikiUrl": str(first[OH["Wiki"]]) if first[OH["Wiki"]] else None,
         "segments": seg_objs,
+        "routeCoords": get_route_coords(name),
         "significance": None,
         "relatedInsights": [],
         "sourceRelease": "GOIT 2026-06",
@@ -220,9 +300,10 @@ for name, segs in gas_groups.items():
 for name, segs in oil_groups.items():
     if name: pipelines.append(process_oil(name, segs))
 
-print(f"Total pipelines: {len(pipelines)}", file=sys.stderr)
+routes_found = sum(1 for p in pipelines if p["routeCoords"])
+print(f"Total pipelines: {len(pipelines)}, with routes: {routes_found}", file=sys.stderr)
 
-# ── Compute country counts from real data ─────────────────────────────────────
+# ── Compute country counts ────────────────────────────────────────────────────
 country_counts = defaultdict(int)
 for p in pipelines:
     for c in p["countries"]:
@@ -232,8 +313,12 @@ for p in pipelines:
 print(f"Countries covered: {len(country_counts)}", file=sys.stderr)
 
 # ── Generate TypeScript ───────────────────────────────────────────────────────
+def render_coords(coords):
+    if not coords: return "null"
+    pts = ", ".join(f"[{round(c[0], 5)},{round(c[1], 5)}]" for c in coords)
+    return f"[{pts}]"
+
 def render_pipeline(p):
-    segments_ts = ""
     if p["segments"]:
         seg_lines = []
         for s in p["segments"]:
@@ -245,15 +330,12 @@ def render_pipeline(p):
     else:
         segments_ts = "[]"
 
-    countries_ts = ts_arr(p["countries"])
-    related_ts = "[]"
-
     return f"""  {{
     slug: {ts_str(p["slug"])},
     name: {ts_str(p["name"])},
     fuel: "{p["fuel"]}",
     status: "{p["status"]}",
-    countries: {countries_ts},
+    countries: {ts_arr(p["countries"])},
     fromCountry: {ts_str(p["fromCountry"])},
     toCountry: {ts_str(p["toCountry"])},
     lengthKm: {ts_num(p["lengthKm"])},
@@ -265,8 +347,9 @@ def render_pipeline(p):
     tracker: {ts_str(p["tracker"])},
     gemWikiUrl: {ts_str(p["gemWikiUrl"])},
     segments: {segments_ts},
+    routeCoords: {render_coords(p["routeCoords"])},
     significance: null,
-    relatedInsights: {related_ts},
+    relatedInsights: [],
     sourceRelease: {ts_str(p["sourceRelease"])},
   }}"""
 
@@ -305,6 +388,7 @@ export interface Pipeline {{
   tracker: string;
   gemWikiUrl: string | null;
   segments: PipelineSegment[];
+  routeCoords: [number, number][] | null;
   significance: string | null;
   relatedInsights: {{ title: string; href: string; type: string }}[];
   sourceRelease: string;
@@ -338,4 +422,4 @@ export function getPipelineBySlug(country: string, slug: string): Pipeline | und
 
 out_path = Path("lib/pipelines/data.ts")
 out_path.write_text(ts_output, encoding="utf-8")
-print(f"Written to {out_path}", file=sys.stderr)
+print(f"Written to {out_path} ({out_path.stat().st_size // 1024} KB)", file=sys.stderr)
