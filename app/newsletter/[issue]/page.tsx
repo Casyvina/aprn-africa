@@ -11,7 +11,7 @@ import {
   type NewsletterIssue,
 } from "@/lib/queries/newsletter";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 // -- Helpers -------------------------------------------------------------------

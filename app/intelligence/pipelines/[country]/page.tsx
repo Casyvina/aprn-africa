@@ -9,6 +9,8 @@ import {
   getPipelinesForCountry,
 } from "@/lib/pipelines/data";
 
+export const dynamicParams = false;
+
 interface Props { params: Promise<{ country: string }> }
 
 export async function generateStaticParams() {

@@ -16,7 +16,7 @@ export async function sanityFetch<T>(
   const isFast = tags.some((t) => FAST_TAGS.has(t))
   return client.fetch<T>(query, params, {
     next: {
-      revalidate: process.env.NODE_ENV === 'development' ? 30 : isFast ? 60 : 3600,
+      revalidate: process.env.NODE_ENV === 'development' ? 30 : isFast ? 300 : 3600,
       tags,
     },
   })
