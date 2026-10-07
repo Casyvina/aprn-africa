@@ -27,7 +27,7 @@ export default function PipelinesPage() {
 
       {/* Hero */}
       <section className="pt-28 pb-8 border-b border-white/5">
-        <div className="max-w-360 mx-auto px-10">
+        <div className="max-w-360 mx-auto px-4 sm:px-6 md:px-10">
           <p
             style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2.5px", color: "#D4A017", textTransform: "uppercase", marginBottom: 14 }}
           >
@@ -36,8 +36,7 @@ export default function PipelinesPage() {
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 40, flexWrap: "wrap" }}>
             <div>
               <h1
-                style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 54, lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1" }}
-                className="text-4xl sm:text-5xl"
+                style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: "clamp(1.75rem, 5vw, 3.375rem)", lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1" }}
               >
                 African Pipelines
               </h1>
@@ -59,7 +58,7 @@ export default function PipelinesPage() {
       </section>
 
       {/* Map + sidebar */}
-      <section className="max-w-360 mx-auto px-10 py-10">
+      <section className="max-w-360 mx-auto px-4 sm:px-6 md:px-10 py-10">
         <div className="flex flex-col lg:grid lg:gap-x-10 mb-12" style={{ gridTemplateColumns: "1fr 280px" }}>
           {/* Map */}
           <div className="mb-10 lg:mb-0">

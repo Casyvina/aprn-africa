@@ -36,23 +36,23 @@ export default async function IntelligencePage() {
 
       {/* Hero */}
       <section className="pt-28 pb-12 border-b border-white/5">
-        <div className="max-w-360 mx-auto px-10">
+        <div className="max-w-360 mx-auto px-4 sm:px-6 md:px-10">
           <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2.5px", color: "#D4A017", textTransform: "uppercase", marginBottom: 14 }}>
             APRN · Intelligence Platform
           </p>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 40, flexWrap: "wrap" }}>
             <div style={{ maxWidth: 600 }}>
-              <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 54, lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1", marginBottom: 20 }}>
+              <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: "clamp(1.75rem, 5vw, 3.375rem)", lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1", marginBottom: 20 }}>
                 African Energy Intelligence
               </h1>
               <p style={{ fontSize: 15, color: "#9fb0bd", lineHeight: 1.7 }}>
                 Structured data, analysis and briefings on Africa's energy infrastructure — pipelines, corridors, policy frameworks and investment activity, synthesised for professionals.
               </p>
             </div>
-            <div style={{ display: "flex", gap: 36, flexShrink: 0, paddingBottom: 6 }}>
+            <div className="flex gap-6 sm:gap-9 pt-4 sm:pt-0">
               {[["398", "Named Pipelines"], ["33", "Countries"], ["137k", "Km Mapped"]].map(([n, l]) => (
                 <div key={l} style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 36, lineHeight: 1, color: "#E5B83B" }}>{n}</div>
+                  <div style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: "clamp(1.5rem, 4vw, 2.25rem)", lineHeight: 1, color: "#E5B83B" }}>{n}</div>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1.5px", color: "#7c8b98", textTransform: "uppercase", marginTop: 6 }}>{l}</div>
                 </div>
               ))}
@@ -62,7 +62,7 @@ export default async function IntelligencePage() {
       </section>
 
       {/* Intelligence products */}
-      <section className="max-w-360 mx-auto px-10 py-14">
+      <section className="max-w-360 mx-auto px-4 sm:px-6 md:px-10 py-14">
         <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#D4A017", textTransform: "uppercase", marginBottom: 24 }}>
           Intelligence Products
         </p>
@@ -160,7 +160,7 @@ export default async function IntelligencePage() {
       {/* Recent updates from Sanity */}
       {updates.length > 0 && (
         <section style={{ borderTop: "1px solid rgba(255,255,255,.05)" }}>
-          <div className="max-w-360 mx-auto px-10 py-14">
+          <div className="max-w-360 mx-auto px-4 sm:px-6 md:px-10 py-14">
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#D4A017", textTransform: "uppercase", marginBottom: 28 }}>
               Recent Updates
             </p>
@@ -192,7 +192,7 @@ export default async function IntelligencePage() {
 
       {/* Membership CTA */}
       <section style={{ borderTop: "1px solid rgba(255,255,255,.05)", background: "#0D2436" }}>
-        <div className="max-w-360 mx-auto px-10 py-16" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 40, flexWrap: "wrap" }}>
+        <div className="max-w-360 mx-auto px-4 sm:px-6 md:px-10 py-16" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 40, flexWrap: "wrap" }}>
           <div>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#D4A017", textTransform: "uppercase", marginBottom: 14 }}>
               Member Access

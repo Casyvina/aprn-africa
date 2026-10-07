@@ -47,7 +47,7 @@ export default async function PipelineDetailPage({ params }: Props) {
       <Navigation />
 
       <section className="pt-28 pb-0">
-        <div className="max-w-275 mx-auto px-10">
+        <div className="max-w-275 mx-auto px-4 sm:px-6 md:px-10">
 
           {/* Breadcrumb */}
           <nav style={{ fontSize: 12, color: "#7c8b98", marginBottom: 22, letterSpacing: ".3px" }}>
@@ -67,7 +67,7 @@ export default async function PipelineDetailPage({ params }: Props) {
                 <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1.6px", color: "#E5B83B", textTransform: "uppercase" }}>{pipeline.fuel}</span>
                 <StatusPill status={pipeline.status} />
               </div>
-              <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 46, lineHeight: 1.02, letterSpacing: "-.5px", color: "#e8edf1", maxWidth: 640 }}>
+              <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: "clamp(1.5rem, 4vw, 2.875rem)", lineHeight: 1.05, letterSpacing: "-.5px", color: "#e8edf1", maxWidth: 640 }}>
                 {pipeline.name}
               </h1>
               <div style={{ marginTop: 16, fontSize: 15, color: "#b6c2cc", letterSpacing: ".2px" }}>

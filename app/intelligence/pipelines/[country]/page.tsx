@@ -43,7 +43,7 @@ export default async function CountryPipelinesPage({ params }: Props) {
 
       {/* Header */}
       <section className="pt-28 pb-6 border-b border-white/5">
-        <div className="max-w-360 mx-auto px-10">
+        <div className="max-w-360 mx-auto px-4 sm:px-6 md:px-10">
           <nav style={{ fontSize: 12, color: "#7c8b98", marginBottom: 18, letterSpacing: ".3px" }}>
             <Link href="/intelligence" style={{ color: "#7c8b98", textDecoration: "none" }}>Intelligence</Link>
             <span style={{ margin: "0 8px", opacity: .5 }}>›</span>
@@ -57,7 +57,7 @@ export default async function CountryPipelinesPage({ params }: Props) {
               <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2.5px", color: "#D4A017", textTransform: "uppercase", marginBottom: 14 }}>
                 African Pipeline Infrastructure
               </p>
-              <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 52, lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1" }}>
+              <h1 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: "clamp(1.75rem, 5vw, 3.25rem)", lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1" }}>
                 {name}
               </h1>
               <p style={{ marginTop: 16, fontSize: 13.5, color: "#b6c2cc" }}>
@@ -84,7 +84,7 @@ export default async function CountryPipelinesPage({ params }: Props) {
       </section>
 
       {/* Results grid */}
-      <section className="max-w-360 mx-auto px-10 py-8 pb-20">
+      <section className="max-w-360 mx-auto px-4 sm:px-6 md:px-10 py-8 pb-20">
         <PipelineFilterList pipelines={pipelines} countrySlug={slug} totalCount={count} />
       </section>
 
