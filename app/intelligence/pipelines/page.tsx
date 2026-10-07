@@ -37,6 +37,7 @@ export default function PipelinesPage() {
             <div>
               <h1
                 style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 54, lineHeight: 1, letterSpacing: "-.5px", color: "#e8edf1" }}
+                className="text-4xl sm:text-5xl"
               >
                 African Pipelines
               </h1>
@@ -45,10 +46,10 @@ export default function PipelinesPage() {
                 enriched with APRN analysis.
               </p>
             </div>
-            <div style={{ display: "flex", gap: 36, flexShrink: 0, paddingBottom: 6 }}>
-              {[["398", "Named Pipelines"], ["33", "Countries Covered"], ["137k", "Km Mapped"]].map(([n, l]) => (
+            <div className="flex gap-6 sm:gap-9 pt-4 sm:pt-0">
+              {[["398", "Named Pipelines"], ["33", "Countries"], ["137k", "Km Mapped"]].map(([n, l]) => (
                 <div key={l} style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, fontSize: 38, lineHeight: 1, color: "#E5B83B" }}>{n}</div>
+                  <div style={{ fontFamily: "var(--font-playfair), serif", fontWeight: 800, lineHeight: 1, color: "#E5B83B" }} className="text-3xl sm:text-4xl">{n}</div>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1.5px", color: "#7c8b98", textTransform: "uppercase", marginTop: 6, lineHeight: 1.4 }}>{l}</div>
                 </div>
               ))}
@@ -59,9 +60,9 @@ export default function PipelinesPage() {
 
       {/* Map + sidebar */}
       <section className="max-w-360 mx-auto px-10 py-10">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 40, marginBottom: 48 }}>
+        <div className="flex flex-col lg:grid lg:gap-x-10 mb-12" style={{ gridTemplateColumns: "1fr 280px" }}>
           {/* Map */}
-          <div>
+          <div className="mb-10 lg:mb-0">
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1.8px", color: "#7c8b98", textTransform: "uppercase", marginBottom: 14 }}>
               Segments by country — click a country to view its pipelines
             </p>
@@ -86,7 +87,7 @@ export default function PipelinesPage() {
                   }}
                   className="group"
                 >
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#e8edf1" }} className="group-hover:text-[#E5B83B] transition-colors">{name}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#e8edf1" }} className="group-hover:text-gold-400 transition-colors">{name}</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ width: barW, height: 3, background: "#D4A017", opacity: .6 }} />
                     <span style={{ fontSize: 12, color: "#7c8b98", fontVariantNumeric: "tabular-nums", minWidth: 24, textAlign: "right" }}>{n}</span>
