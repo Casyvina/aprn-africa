@@ -11,6 +11,16 @@ interface PlotlyInstance {
 
 type PlotlyEl = HTMLElement & { on?: (ev: string, cb: () => void) => void };
 
+// Countries in the NMGP route that have pipeline data in our database
+const NMGP_LINKED = new Set([
+  "Nigeria", "Benin", "Togo", "Ghana", "Liberia", "Sierra Leone",
+  "Guinea", "Guinea-Bissau", "Senegal", "Mauritania", "Morocco",
+]);
+
+function toSlug(s: string) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
 declare global {
   interface Window {
     Plotly?: PlotlyInstance;
@@ -282,21 +292,36 @@ export default function MapSection({
               <p className="text-sm text-slate-400 mt-1">{spotlightSubtitle}</p>
             </div>
             <div className="h-px lg:h-10 lg:w-px bg-navy-700 lg:mx-4 shrink-0" />
-            {/* Countries in coastal route order */}
+            {/* Countries in coastal route order — linked where we have pipeline data */}
             <div className="flex flex-wrap gap-2">
               {[
                 "Nigeria", "Benin", "Togo", "Ghana", "Côte d'Ivoire",
                 "Liberia", "Sierra Leone", "Guinea", "Guinea-Bissau",
                 "Senegal", "Mauritania", "Western Sahara", "Morocco",
-              ].map((country, i) => (
-                <span
-                  key={country}
-                  className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-navy-800 text-slate-300 border border-navy-700"
-                >
-                  <span className="text-[9px] text-slate-600 font-bold">{i + 1}</span>
-                  {country}
-                </span>
-              ))}
+              ].map((country, i) => {
+                const chip = (
+                  <>
+                    <span className="text-[9px] text-slate-600 font-bold">{i + 1}</span>
+                    {country}
+                  </>
+                );
+                return NMGP_LINKED.has(country) ? (
+                  <Link
+                    key={country}
+                    href={`/intelligence/pipelines/${toSlug(country)}`}
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-navy-800 text-slate-300 border border-navy-700 hover:border-gold-500/40 hover:text-gold-400 transition-colors"
+                  >
+                    {chip}
+                  </Link>
+                ) : (
+                  <span
+                    key={country}
+                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-navy-800 text-slate-400 border border-navy-700 opacity-50"
+                  >
+                    {chip}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>
