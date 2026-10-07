@@ -126,7 +126,7 @@ export default async function ResearchSection({
         </div>
 
         {/* Featured + grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
 
           {/* Featured card */}
           {featured && (
@@ -171,7 +171,7 @@ export default async function ResearchSection({
           )}
 
           {/* Publication cards */}
-          <div className={`${featured ? 'lg:col-span-3' : 'lg:col-span-5'} grid grid-cols-1 sm:grid-cols-2 gap-5`}>
+          <div className={`${featured ? 'lg:col-span-3' : 'md:col-span-2 lg:col-span-5'} grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-5`}>
             {publications.map((pub) => {
               const pcfg = typeConfig(pub.reportType)
               return (

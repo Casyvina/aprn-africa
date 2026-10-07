@@ -130,7 +130,7 @@ export default function HeroSection({
 
           <motion.h1
             variants={fadeUp}
-            className="font-display text-4xl sm:text-5xl md:text-7xl font-bold leading-[1.1] mb-8 text-white"
+            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] mb-8 text-white"
           >
             {headline ? (
               <AccentHeading text={headline} accent={headlineAccent} />

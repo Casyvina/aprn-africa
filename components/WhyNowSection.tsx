@@ -66,7 +66,7 @@ export default function WhyNowSection({
         }}
       />
       <div className="max-w-360 mx-auto px-6 md:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           {/* Left — editorial intro, slides in from left */}
           <motion.div
             initial="hidden"

@@ -51,7 +51,7 @@ export default function AboutSection({
   return (
     <section id="about" className="py-24 bg-navy-900 relative border-t border-navy-800">
       <div className="max-w-360 mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
 
           {/* Left — staggered fade from left */}
           <motion.div

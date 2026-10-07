@@ -56,7 +56,7 @@ export default async function LatestInsightsSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
 
           {/* Lead card */}
           <div className="lg:col-span-6">
