@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import StatusPill from "@/components/pipelines/StatusPill";
+import PipelineRouteMap from "@/components/pipelines/PipelineRouteMap";
 import {
   COUNTRY_COUNTS, slugToCountry, countryToSlug,
   getPipelineBySlug, getPipelinesForCountry,
@@ -50,7 +51,7 @@ export default async function PipelineDetailPage({ params }: Props) {
 
           {/* Breadcrumb */}
           <nav style={{ fontSize: 12, color: "#7c8b98", marginBottom: 22, letterSpacing: ".3px" }}>
-            <Link href="/intelligence/pipelines" style={{ color: "#7c8b98", textDecoration: "none" }}>Intelligence</Link>
+            <Link href="/intelligence" style={{ color: "#7c8b98", textDecoration: "none" }}>Intelligence</Link>
             <span style={{ margin: "0 8px", opacity: .5 }}>›</span>
             <Link href="/intelligence/pipelines" style={{ color: "#7c8b98", textDecoration: "none" }}>Pipelines</Link>
             <span style={{ margin: "0 8px", opacity: .5 }}>›</span>
@@ -148,18 +149,18 @@ export default async function PipelineDetailPage({ params }: Props) {
                 </div>
               )}
 
-              {/* Map placeholder */}
+              {/* Route map */}
               <div style={{ marginBottom: 40 }}>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2.2px", color: "#D4A017", textTransform: "uppercase", marginBottom: 16 }}>
                   Route map
                 </p>
-                <div style={{
-                  height: 230, border: "1px solid rgba(255,255,255,.10)", background: "#0D2436",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "#7c8b98", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase",
-                }}>
-                  Route geometry — GIS layer, later phase
-                </div>
+                <PipelineRouteMap
+                  routeCoords={pipeline.routeCoords}
+                  status={pipeline.status}
+                  name={pipeline.name}
+                  fromCountry={pipeline.countries[0] ?? countryName}
+                  toCountry={pipeline.countries[pipeline.countries.length - 1] ?? countryName}
+                />
               </div>
             </div>
 
