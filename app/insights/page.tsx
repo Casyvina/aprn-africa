@@ -127,10 +127,10 @@ export default async function InsightsPage() {
             <p className="text-xs text-gold-500 uppercase tracking-widest font-semibold mb-8">Featured</p>
             <Link
               href={`/insights/${featured.slug}`}
-              className="group block lg:grid lg:grid-cols-12 gap-6 lg:gap-12 items-center"
+              className="group block md:grid md:grid-cols-12 gap-6 md:gap-12 items-center"
             >
               <div
-                className="lg:col-span-7 aspect-video bg-cover bg-center overflow-hidden mb-8 lg:mb-0 relative"
+                className="md:col-span-7 aspect-video bg-cover bg-center overflow-hidden mb-8 md:mb-0 relative"
                 style={{ backgroundImage: featured.heroImage ? `url('${featured.heroImage}')` : undefined }}
               >
                 <div className="absolute inset-0 bg-navy-900/40 group-hover:bg-navy-900/20 transition-colors" />
@@ -148,7 +148,7 @@ export default async function InsightsPage() {
                   className="absolute top-4 right-4 z-10"
                 />
               </div>
-              <div className="lg:col-span-5">
+              <div className="md:col-span-5">
                 <h2
                   className="text-3xl lg:text-4xl font-bold mb-4 leading-tight group-hover:text-gold-500 transition-colors"
                   style={{ fontFamily: "var(--font-playfair), serif" }}

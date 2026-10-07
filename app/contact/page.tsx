@@ -95,7 +95,7 @@ export default function ContactPage() {
             </motion.div>
             <motion.h1
               variants={fadeUp}
-              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
             >
               Connect With <span className="text-gold-500">APRN</span>
@@ -108,9 +108,9 @@ export default function ContactPage() {
 
         {/* -- Contact Overview & Channels ------------------------- */}
         <section className="py-24 px-6 lg:px-12 bg-navy-900">
-          <div className="max-w-360 mx-auto grid lg:grid-cols-12 gap-8 lg:gap-16">
+          <div className="max-w-360 mx-auto grid md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-16">
 
-            <div className="lg:col-span-4">
+            <div className="md:col-span-1 lg:col-span-4">
               <h2
                 className="text-3xl font-bold mb-6 text-white"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -143,7 +143,7 @@ export default function ContactPage() {
             </div>
 
             <motion.div
-              className="lg:col-span-8 grid md:grid-cols-2 gap-6"
+              className="md:col-span-2 lg:col-span-8 grid md:grid-cols-2 gap-6"
               initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={stagger}
             >
               {channels.map((c) => (
@@ -174,7 +174,7 @@ export default function ContactPage() {
               backgroundSize: "40px 40px",
             }}
           />
-          <div className="max-w-360 mx-auto relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+          <div className="max-w-360 mx-auto relative z-10 grid md:grid-cols-2 gap-8 lg:gap-16 items-start">
 
             <ContactForm />
 

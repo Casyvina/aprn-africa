@@ -236,9 +236,9 @@ export default async function ResearchPage() {
             </div>
 
             {featured ? (
-              <div className={`grid grid-cols-1 gap-8 ${secondary.length > 0 ? "lg:grid-cols-12" : ""}`}>
+              <div className={`grid grid-cols-1 gap-8 ${secondary.length > 0 ? "md:grid-cols-12" : ""}`}>
                 {/* Main feature — full width when no secondary reports exist */}
-                <div className={`${secondary.length > 0 ? "lg:col-span-8" : ""} relative group overflow-hidden bg-navy-800`}>
+                <div className={`${secondary.length > 0 ? "md:col-span-8" : ""} relative group overflow-hidden bg-navy-800`}>
                   <Link href={`/research/${featured.slug}`} className="block cursor-pointer">
                     <div className="h-80 sm:h-110 lg:h-150 w-full relative">
                       {featured.coverImageUrl ? (
@@ -300,7 +300,7 @@ export default async function ResearchPage() {
                 </div>
 
                 {/* Secondary column — only renders when there are secondary reports */}
-                {secondary.length > 0 && <div className="lg:col-span-4 flex flex-col gap-8">
+                {secondary.length > 0 && <div className="md:col-span-4 flex flex-col gap-8">
                   {secondary.map((card) => (
                     <div
                       key={card._id}
