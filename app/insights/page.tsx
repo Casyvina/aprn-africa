@@ -92,12 +92,12 @@ export default async function InsightsPage() {
         {/* -- Hero ------------------------------------------------ */}
         <section className="pt-32 pb-16 px-6 lg:px-12 border-b border-navy-800">
           <div className="max-w-360 mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-gold-500/30 rounded-full bg-gold-500/10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-gold-500/30 bg-gold-500/10">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
               <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">APRN Publishing</span>
             </div>
             <h1
-              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 leading-tight"
+              className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-tight"
               style={{ fontFamily: "var(--font-oswald), sans-serif" }}
             >
               Infrastructure <span className="text-gold-500">Insights</span>
@@ -111,7 +111,7 @@ export default async function InsightsPage() {
               {(Object.entries(categoryMeta) as [InsightCategory, typeof categoryMeta[InsightCategory]][]).map(([, meta]) => (
                 <span
                   key={meta.label}
-                  className={`inline-flex items-center gap-2 px-3 py-1 border rounded-full text-xs font-semibold uppercase tracking-wider ${meta.badge}`}
+                  className={`inline-flex items-center gap-2 px-3 py-1 border text-xs font-semibold uppercase tracking-wider ${meta.badge}`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
                   {meta.label}
@@ -130,12 +130,12 @@ export default async function InsightsPage() {
               className="group block lg:grid lg:grid-cols-12 gap-6 lg:gap-12 items-center"
             >
               <div
-                className="lg:col-span-7 aspect-video bg-cover bg-center rounded-sm overflow-hidden mb-8 lg:mb-0 relative"
+                className="lg:col-span-7 aspect-video bg-cover bg-center overflow-hidden mb-8 lg:mb-0 relative"
                 style={{ backgroundImage: featured.heroImage ? `url('${featured.heroImage}')` : undefined }}
               >
                 <div className="absolute inset-0 bg-navy-900/40 group-hover:bg-navy-900/20 transition-colors" />
                 <div className="absolute top-4 left-4">
-                  <span className={`inline-flex items-center gap-2 px-3 py-1 border rounded-full text-xs font-semibold uppercase tracking-wider ${categoryMeta[featured.category].badge}`}>
+                  <span className={`inline-flex items-center gap-2 px-3 py-1 border text-xs font-semibold uppercase tracking-wider ${categoryMeta[featured.category].badge}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${categoryMeta[featured.category].dot}`} />
                     {categoryMeta[featured.category].label}
                   </span>

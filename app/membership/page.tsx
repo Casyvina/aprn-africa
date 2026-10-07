@@ -44,7 +44,7 @@ export default function MembershipPage() {
             }}
           />
           <div className="max-w-360 mx-auto px-6 md:px-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold-500/30 bg-gold-500/8 mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 border border-gold-500/30 bg-gold-500/8 mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
               <span className="text-[11px] font-bold text-gold-500 uppercase tracking-widest">
                 Founding Window Open · June 2026 – June 2027
