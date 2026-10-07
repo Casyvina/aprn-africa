@@ -78,7 +78,8 @@ PLAN.md
 
 # GEM data archive + extracted datasets (large, third-party CC-BY data)
 /gem-data
-/gem-data.zip
+gem-data*.zip
+gem-download*.zip
 
 # research reports (generated locally, not source)
 /research-reports
