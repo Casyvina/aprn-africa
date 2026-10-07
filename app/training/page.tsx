@@ -104,7 +104,7 @@ export default async function TrainingPage() {
 
           <div className="max-w-360 mx-auto px-6 lg:px-12 relative z-20 grid lg:grid-cols-12 gap-12 items-center w-full">
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold-500/30 bg-gold-500/10 mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 border border-gold-500/30 bg-gold-500/10 mb-6">
                 <span className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
                 <span className="text-xs font-semibold text-gold-500 uppercase tracking-widest">
                   APRN Professional Academy
@@ -124,13 +124,13 @@ export default async function TrainingPage() {
               <div className="flex flex-wrap items-center gap-4">
                 <a
                   href="#tracks"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold tracking-wide transition-all rounded-sm shadow-[0_0_20px_rgba(212,160,23,0.2)]"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold tracking-wide transition-all shadow-[0_0_20px_rgba(212,160,23,0.2)]"
                 >
                   Explore Programs <i className="fa-solid fa-arrow-right text-sm" />
                 </a>
                 <a
                   href="/about"
-                  className="inline-flex items-center gap-2 px-8 py-4 glass-panel hover:bg-navy-800 text-white font-semibold tracking-wide transition-all rounded-sm border border-white/10"
+                  className="inline-flex items-center gap-2 px-8 py-4 glass-panel hover:bg-navy-800 text-white font-semibold tracking-wide transition-all border border-white/10"
                 >
                   Partner With APRN
                 </a>
@@ -141,7 +141,7 @@ export default async function TrainingPage() {
             <div className="lg:col-span-5 relative hidden lg:block">
               <div className="relative w-full aspect-square max-w-md mx-auto">
                 <div className="absolute inset-0 bg-linear-to-br from-gold-500/20 to-transparent rounded-full blur-3xl" />
-                <div className="glass-panel rounded-sm p-6 relative z-10 border border-navy-700 hover:border-gold-500/40 transition-all duration-500 rotate-2 hover:rotate-0">
+                <div className="glass-panel p-6 relative z-10 border border-navy-700 hover:border-gold-500/40 transition-all duration-500 rotate-2 hover:rotate-0">
                   <div className="flex items-center justify-between mb-6 pb-4 border-b border-navy-700">
                     <span className="text-sm font-semibold text-slate-300 uppercase tracking-widest">
                       Academy Metrics
@@ -160,9 +160,9 @@ export default async function TrainingPage() {
                           <span>{m.label}</span>
                           <span className="text-gold-500 font-mono">{m.pct}</span>
                         </div>
-                        <div className="h-1.5 w-full bg-navy-900 rounded-full overflow-hidden">
+                        <div className="h-1.5 w-full bg-navy-900 overflow-hidden">
                           <div
-                            className="h-full bg-linear-to-r from-gold-500 to-copper-500 rounded-full"
+                            className="h-full bg-linear-to-r from-gold-500 to-copper-500"
                             style={{ width: m.pct }}
                           />
                         </div>
@@ -170,8 +170,8 @@ export default async function TrainingPage() {
                     ))}
                   </div>
 
-                  <div className="mt-6 p-4 rounded-sm bg-navy-900 border border-navy-700 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-sm bg-gold-500/10 flex items-center justify-center text-gold-500 shrink-0">
+                  <div className="mt-6 p-4 bg-navy-900 border border-navy-700 flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gold-500/10 flex items-center justify-center text-gold-500 shrink-0">
                       <i className="fa-solid fa-shield-halved text-xl" />
                     </div>
                     <div>
@@ -205,7 +205,7 @@ export default async function TrainingPage() {
                   {stats.map((s) => (
                     <div
                       key={s.value}
-                      className="glass-panel p-5 rounded-sm border border-navy-700 hover:border-gold-500/40 transition-colors"
+                      className="glass-panel p-5 border border-navy-700 hover:border-gold-500/40 transition-colors"
                     >
                       <div className="font-display text-3xl font-bold text-gold-500 mb-2">{s.value}</div>
                       <p className="text-xs text-slate-400 leading-relaxed">{s.label}</p>
@@ -215,13 +215,13 @@ export default async function TrainingPage() {
               </div>
 
               <div className="relative">
-                <div className="absolute inset-0 bg-gold-500/5 rounded-sm transform -rotate-2" />
+                <div className="absolute inset-0 bg-gold-500/5 transform -rotate-2" />
                 <Image
                   src="/images/female-engineer-training.png"
                   alt="Female engineer in training"
                   width={900}
                   height={600}
-                  className="relative rounded-sm border border-navy-700 object-cover h-105 w-full"
+                  className="relative border border-navy-700 object-cover w-full h-64 sm:h-80 lg:h-105"
                 />
               </div>
             </div>
@@ -248,10 +248,10 @@ export default async function TrainingPage() {
               {tracks.map((t) => (
                 <div
                   key={t.title}
-                  className="glass-panel rounded-sm p-8 border border-navy-700 hover:border-gold-500/40 transition-all group relative overflow-hidden"
+                  className="glass-panel p-8 border border-navy-700 hover:border-gold-500/40 transition-all group relative overflow-hidden"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/5 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-gold-500/15 transition-all" />
-                  <div className="w-14 h-14 rounded-sm bg-navy-900 border border-navy-700 flex items-center justify-center text-gold-500 mb-6 text-2xl group-hover:border-gold-500/40 transition-colors">
+                  <div className="w-14 h-14 bg-navy-900 border border-navy-700 flex items-center justify-center text-gold-500 mb-6 text-2xl group-hover:border-gold-500/40 transition-colors">
                     <i className={`fa-solid ${t.icon}`} />
                   </div>
                   <h3 className="font-display text-lg font-bold mb-3 text-white">{t.title}</h3>
@@ -325,10 +325,10 @@ export default async function TrainingPage() {
                 ].map((tier) => (
                   <div
                     key={tier.level}
-                    className={`glass-panel rounded-sm border ${tier.border} p-8 flex flex-col gap-5 hover:border-opacity-60 transition-all`}
+                    className={`glass-panel border ${tier.border} p-8 flex flex-col gap-5 hover:border-opacity-60 transition-all`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className={`w-12 h-12 rounded-sm ${tier.bg} border ${tier.border} flex items-center justify-center shrink-0`}>
+                      <div className={`w-12 h-12 ${tier.bg} border ${tier.border} flex items-center justify-center shrink-0`}>
                         <i className={`fa-solid ${tier.icon} ${tier.color} text-lg`} />
                       </div>
                       <span className={`text-3xl font-bold ${tier.color} opacity-20 font-display`}>{tier.level}</span>
@@ -363,7 +363,7 @@ export default async function TrainingPage() {
             <div className="grid lg:grid-cols-2 gap-16 items-center">
 
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-gold-500/30 bg-gold-500/10 mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-gold-500/30 bg-gold-500/10 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
                   <span className="text-xs font-bold text-gold-500 uppercase tracking-widest">Now Live</span>
                 </div>
@@ -381,7 +381,7 @@ export default async function TrainingPage() {
                     { icon: "fa-mobile-screen",    label: "Access",               value: "Any device" },
                   ].map((f) => (
                     <div key={f.label} className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-sm bg-navy-900 border border-navy-700 flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-8 h-8 bg-navy-900 border border-navy-700 flex items-center justify-center shrink-0 mt-0.5">
                         <i className={`fa-solid ${f.icon} text-gold-500 text-xs`} />
                       </div>
                       <div>
@@ -394,13 +394,13 @@ export default async function TrainingPage() {
                 <div className="flex flex-wrap gap-3">
                   <Link
                     href="/register"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold text-sm tracking-wide transition-all rounded-sm"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold text-sm tracking-wide transition-all"
                   >
                     Join & Start Learning <i className="fa-solid fa-arrow-right text-xs" />
                   </Link>
                   <Link
                     href="/dashboard/courses"
-                    className="inline-flex items-center gap-2 px-6 py-3 glass-panel border border-white/10 hover:border-white/20 text-white font-semibold text-sm transition-all rounded-sm"
+                    className="inline-flex items-center gap-2 px-6 py-3 glass-panel border border-white/10 hover:border-white/20 text-white font-semibold text-sm transition-all"
                   >
                     Browse Courses
                   </Link>
@@ -408,13 +408,13 @@ export default async function TrainingPage() {
               </div>
 
               {/* Platform feature card */}
-              <div className="glass-panel rounded-sm border border-navy-700 p-6 space-y-4">
+              <div className="glass-panel border border-navy-700 p-6 space-y-4">
                 <div className="flex items-center justify-between pb-4 border-b border-navy-700">
                   <div>
                     <p className="text-sm font-bold text-white">APConnect™</p>
                     <p className="text-xs text-slate-500">Pipeline Learning Platform</p>
                   </div>
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest px-2 py-1 bg-emerald-400/10 border border-emerald-400/20 rounded-full">
+                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest px-2 py-1 bg-emerald-400/10 border border-emerald-400/20">
                     Live
                   </span>
                 </div>
@@ -430,9 +430,9 @@ export default async function TrainingPage() {
                       <span className="text-[9px] text-slate-500 shrink-0">{course.modules} modules</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1 bg-navy-900 rounded-full overflow-hidden">
+                      <div className="flex-1 h-1 bg-navy-900 overflow-hidden">
                         <div
-                          className="h-full bg-linear-to-r from-gold-500 to-copper-500 rounded-full transition-all"
+                          className="h-full bg-linear-to-r from-gold-500 to-copper-500 transition-all"
                           style={{ width: course.pct > 0 ? `${course.pct}%` : "3px" }}
                         />
                       </div>
@@ -469,9 +469,9 @@ export default async function TrainingPage() {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 {programs.map((p) => (
-                  <div key={p._id} className="glass-panel rounded-sm p-8 border border-navy-700 hover:border-gold-500/40 transition-all group flex flex-col gap-4">
+                  <div key={p._id} className="glass-panel p-8 border border-navy-700 hover:border-gold-500/40 transition-all group flex flex-col gap-4">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${LEVEL_COLOR[p.level] ?? LEVEL_COLOR.professional}`}>
+                      <span className={`text-xs font-semibold px-2.5 py-1 border ${LEVEL_COLOR[p.level] ?? LEVEL_COLOR.professional}`}>
                         {p.level.charAt(0).toUpperCase() + p.level.slice(1)}
                       </span>
                       <span className="text-xs text-slate-500 uppercase tracking-widest">
@@ -479,7 +479,7 @@ export default async function TrainingPage() {
                         {p.durationWeeks ? ` · ${p.durationWeeks} weeks` : ""}
                       </span>
                       {p.featured && (
-                        <span className="ml-auto text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2 py-0.5 border border-gold-500/30 rounded-full">
+                        <span className="ml-auto text-[10px] font-bold text-gold-500 uppercase tracking-widest px-2 py-0.5 border border-gold-500/30">
                           Featured
                         </span>
                       )}
@@ -533,13 +533,13 @@ export default async function TrainingPage() {
             <div className="flex flex-wrap justify-center items-center gap-4">
               <a
                 href="#tracks"
-                className="inline-block px-8 py-4 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold tracking-wide transition-all rounded-sm shadow-[0_0_20px_rgba(212,160,23,0.2)]"
+                className="inline-block px-8 py-4 bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold tracking-wide transition-all shadow-[0_0_20px_rgba(212,160,23,0.2)]"
               >
                 Explore Programs
               </a>
               <a
                 href="/about"
-                className="inline-block px-8 py-4 glass-panel hover:bg-navy-800 text-white font-semibold tracking-wide transition-all rounded-sm border border-white/10"
+                className="inline-block px-8 py-4 glass-panel hover:bg-navy-800 text-white font-semibold tracking-wide transition-all border border-white/10"
               >
                 Partner With APRN
               </a>
