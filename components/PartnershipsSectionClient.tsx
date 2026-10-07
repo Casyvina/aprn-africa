@@ -46,7 +46,7 @@ export default function PartnershipsSectionClient({
           className="text-center mb-16"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.6, ease: "easeOut" as const }}
         >
           <span className="text-gold-500 uppercase tracking-widest text-sm font-semibold mb-3 block">
@@ -80,7 +80,7 @@ export default function PartnershipsSectionClient({
                       className="w-full h-full"
                       initial={{ filter: "grayscale(1)", opacity: 0.55 }}
                       whileInView={{ filter: "grayscale(0)", opacity: 1 }}
-                      viewport={{ once: true, amount: 0.5 }}
+                      viewport={{ once: true, amount: 0.1 }}
                       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
                       whileHover={{ filter: "drop-shadow(0 0 8px rgba(212,160,23,0.35))" }}
                     >

@@ -49,7 +49,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
           className="font-display text-3xl md:text-4xl font-bold text-white mb-16 text-center"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
+          viewport={{ once: true, amount: 0.05 }}
           transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
         >
           {sectionHeading}
@@ -68,7 +68,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
                   className="relative flex flex-col md:flex-row items-start md:items-center justify-between group"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.4 }}
+                  viewport={{ once: true, amount: 0.05 }}
                   transition={{ duration: 0.65, ease: "easeOut" as const }}
                 >
                   {/* Left column */}
@@ -77,7 +77,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
                       className="md:w-5/12 text-left md:text-right order-2 md:order-1 pl-16 md:pl-0 pr-0 md:pr-12"
                       initial={{ opacity: 0, x: -30 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.4 }}
+                      viewport={{ once: true, amount: 0.05 }}
                       transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" as const }}
                     >
                       <h4 className="text-xl font-bold text-white mb-2">{m.title}</h4>
@@ -88,7 +88,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
                       className="md:w-5/12 order-3 md:order-1 pl-16 md:pl-12 hidden md:block text-right"
                       initial={{ opacity: 0, x: -30 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.4 }}
+                      viewport={{ once: true, amount: 0.05 }}
                       transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" as const }}
                     >
                       {m.tag && (
@@ -104,7 +104,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
                     className={`absolute left-0 md:left-1/2 w-14 h-14 rounded-full border-4 border-navy-800 ${style.color} flex items-center justify-center transform md:-translate-x-1/2 z-10 shadow-[0_0_15px_rgba(212,160,23,0.4)]`}
                     initial={{ scale: 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ once: true, amount: 0.5 }}
+                    viewport={{ once: true, amount: 0.05 }}
                     transition={{ duration: 0.4, ease: "easeOut" as const }}
                   >
                     <span className={`${style.textColor} font-bold text-sm`}>{m.year}</span>
@@ -116,7 +116,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
                       className="md:w-5/12 order-3 pl-16 md:pl-12 hidden md:block"
                       initial={{ opacity: 0, x: 30 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.4 }}
+                      viewport={{ once: true, amount: 0.05 }}
                       transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" as const }}
                     >
                       {m.tag && (
@@ -130,7 +130,7 @@ export default function RoadmapSection({ heading, milestones }: RoadmapProps) {
                       className="md:w-5/12 text-left order-2 md:order-3 pl-16 md:pl-12"
                       initial={{ opacity: 0, x: 30 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.4 }}
+                      viewport={{ once: true, amount: 0.05 }}
                       transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" as const }}
                     >
                       <h4 className="text-xl font-bold text-white mb-2">{m.title}</h4>

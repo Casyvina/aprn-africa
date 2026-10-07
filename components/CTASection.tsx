@@ -51,7 +51,7 @@ export default function CTASection({
         className="max-w-4xl mx-auto px-6 relative z-10 text-center"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
       >
         <motion.i
