@@ -239,8 +239,8 @@ export default function AfricaMap() {
     <div>
       <div
         ref={mapRef}
-        className="w-full"
-        style={{ height: "580px", border: "1px solid rgba(255,255,255,.08)" }}
+        className="w-full h-72 sm:h-96 md:h-[480px] lg:h-[580px]"
+        style={{ border: "1px solid rgba(255,255,255,.08)" }}
       />
 
       {/* Legend */}
