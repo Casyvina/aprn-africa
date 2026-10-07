@@ -1,11 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 interface PlotlyInstance {
   newPlot: (el: HTMLElement, data: unknown[], layout: unknown, config?: unknown) => void;
   purge: (el: HTMLElement) => void;
 }
+
+type PlotlyEl = HTMLElement & { on?: (ev: string, cb: () => void) => void };
 
 declare global {
   interface Window {
@@ -105,6 +109,7 @@ const STATUS_STYLE = {
 
 function PipelineMap() {
   const mapRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const el = mapRef.current;
@@ -188,6 +193,10 @@ function PipelineMap() {
         responsive: true,
         displayModeBar: false,
       });
+
+      (el as PlotlyEl).on?.("plotly_click", () => {
+        router.push("/intelligence/pipelines");
+      });
     };
 
     const poll = () => {
@@ -201,7 +210,7 @@ function PipelineMap() {
       mounted = false;
       if (el && window.Plotly) window.Plotly.purge(el);
     };
-  }, []);
+  }, [router]);
 
   return <div ref={mapRef} className="w-full h-full" />;
 }
@@ -255,8 +264,8 @@ export default function MapSection({
           </div>
         </div>
 
-        {/* Map */}
-        <div className="glass-panel p-2 w-full h-80 md:h-[500px] lg:h-[600px]">
+        {/* Map — click navigates to Pipeline Intelligence */}
+        <div className="glass-panel p-2 w-full h-80 md:h-125 lg:h-150" style={{ cursor: "pointer" }}>
           <PipelineMap />
         </div>
 
@@ -308,6 +317,17 @@ export default function MapSection({
               </div>
             </div>
           ))}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-8 flex justify-end">
+          <Link
+            href="/intelligence/pipelines"
+            className="inline-flex items-center gap-2 text-xs font-bold text-gold-500 hover:text-gold-400 uppercase tracking-widest transition-colors group"
+          >
+            Explore all pipeline corridors
+            <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
       </div>

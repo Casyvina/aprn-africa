@@ -4,6 +4,23 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { COUNTRY_COUNTS, countryToSlug } from "@/lib/pipelines/data";
 
+// Maps each pipeline route to the most relevant country page to navigate to
+const ROUTE_COUNTRY: Record<string, string> = {
+  "West African Gas Pipeline":        "Nigeria",
+  "Trans-Saharan Gas Pipeline":       "Nigeria",
+  "Nigeria–Morocco Gas Pipeline":     "Nigeria",
+  "Trans-Mediterranean Gas Pipeline": "Algeria",
+  "Maghreb–Europe Gas Pipeline":      "Algeria",
+  "EACOP (Uganda–Tanzania)":          "Uganda",
+  "Trans Nigeria Gas Pipeline":       "Nigeria",
+  "Hassi R'Mel–Arzew Gas Pipeline":   "Algeria",
+  "South Valley Gas Pipeline":        "Egypt",
+  "Greater Nile Oil Pipeline":        "Sudan",
+  "Tazama Oil Pipeline":              "Tanzania",
+  "Niger–Benin Oil Pipeline":         "Niger",
+  "Mozambique Gas Corridor":          "Mozambique",
+};
+
 interface AfricaPlotly {
   newPlot: (el: HTMLElement, data: unknown[], layout: unknown, config?: unknown) => Promise<HTMLElement>;
   purge: (el: HTMLElement) => void;
@@ -135,7 +152,7 @@ export default function AfricaMap() {
         marker: {
           line: { color: "#071B2A", width: 0.8 },
         },
-        hovertemplate: "<b>%{location}</b><br><span style='color:#D4A017'>%{z} segments</span><extra></extra>",
+        hovertemplate: "<b>%{location}</b><br><span style='color:#D4A017'>%{z} segments</span><br><span style='color:#7c8b98;font-size:11px'>Click to explore →</span><extra></extra>",
         name: "",
       };
 
@@ -213,11 +230,20 @@ export default function AfricaMap() {
         { responsive: true, displayModeBar: false, scrollZoom: false },
       ).then(() => {
         if (!mounted || !el) return;
-        type PlotlyEl = HTMLElement & { on?: (ev: string, cb: (d: { points: { location?: string }[] }) => void) => void };
+        type PlotPoint = { location?: string; data?: { name?: string } };
+        type PlotlyEl = HTMLElement & { on?: (ev: string, cb: (d: { points: PlotPoint[] }) => void) => void };
         (el as PlotlyEl).on?.("plotly_click", (data) => {
-          const country = data?.points?.[0]?.location;
-          if (country && COUNTRY_COUNTS[country]) {
-            router.push(`/intelligence/pipelines/${countryToSlug(country)}`);
+          const pt = data?.points?.[0];
+          if (!pt) return;
+          // Country choropleth click
+          if (pt.location && COUNTRY_COUNTS[pt.location]) {
+            router.push(`/intelligence/pipelines/${countryToSlug(pt.location)}`);
+            return;
+          }
+          // Pipeline route line click — navigate to the primary country
+          const routeName = pt.data?.name;
+          if (routeName && ROUTE_COUNTRY[routeName]) {
+            router.push(`/intelligence/pipelines/${countryToSlug(ROUTE_COUNTRY[routeName])}`);
           }
         });
       });
@@ -239,8 +265,8 @@ export default function AfricaMap() {
     <div>
       <div
         ref={mapRef}
-        className="w-full h-72 sm:h-96 md:h-[480px] lg:h-[580px]"
-        style={{ border: "1px solid rgba(255,255,255,.08)" }}
+        className="w-full h-72 sm:h-96 md:h-120 lg:h-145"
+        style={{ border: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}
       />
 
       {/* Legend */}
